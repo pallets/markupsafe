@@ -50,6 +50,10 @@ class ve_build_ext(build_ext):
             raise BuildFailed()
 
 
+def echo(msg=''):
+    sys.stdout.write(msg + '\n')
+
+
 readme = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 
@@ -94,15 +98,15 @@ except BuildFailed:
     LINE = '=' * 74
     BUILD_EXT_WARNING = 'WARNING: The C extension could not be compiled, speedups are not enabled.'
 
-    print LINE
-    print BUILD_EXT_WARNING
-    print 'Failure information, if any, is above.'
-    print 'Retrying the build without the C extension now.'
-    print
+    echo(LINE)
+    echo(BUILD_EXT_WARNING)
+    echo('Failure information, if any, is above.')
+    echo('Retrying the build without the C extension now.')
+    echo()
 
     run_setup(False)
 
-    print LINE
-    print BUILD_EXT_WARNING
-    print 'Plain-Python installation succeeded.'
-    print LINE
+    echo(LINE)
+    echo(BUILD_EXT_WARNING)
+    echo('Plain-Python installation succeeded.')
+    echo(LINE)
