@@ -45,7 +45,7 @@ class ve_build_ext(build_ext):
             raise BuildFailed()
 
 
-description = open(os.path.join(os.path.dirname(__file__), 'README')).read()
+readme = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 
 def run_setup(with_binary):
@@ -60,7 +60,7 @@ def run_setup(with_binary):
         author='Armin Ronacher',
         author_email='armin.ronacher@active-4.com',
         description='Implements a XML/HTML/XHTML Markup safe string for Python',
-        long_description=description,
+        long_description=readme,
         zip_safe=False,
         classifiers=[
             'Development Status :: 5 - Production/Stable',
