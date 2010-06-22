@@ -1,2 +1,2 @@
-include LICENSE README
+include LICENSE README AUTHORS
 recursive-include markupsafe *.c
