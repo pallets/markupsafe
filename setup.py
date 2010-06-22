@@ -1,16 +1,4 @@
-"""
-MarkupSafe
-==========
-
-Implements a unicode subclass that supports HTML strings:
-
->>> from markupsafe import Markup, escape
->>> escape("<script>alert(document.cookie);</script>")
-Markup(u'&lt;script&gt;alert(document.cookie);&lt;/script&gt;')
->>> tmpl = Markup("<em>%s</em>")
->>> tmpl % "Peter > Lustig"
-Markup(u'<em>Peter &gt; Lustig</em>')
-"""
+import os
 import sys
 from setuptools import setup, Extension, Feature
 from distutils.command.build_ext import build_ext
@@ -57,6 +45,9 @@ class ve_build_ext(build_ext):
             raise BuildFailed()
 
 
+description = open(os.path.join(os.path.dirname(__file__), 'README')).read()
+
+
 def run_setup(with_binary):
     features = {}
     if with_binary:
@@ -69,7 +60,7 @@ def run_setup(with_binary):
         author='Armin Ronacher',
         author_email='armin.ronacher@active-4.com',
         description='Implements a XML/HTML/XHTML Markup safe string for Python',
-        long_description=__doc__,
+        long_description=description,
         zip_safe=False,
         classifiers=[
             'Development Status :: 5 - Production/Stable',
