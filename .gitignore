@@ -2,6 +2,7 @@
 *.pyc
 *.pyo
 *.o
+*.so
 env
 dist
 build

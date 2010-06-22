@@ -75,6 +75,7 @@ def run_setup(with_binary):
             'Topic :: Text Processing :: Markup :: HTML'
         ],
         packages=['markupsafe'],
+        test_suite='markupsafe.tests.suite',
         include_package_data=True,
         cmdclass={'build_ext': ve_build_ext},
         features=features
