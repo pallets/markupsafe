@@ -25,6 +25,11 @@ if sys.platform == 'win32' and sys.version_info > (2, 6):
    ext_errors += (IOError,)
 
 
+extra = {}
+if sys.version_info >= (3, 0):
+    extra['use_2to3'] = True
+
+
 class BuildFailed(Exception):
     pass
 
@@ -54,7 +59,7 @@ def run_setup(with_binary):
         features['speedups'] = speedups
     setup(
         name='MarkupSafe',
-        version='0.9',
+        version='0.9.1',
         url='http://dev.pocoo.org/',
         license='BSD',
         author='Armin Ronacher',
@@ -78,7 +83,8 @@ def run_setup(with_binary):
         test_suite='markupsafe.tests.suite',
         include_package_data=True,
         cmdclass={'build_ext': ve_build_ext},
-        features=features
+        features=features,
+        **extra
     )
 
 
