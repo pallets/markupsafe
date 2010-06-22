@@ -1,6 +1,7 @@
 .DS_Store
 *.pyc
 *.pyo
+*.o
 env
 dist
 build
