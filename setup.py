@@ -40,13 +40,13 @@ class ve_build_ext(build_ext):
     def run(self):
         try:
             build_ext.run(self)
-        except DistutilsPlatformError, x:
+        except DistutilsPlatformError:
             raise BuildFailed()
 
     def build_extension(self, ext):
         try:
             build_ext.build_extension(self, ext)
-        except ext_errors, x:
+        except ext_errors:
             raise BuildFailed()
 
 
@@ -59,7 +59,7 @@ def run_setup(with_binary):
         features['speedups'] = speedups
     setup(
         name='MarkupSafe',
-        version='0.9.1',
+        version='0.9.2',
         url='http://dev.pocoo.org/',
         license='BSD',
         author='Armin Ronacher',
