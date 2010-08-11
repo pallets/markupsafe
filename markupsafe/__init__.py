@@ -12,7 +12,7 @@ import re
 from itertools import imap
 
 
-__all__ = ['Module', 'soft_unicode', 'escape']
+__all__ = ['Markup', 'soft_unicode', 'escape']
 
 
 _striptags_re = re.compile(r'(<!--.*?-->|<[^>]*>)')

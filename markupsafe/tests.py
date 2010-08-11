@@ -40,6 +40,11 @@ class MarkupTestCase(unittest.TestCase):
         assert Markup("<em>Foo &amp; Bar</em>").striptags() == "Foo & Bar"
         assert Markup("&lt;test&gt;").unescape() == "<test>"
 
+    def test_all_set(self):
+        import markupsafe as markup
+        for item in markup.__all__:
+            getattr(markup, item)
+
 
 class MarkupLeakTestCase(unittest.TestCase):
 
