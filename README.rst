@@ -43,6 +43,8 @@ object, you can create your own subclass that does that::
     from markupsafe import Markup, escape_silent as escape
 
     class SilentMarkup(Markup):
+        __slots__ = ()
+
         @classmethod
         def escape(cls, s):
             return cls(escape(s))
