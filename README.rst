@@ -31,3 +31,18 @@ the `__html__` function:
 Markup(u'<strong>Nice</strong>')
 >>> Markup(Foo())
 Markup(u'<strong>Nice</strong>')
+
+Since MarkupSafe 0.10 there is now also a separate escape function
+called `escape_silent` that returns an empty string for `None` for
+consistency with other systems that return empty strings for `None`
+when escaping (for instance Pylons' webhelpers).
+
+If you also want to use this for the escape method of the Markup
+object, you can create your own subclass that does that::
+
+    from markupsafe import Markup, escape_silent as escape
+
+    class SilentMarkup(Markup):
+        @classmethod
+        def escape(cls, s):
+            return cls(escape(s))

@@ -12,7 +12,7 @@ import re
 from itertools import imap
 
 
-__all__ = ['Markup', 'soft_unicode', 'escape']
+__all__ = ['Markup', 'soft_unicode', 'escape', 'escape_silent']
 
 
 _striptags_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
@@ -220,6 +220,6 @@ class _MarkupEscapeHelper(object):
 # we have to import it down here as the speedups and native
 # modules imports the markup type which is define above.
 try:
-    from markupsafe._speedups import escape, soft_unicode
+    from markupsafe._speedups import escape, escape_silent, soft_unicode
 except ImportError:
-    from markupsafe._native import escape, soft_unicode
+    from markupsafe._native import escape, escape_silent, soft_unicode

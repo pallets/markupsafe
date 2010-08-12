@@ -160,6 +160,15 @@ escape(PyObject *self, PyObject *text)
 
 
 static PyObject*
+escape_silent(PyObject *self, PyObject *text)
+{
+	if (text != Py_None)
+		return escape(self, text);
+	return PyObject_CallFunctionObjArgs(markup, NULL);
+}
+
+
+static PyObject*
 soft_unicode(PyObject *self, PyObject *s)
 {
 	if (!PyUnicode_Check(s))
@@ -179,6 +188,9 @@ static PyMethodDef module_methods[] = {
 	 "Convert the characters &, <, >, ', and \" in string s to HTML-safe\n"
 	 "sequences.  Use this if you need to display text that might contain\n"
 	 "such characters in HTML.  Marks return value as markup string."},
+	{"escape_silent", (PyCFunction)escape_silent, METH_O,
+	 "escape_silent(s) -> markup\n\n"
+	 "Like escape but converts None to an empty string."},
 	{"soft_unicode", (PyCFunction)soft_unicode, METH_O,
 	 "soft_unicode(object) -> string\n\n"
          "Make a string unicode if it isn't already.  That way a markup\n"

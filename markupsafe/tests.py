@@ -1,6 +1,6 @@
 import gc
 import unittest
-from markupsafe import Markup, escape
+from markupsafe import Markup, escape, escape_silent
 
 
 class MarkupTestCase(unittest.TestCase):
@@ -44,6 +44,11 @@ class MarkupTestCase(unittest.TestCase):
         import markupsafe as markup
         for item in markup.__all__:
             getattr(markup, item)
+
+    def test_escape_silent(self):
+        assert escape_silent(None) == Markup()
+        assert escape(None) == Markup(None)
+        assert escape_silent('<foo>') == Markup(u'&lt;foo&gt;')
 
 
 class MarkupLeakTestCase(unittest.TestCase):
