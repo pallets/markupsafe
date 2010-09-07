@@ -181,8 +181,12 @@ class Markup(unicode):
 
     # new in python 2.5
     if hasattr(unicode, 'partition'):
-        partition = make_wrapper('partition'),
-        rpartition = make_wrapper('rpartition')
+        def partition(self, sep):
+            return tuple(map(self.__class__,
+                             unicode.partition(self, escape(sep))))
+        def rpartition(self, sep):
+            return tuple(map(self.__class__,
+                             unicode.rpartition(self, escape(sep))))
 
     # new in python 2.6
     if hasattr(unicode, 'format'):
