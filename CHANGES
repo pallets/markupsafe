@@ -1,0 +1,7 @@
+MarkupSafe Changelog
+====================
+
+Version 0.12
+------------
+
+- improved PyPy compatibility

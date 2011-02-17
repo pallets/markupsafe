@@ -63,7 +63,7 @@ def run_setup(with_binary):
         features['speedups'] = speedups
     setup(
         name='MarkupSafe',
-        version='0.11',
+        version='0.12',
         url='http://dev.pocoo.org/',
         license='BSD',
         author='Armin Ronacher',
