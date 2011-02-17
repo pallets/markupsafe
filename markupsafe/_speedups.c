@@ -12,7 +12,7 @@
 #include <Python.h>
 
 #define ESCAPED_CHARS_TABLE_SIZE 63
-#define UNICHR(x) (((PyUnicodeObject*)PyUnicode_DecodeASCII(x, strlen(x), NULL))->str);
+#define UNICHR(x) (PyUnicode_AS_UNICODE((PyUnicodeObject*)PyUnicode_DecodeASCII(x, strlen(x), NULL)));
 
 #if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
 typedef int Py_ssize_t;
@@ -56,8 +56,8 @@ static PyObject*
 escape_unicode(PyUnicodeObject *in)
 {
 	PyUnicodeObject *out;
-	Py_UNICODE *inp = in->str;
-	const Py_UNICODE *inp_end = in->str + in->length;
+	Py_UNICODE *inp = PyUnicode_AS_UNICODE(in);
+	const Py_UNICODE *inp_end = PyUnicode_AS_UNICODE(in) + PyUnicode_GET_SIZE(in);
 	Py_UNICODE *next_escp;
 	Py_UNICODE *outp;
 	Py_ssize_t delta=0, erepl=0, delta_len=0;
@@ -77,12 +77,12 @@ escape_unicode(PyUnicodeObject *in)
 		return (PyObject*)in;
 	}
 
-	out = (PyUnicodeObject*)PyUnicode_FromUnicode(NULL, in->length + delta);
+	out = (PyUnicodeObject*)PyUnicode_FromUnicode(NULL, PyUnicode_GET_SIZE(in) + delta);
 	if (!out)
 		return NULL;
 
-	outp = out->str;
-	inp = in->str;
+	outp = PyUnicode_AS_UNICODE(out);
+	inp = PyUnicode_AS_UNICODE(in);
 	while (erepl-- > 0) {
 		/* look for the next substitution */
 		next_escp = inp;
@@ -108,7 +108,7 @@ escape_unicode(PyUnicodeObject *in)
 		inp = next_escp + 1;
 	}
 	if (inp < inp_end)
-		Py_UNICODE_COPY(outp, inp, in->length - (inp - in->str));
+		Py_UNICODE_COPY(outp, inp, PyUnicode_GET_SIZE(in) - (inp - PyUnicode_AS_UNICODE(in)));
 
 	return (PyObject*)out;
 }
