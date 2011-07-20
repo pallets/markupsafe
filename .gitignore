@@ -1,9 +1,12 @@
 .DS_Store
 *.pyc
 *.pyo
+*$py.class
 *.o
 *.so
 env
 dist
 build
 *.egg-info
+.tox
+

@@ -1,6 +1,13 @@
 MarkupSafe Changelog
 ====================
 
+Next version
+------------
+
+- Don't attempt to compile C extension speedups on Jython or PyPy.
+
+- Add a tox.ini for easier multiplatform testing.
+
 Version 0.12
 ------------
 
