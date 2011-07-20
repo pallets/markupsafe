@@ -1,6 +1,12 @@
 MarkupSafe Changelog
 ====================
 
+Version 0.15
+------------
+
+- Fixed a typo that caused the library to fail to install
+  on pypy and jython -.-
+
 Version 0.14
 ------------
 

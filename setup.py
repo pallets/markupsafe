@@ -71,7 +71,7 @@ def run_setup(with_binary):
         features['speedups'] = speedups
     setup(
         name='MarkupSafe',
-        version='0.14',
+        version='0.15',
         url='http://dev.pocoo.org/',
         license='BSD',
         author='Armin Ronacher',
@@ -125,4 +125,4 @@ def try_building_extension():
 if not (is_pypy or is_jython):
     try_building_extension()
 else:
-    run_setpu(False)
+    run_setup(False)
