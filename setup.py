@@ -48,6 +48,11 @@ class ve_build_ext(build_ext):
             build_ext.build_extension(self, ext)
         except ext_errors:
             raise BuildFailed()
+        except ValueError:
+            # this can happen on Windows 64 bit, see Python issue 7511
+            if "'path'" in str(sys.exc_info()[1]): # works with Python 2 and 3
+                raise BuildFailed()
+            raise
 
 
 def echo(msg=''):
