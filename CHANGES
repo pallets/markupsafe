@@ -1,6 +1,12 @@
 MarkupSafe Changelog
 ====================
 
+Version 0.13
+------------
+
+- Do not attempt to compile extension for PyPy or Jython.
+- Work around some 64bit Windows issues.
+
 Version 0.12
 ------------
 

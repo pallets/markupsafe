@@ -9,6 +9,9 @@ from distutils.errors import CCompilerError, DistutilsExecError, \
 # fail safe compilation shamelessly stolen from the simplejson
 # setup.py file.  Original author: Bob Ippolito
 
+is_jython = 'java' in sys.platform
+is_pypy = hasattr(sys, 'pypy_version_info')
+
 
 speedups = Feature(
     'optional C speed-enhancement module',
@@ -92,21 +95,29 @@ def run_setup(with_binary):
     )
 
 
-try:
-    run_setup(True)
-except BuildFailed:
-    LINE = '=' * 74
-    BUILD_EXT_WARNING = 'WARNING: The C extension could not be compiled, speedups are not enabled.'
+def try_building_extension():
+    try:
+        run_setup(True)
+    except BuildFailed:
+        LINE = '=' * 74
+        BUILD_EXT_WARNING = 'WARNING: The C extension could not be ' \
+                            'compiled, speedups are not enabled.'
 
-    echo(LINE)
-    echo(BUILD_EXT_WARNING)
-    echo('Failure information, if any, is above.')
-    echo('Retrying the build without the C extension now.')
-    echo()
+        echo(LINE)
+        echo(BUILD_EXT_WARNING)
+        echo('Failure information, if any, is above.')
+        echo('Retrying the build without the C extension now.')
+        echo()
 
-    run_setup(False)
+        run_setup(False)
 
-    echo(LINE)
-    echo(BUILD_EXT_WARNING)
-    echo('Plain-Python installation succeeded.')
-    echo(LINE)
+        echo(LINE)
+        echo(BUILD_EXT_WARNING)
+        echo('Plain-Python installation succeeded.')
+        echo(LINE)
+
+
+if not (is_pypy or is_jython):
+    try_building_extension()
+else:
+    run_setpu(False)

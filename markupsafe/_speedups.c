@@ -64,9 +64,9 @@ escape_unicode(PyUnicodeObject *in)
 
 	/* First we need to figure out how long the escaped string will be */
 	while (*(inp) || inp < inp_end) {
-		if (*inp < ESCAPED_CHARS_TABLE_SIZE && escaped_chars_delta_len[*inp]) {
+		if (*inp < ESCAPED_CHARS_TABLE_SIZE) {
 			delta += escaped_chars_delta_len[*inp];
-			++erepl;
+			erepl += !!escaped_chars_delta_len[*inp];
 		}
 		++inp;
 	}
