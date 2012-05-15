@@ -75,13 +75,13 @@ class Markup(unicode):
         return self
 
     def __add__(self, other):
-        if hasattr(other, '__html__') or isinstance(other, basestring):
-            return self.__class__(unicode(self) + unicode(escape(other)))
+        if isinstance(other, basestring) or hasattr(other, '__html__'):
+            return self.__class__(super(Markup, self).__add__(self.escape(other)))
         return NotImplemented
 
     def __radd__(self, other):
         if hasattr(other, '__html__') or isinstance(other, basestring):
-            return self.__class__(unicode(escape(other)) + unicode(self))
+            return self.escape(other).__add__(self)
         return NotImplemented
 
     def __mul__(self, num):
@@ -92,9 +92,9 @@ class Markup(unicode):
 
     def __mod__(self, arg):
         if isinstance(arg, tuple):
-            arg = tuple(imap(_MarkupEscapeHelper, arg))
+            arg = tuple(imap(_MarkupEscapeHelper, arg, self.escape))
         else:
-            arg = _MarkupEscapeHelper(arg)
+            arg = _MarkupEscapeHelper(arg, self.escape)
         return self.__class__(unicode.__mod__(self, arg))
 
     def __repr__(self):
@@ -104,7 +104,7 @@ class Markup(unicode):
         )
 
     def join(self, seq):
-        return self.__class__(unicode.join(self, imap(escape, seq)))
+        return self.__class__(unicode.join(self, imap(self.escape, seq)))
     join.__doc__ = unicode.join.__doc__
 
     def split(self, *args, **kwargs):
@@ -166,8 +166,8 @@ class Markup(unicode):
     def make_wrapper(name):
         orig = getattr(unicode, name)
         def func(self, *args, **kwargs):
-            args = _escape_argspec(list(args), enumerate(args))
-            _escape_argspec(kwargs, kwargs.iteritems())
+            args = _escape_argspec(list(args), enumerate(args), self.escape)
+            #_escape_argspec(kwargs, kwargs.iteritems(), None)
             return self.__class__(orig(self, *args, **kwargs))
         func.__name__ = orig.__name__
         func.__doc__ = orig.__doc__
@@ -183,10 +183,10 @@ class Markup(unicode):
     if hasattr(unicode, 'partition'):
         def partition(self, sep):
             return tuple(map(self.__class__,
-                             unicode.partition(self, escape(sep))))
+                             unicode.partition(self, self.escape(sep))))
         def rpartition(self, sep):
             return tuple(map(self.__class__,
-                             unicode.rpartition(self, escape(sep))))
+                             unicode.rpartition(self, self.escape(sep))))
 
     # new in python 2.6
     if hasattr(unicode, 'format'):
@@ -199,7 +199,7 @@ class Markup(unicode):
     del method, make_wrapper
 
 
-def _escape_argspec(obj, iterable):
+def _escape_argspec(obj, iterable, escape):
     """Helper for various string-wrapped functions."""
     for key, value in iterable:
         if hasattr(value, '__html__') or isinstance(value, basestring):
@@ -210,13 +210,13 @@ def _escape_argspec(obj, iterable):
 class _MarkupEscapeHelper(object):
     """Helper for Markup.__mod__"""
 
-    def __init__(self, obj):
+    def __init__(self, obj, escape):
         self.obj = obj
+        self.escape = escape
 
-    __getitem__ = lambda s, x: _MarkupEscapeHelper(s.obj[x])
-    __str__ = lambda s: str(escape(s.obj))
-    __unicode__ = lambda s: unicode(escape(s.obj))
-    __repr__ = lambda s: str(escape(repr(s.obj)))
+    __getitem__ = lambda s, x: _MarkupEscapeHelper(s.obj[x], s.escape)
+    __unicode__ = lambda s: unicode(s.escape(s.obj))
+    __repr__ = lambda s: str(s.escape(repr(s.obj)))
     __int__ = lambda s: int(s.obj)
     __float__ = lambda s: float(s.obj)
 
@@ -227,3 +227,5 @@ try:
     from markupsafe._speedups import escape, escape_silent, soft_unicode
 except ImportError:
     from markupsafe._native import escape, escape_silent, soft_unicode
+
+# vim:sts=4:sw=4:et:

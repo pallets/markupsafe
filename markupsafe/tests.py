@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import gc
 import unittest
 from markupsafe import Markup, escape, escape_silent
@@ -17,6 +18,9 @@ class MarkupTestCase(unittest.TestCase):
         assert Markup('<em>%(username)s</em>') % {
             'username': '<bad user>'
         } == '<em>&lt;bad user&gt;</em>'
+
+        assert Markup('%i') % 3.14 == '3'
+        assert Markup('%.2f') % 3.14 == '3.14'
 
         # an escaped object is markup too
         assert type(Markup('foo') + 'bar') is Markup
@@ -64,10 +68,48 @@ class MarkupLeakTestCase(unittest.TestCase):
             counts.add(len(gc.get_objects()))
         assert len(counts) == 1, 'ouch, c extension seems to leak objects'
 
+class EncodedMarkup(Markup):
+    __slots__ = ()
+    encoding = 'utf8'
+
+    @classmethod
+    def escape(cls, s):
+        if isinstance(s, str):
+            s = s.decode('utf8')
+        return super(EncodedMarkup, cls).escape(s)
+
+class MarkupSubclassTestCase(unittest.TestCase):
+    # The Russian name of Russia (Rossija)
+    russia = u'Россия'
+    utf8 = russia.encode('utf8')
+
+    def test_escape(self):
+        myval = EncodedMarkup.escape(self.utf8)
+        assert myval == self.russia, repr(myval)
+    def test_add(self):
+        myval = EncodedMarkup() + self.utf8
+        assert myval == self.russia, repr(myval)
+    def test_radd(self):
+        myval = self.utf8 + EncodedMarkup()
+        assert myval == self.russia, repr(myval)
+    def test_join(self):
+        myval = EncodedMarkup().join([self.utf8])
+        assert myval == self.russia, repr(myval)
+    def test_partition(self):
+        assert EncodedMarkup(self.russia).partition(self.utf8)[1] == self.russia
+        assert EncodedMarkup(self.russia).rpartition(self.utf8)[1] == self.russia
+    def test_mod(self):
+        assert EncodedMarkup('%s') % self.utf8 == self.russia
+        assert EncodedMarkup('%r') % self.utf8 == escape(repr(self.utf8))
+    def test_strip(self):
+        assert EncodedMarkup(self.russia).strip(self.utf8) == u''
+        assert EncodedMarkup(self.russia).rstrip(self.utf8) == u''
+
 
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(MarkupTestCase))
+    suite.addTest(unittest.makeSuite(MarkupSubclassTestCase))
 
     # this test only tests the c extension
     if not hasattr(escape, 'func_code'):
@@ -78,3 +120,5 @@ def suite():
 
 if __name__ == '__main__':
     unittest.main(defaultTest='suite')
+
+# vim:sts=4:sw=4:et:
