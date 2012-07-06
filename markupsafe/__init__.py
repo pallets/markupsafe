@@ -16,7 +16,7 @@ __all__ = ['Markup', 'soft_unicode', 'escape', 'escape_silent']
 
 
 _striptags_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
-_entity_re = re.compile(r'&([^;]+);')
+_entity_re = re.compile(r'&([^& ;]+);')
 
 
 class Markup(unicode):
@@ -138,7 +138,8 @@ class Markup(unicode):
                     return unichr(int(name[1:]))
             except ValueError:
                 pass
-            return u''
+            # Don't modify unexpected input.
+            return m.group()
         return _entity_re.sub(handle_match, unicode(self))
 
     def striptags(self):

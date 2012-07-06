@@ -39,10 +39,23 @@ class MarkupTestCase(unittest.TestCase):
         assert Markup('<strong>%s</strong>') % Foo() == \
                '<strong><em>awesome</em></strong>'
 
-        # escaping and unescaping
+        # escaping
         assert escape('"<>&\'') == '&#34;&lt;&gt;&amp;&#39;'
         assert Markup("<em>Foo &amp; Bar</em>").striptags() == "Foo & Bar"
+
+    def test_unescape(self):
         assert Markup("&lt;test&gt;").unescape() == "<test>"
+
+        assert "jack & tavi are cooler than mike & russ" == \
+                Markup("jack & tavi are cooler than mike &amp; russ").unescape(), \
+                Markup("jack & tavi are cooler than mike &amp; russ").unescape()
+
+        # Test that unescape is idempotent
+        original = '&foo&#x3b;'
+        once = Markup(original).unescape()
+        twice = Markup(once).unescape()
+        expected = "&foo;"
+        assert expected == once == twice, (once, twice)
 
     def test_all_set(self):
         import markupsafe as markup
