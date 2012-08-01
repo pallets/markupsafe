@@ -19,9 +19,6 @@ class MarkupTestCase(unittest.TestCase):
             'username': '<bad user>'
         } == '<em>&lt;bad user&gt;</em>'
 
-        assert Markup('%i') % 3.14 == '3'
-        assert Markup('%.2f') % 3.14 == '3.14'
-
         # an escaped object is markup too
         assert type(Markup('foo') + 'bar') is Markup
 
@@ -56,6 +53,14 @@ class MarkupTestCase(unittest.TestCase):
         twice = Markup(once).unescape()
         expected = "&foo;"
         assert expected == once == twice, (once, twice)
+
+    def test_formatting(self):
+        assert Markup('%i') % 3.14 == '3'
+        assert Markup('%.2f') % 3.14159 == '3.14'
+        assert Markup('%s %s %s') % ('<',123,'>') == '&lt; 123 &gt;'
+        assert Markup('<em>{awesome}</em>').format(awesome='<awesome>') == \
+                '<em>&lt;awesome&gt;</em>'
+
 
     def test_all_set(self):
         import markupsafe as markup

@@ -92,7 +92,7 @@ class Markup(unicode):
 
     def __mod__(self, arg):
         if isinstance(arg, tuple):
-            arg = tuple(imap(_MarkupEscapeHelper, arg, self.escape))
+            arg = tuple(_MarkupEscapeHelper(x, self.escape) for x in arg)
         else:
             arg = _MarkupEscapeHelper(arg, self.escape)
         return self.__class__(unicode.__mod__(self, arg))
@@ -168,7 +168,7 @@ class Markup(unicode):
         orig = getattr(unicode, name)
         def func(self, *args, **kwargs):
             args = _escape_argspec(list(args), enumerate(args), self.escape)
-            #_escape_argspec(kwargs, kwargs.iteritems(), None)
+            _escape_argspec(kwargs, kwargs.iteritems(), self.escape)
             return self.__class__(orig(self, *args, **kwargs))
         func.__name__ = orig.__name__
         func.__doc__ = orig.__doc__
