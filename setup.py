@@ -28,11 +28,6 @@ if sys.platform == 'win32' and sys.version_info > (2, 6):
    ext_errors += (IOError,)
 
 
-extra = {}
-if sys.version_info >= (3, 0):
-    extra['use_2to3'] = True
-
-
 class BuildFailed(Exception):
     pass
 
@@ -96,7 +91,6 @@ def run_setup(with_binary):
         include_package_data=True,
         cmdclass={'build_ext': ve_build_ext},
         features=features,
-        **extra
     )
 
 
