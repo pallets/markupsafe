@@ -12,7 +12,8 @@ Markup(u'<em>Peter &gt; Lustig</em>')
 
 If you want to make an object unicode that is not yet unicode
 but don't want to lose the taint information, you can use the
-`soft_unicode` function:
+`soft_unicode` function.  (On Python 3 you can also use `soft_str` which
+is a different name for the same function).
 
 >>> from markupsafe import soft_unicode
 >>> soft_unicode(42)
