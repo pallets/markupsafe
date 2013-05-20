@@ -6,4 +6,5 @@
 env
 dist
 build
+.tox
 *.egg-info
