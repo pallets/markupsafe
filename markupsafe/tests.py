@@ -24,6 +24,8 @@ class MarkupTestCase(unittest.TestCase):
         assert Markup('%i') % 3.14 == '3'
         assert Markup('%.2f') % 3.14 == '3.14'
 
+        assert Markup(('%s', '%s')) % ('ab', 'cd') == "('ab', 'cd')"
+
     def test_type_behavior(self):
         # an escaped object is markup too
         assert type(Markup('foo') + 'bar') is Markup

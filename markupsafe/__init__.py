@@ -9,6 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+from functools import partial
 from markupsafe._compat import text_type, string_types, imap, unichr, PY2
 
 
@@ -40,7 +41,7 @@ class Markup(text_type):
     >>> class Foo(object):
     ...  def __html__(self):
     ...   return '<a href="#">foo</a>'
-    ... 
+    ...
     >>> Markup(Foo())
     Markup(u'<a href="#">foo</a>')
 
@@ -92,7 +93,8 @@ class Markup(text_type):
 
     def __mod__(self, arg):
         if isinstance(arg, tuple):
-            arg = tuple(imap(_MarkupEscapeHelper, arg, self.escape))
+            create_markup_escape_handler = partial(markup_escape_handler_factory, escape=self.escape)
+            arg = tuple(imap(create_markup_escape_handler, arg))
         else:
             arg = _MarkupEscapeHelper(arg, self.escape)
         return self.__class__(text_type.__mod__(self, arg))
@@ -220,6 +222,9 @@ class _MarkupEscapeHelper(object):
     __int__ = lambda s: int(s.obj)
     __float__ = lambda s: float(s.obj)
 
+
+def markup_escape_handler_factory(arg, escape):
+    return _MarkupEscapeHelper(arg, escape)
 
 # we have to import it down here as the speedups and native
 # modules imports the markup type which is define above.
