@@ -66,7 +66,7 @@ def run_setup(with_binary):
         features['speedups'] = speedups
     setup(
         name='MarkupSafe',
-        version='0.16',
+        version='0.17',
         url='http://github.com/mitsuhiko/markupsafe',
         license='BSD',
         author='Armin Ronacher',
