@@ -92,7 +92,7 @@ class Markup(text_type):
 
     def __mod__(self, arg):
         if isinstance(arg, tuple):
-            arg = tuple(imap(_MarkupEscapeHelper, arg, self.escape))
+            arg = tuple(_MarkupEscapeHelper(x, self.escape) for x in arg)
         else:
             arg = _MarkupEscapeHelper(arg, self.escape)
         return self.__class__(text_type.__mod__(self, arg))

@@ -44,6 +44,21 @@ class MarkupTestCase(unittest.TestCase):
         assert Markup('<strong>%s</strong>') % Foo() == \
                '<strong><em>awesome</em></strong>'
 
+    def test_tuple_interpol(self):
+        self.assertEqual(Markup('<em>%s:%s</em>') % (
+            '<foo>',
+            '<bar>',
+        ), Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
+
+    def test_dict_interpol(self):
+        self.assertEqual(Markup('<em>%(foo)s</em>') % {
+            'foo': '<foo>',
+        }, Markup(u'<em>&lt;foo&gt;</em>'))
+        self.assertEqual(unicode(Markup('<em>%(foo)s:%(bar)s</em>') % {
+            'foo': '<foo>',
+            'bar': '<bar>',
+        }), unicode(Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>')))
+
     def test_escaping(self):
         # escaping and unescaping
         assert escape('"<>&\'') == '&#34;&lt;&gt;&amp;&#39;'
