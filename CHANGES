@@ -1,6 +1,11 @@
 MarkupSafe Changelog
 ====================
 
+Unreleased
+----------
+
+- Restored Python 3.2 support.
+
 Version 0.18
 ------------
 

@@ -17,8 +17,18 @@ if not PY2:
     string_types = (str,)
     unichr = chr
     int_types = (int,)
+
+    def _u(s):
+        return s
+
 else:
     text_type = unicode
     string_types = (str, unicode)
     unichr = unichr
     int_types = (int, long)
+
+    def _u(s):
+        return unicode(s, 'unicode_escape')
+
+_EMPTY = _u('')
+_BLANK = _u(' ')
