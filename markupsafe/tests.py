@@ -54,10 +54,10 @@ class MarkupTestCase(unittest.TestCase):
         self.assertEqual(Markup('<em>%(foo)s</em>') % {
             'foo': '<foo>',
         }, Markup(u'<em>&lt;foo&gt;</em>'))
-        self.assertEqual(unicode(Markup('<em>%(foo)s:%(bar)s</em>') % {
+        self.assertEqual(Markup('<em>%(foo)s:%(bar)s</em>') % {
             'foo': '<foo>',
             'bar': '<bar>',
-        }), unicode(Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>')))
+        }, Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
 
     def test_escaping(self):
         # escaping and unescaping
