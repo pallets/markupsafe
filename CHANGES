@@ -1,6 +1,22 @@
 MarkupSafe Changelog
 ====================
 
+Version 0.18
+------------
+
+- Fixed `__mul__` and string splitting on Python 3.
+
+Version 0.17
+------------
+
+- Fixed a bug with broken interpolation on tuples.
+
+Version 0.16
+------------
+
+- Improved Python 3 Support and removed 2to3
+- Removed support for Python 3.2 and 2.5
+
 Version 0.15
 ------------
 
