@@ -15,10 +15,10 @@ PY2 = sys.version_info[0] == 2
 if not PY2:
     text_type = str
     string_types = (str,)
-    imap = map
     unichr = chr
+    int_types = (int,)
 else:
     text_type = unicode
     string_types = (str, unicode)
-    from itertools import imap
     unichr = unichr
+    int_types = (int, long)

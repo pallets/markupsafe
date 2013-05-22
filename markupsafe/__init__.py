@@ -9,7 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from markupsafe._compat import text_type, string_types, imap, unichr, PY2
+from markupsafe._compat import text_type, string_types, int_types, \
+     unichr, PY2
 
 
 __all__ = ['Markup', 'soft_unicode', 'escape', 'escape_silent']
@@ -85,7 +86,7 @@ class Markup(text_type):
         return NotImplemented
 
     def __mul__(self, num):
-        if isinstance(num, (int, long)):
+        if isinstance(num, int_types):
             return self.__class__(text_type.__mul__(self, num))
         return NotImplemented
     __rmul__ = __mul__
@@ -104,7 +105,7 @@ class Markup(text_type):
         )
 
     def join(self, seq):
-        return self.__class__(text_type.join(self, imap(self.escape, seq)))
+        return self.__class__(text_type.join(self, map(self.escape, seq)))
     join.__doc__ = text_type.join.__doc__
 
     def split(self, *args, **kwargs):

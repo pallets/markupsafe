@@ -89,6 +89,9 @@ class MarkupTestCase(unittest.TestCase):
             Markup('b')
         ])
 
+    def test_mul(self):
+        self.assertEqual(Markup('a') * 3, Markup('aaa'))
+
 
 class MarkupLeakTestCase(unittest.TestCase):
 
