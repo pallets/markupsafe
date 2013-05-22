@@ -108,15 +108,15 @@ class Markup(text_type):
     join.__doc__ = text_type.join.__doc__
 
     def split(self, *args, **kwargs):
-        return map(self.__class__, text_type.split(self, *args, **kwargs))
+        return list(map(self.__class__, text_type.split(self, *args, **kwargs)))
     split.__doc__ = text_type.split.__doc__
 
     def rsplit(self, *args, **kwargs):
-        return map(self.__class__, text_type.rsplit(self, *args, **kwargs))
+        return list(map(self.__class__, text_type.rsplit(self, *args, **kwargs)))
     rsplit.__doc__ = text_type.rsplit.__doc__
 
     def splitlines(self, *args, **kwargs):
-        return map(self.__class__, text_type.splitlines(self, *args, **kwargs))
+        return list(map(self.__class__, text_type.splitlines(self, *args, **kwargs)))
     splitlines.__doc__ = text_type.splitlines.__doc__
 
     def unescape(self):

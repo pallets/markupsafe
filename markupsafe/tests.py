@@ -75,6 +75,20 @@ class MarkupTestCase(unittest.TestCase):
         assert escape(None) == Markup(None)
         assert escape_silent('<foo>') == Markup(u'&lt;foo&gt;')
 
+    def test_splitting(self):
+        self.assertEqual(Markup('a b').split(), [
+            Markup('a'),
+            Markup('b')
+        ])
+        self.assertEqual(Markup('a b').rsplit(), [
+            Markup('a'),
+            Markup('b')
+        ])
+        self.assertEqual(Markup('a\nb').splitlines(), [
+            Markup('a'),
+            Markup('b')
+        ])
+
 
 class MarkupLeakTestCase(unittest.TestCase):
 
