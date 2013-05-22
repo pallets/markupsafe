@@ -10,11 +10,10 @@
 """
 import re
 from markupsafe._compat import text_type, string_types, int_types, \
-     unichr, PY2
+     unichr, PY2, _EMPTY, _BLANK
 
 
 __all__ = ['Markup', 'soft_unicode', 'escape', 'escape_silent']
-
 
 _striptags_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 _entity_re = re.compile(r'&([^;]+);')
@@ -65,7 +64,7 @@ class Markup(text_type):
     """
     __slots__ = ()
 
-    def __new__(cls, base=u'', encoding=None, errors='strict'):
+    def __new__(cls, base=_EMPTY, encoding=None, errors='strict'):
         if hasattr(base, '__html__'):
             base = base.__html__()
         if encoding is None:
@@ -139,7 +138,7 @@ class Markup(text_type):
                     return unichr(int(name[1:]))
             except ValueError:
                 pass
-            return u''
+            return _EMPTY
         return _entity_re.sub(handle_match, text_type(self))
 
     def striptags(self):
@@ -150,7 +149,7 @@ class Markup(text_type):
         >>> Markup("Main &raquo;  <em>About</em>").striptags()
         u'Main \xbb About'
         """
-        stripped = u' '.join(_striptags_re.sub('', self).split())
+        stripped = _BLANK.join(_striptags_re.sub('', self).split())
         return Markup(stripped).unescape()
 
     @classmethod

@@ -2,7 +2,7 @@
 import gc
 import unittest
 from markupsafe import Markup, escape, escape_silent
-from markupsafe._compat import text_type
+from markupsafe._compat import text_type, _u
 
 
 class MarkupTestCase(unittest.TestCase):
@@ -48,16 +48,16 @@ class MarkupTestCase(unittest.TestCase):
         self.assertEqual(Markup('<em>%s:%s</em>') % (
             '<foo>',
             '<bar>',
-        ), Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
+        ), Markup(_u('<em>&lt;foo&gt;:&lt;bar&gt;</em>')))
 
     def test_dict_interpol(self):
         self.assertEqual(Markup('<em>%(foo)s</em>') % {
             'foo': '<foo>',
-        }, Markup(u'<em>&lt;foo&gt;</em>'))
+        }, Markup(_u('<em>&lt;foo&gt;</em>')))
         self.assertEqual(Markup('<em>%(foo)s:%(bar)s</em>') % {
             'foo': '<foo>',
             'bar': '<bar>',
-        }, Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
+        }, Markup(_u('<em>&lt;foo&gt;:&lt;bar&gt;</em>')))
 
     def test_escaping(self):
         # escaping and unescaping
@@ -73,7 +73,7 @@ class MarkupTestCase(unittest.TestCase):
     def test_escape_silent(self):
         assert escape_silent(None) == Markup()
         assert escape(None) == Markup(None)
-        assert escape_silent('<foo>') == Markup(u'&lt;foo&gt;')
+        assert escape_silent('<foo>') == Markup(_u('&lt;foo&gt;'))
 
     def test_splitting(self):
         self.assertEqual(Markup('a b').split(), [
@@ -101,8 +101,8 @@ class MarkupLeakTestCase(unittest.TestCase):
             for item in range(1000):
                 escape("foo")
                 escape("<foo>")
-                escape(u"foo")
-                escape(u"<foo>")
+                escape(_u("foo"))
+                escape(_u("<foo>"))
             counts.add(len(gc.get_objects()))
         assert len(counts) == 1, 'ouch, c extension seems to leak objects'
 
