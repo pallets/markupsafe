@@ -59,6 +59,18 @@ class MarkupTestCase(unittest.TestCase):
             'bar': '<bar>',
         }, Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
 
+    def test_format_args(self):
+        self.assertEqual(Markup('<em>{}:{}</em>').format(
+            '<foo>',
+            Markup('<bar>'),
+        ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
+
+    def test_format_kwargs(self):
+        self.assertEqual(Markup('<em>{foo}:{bar}</em>').format(
+            foo='<foo>',
+            bar=Markup('<bar>'),
+        ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
+
     def test_escaping(self):
         # escaping and unescaping
         assert escape('"<>&\'') == '&#34;&lt;&gt;&amp;&#39;'
