@@ -9,6 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+import string
 from markupsafe._compat import text_type, string_types, int_types, \
      unichr, PY2
 
@@ -191,7 +192,8 @@ class Markup(text_type):
 
     # new in python 2.6
     if hasattr(text_type, 'format'):
-        format = make_wrapper('format')
+        def format(self, *args, **kwargs):
+            return EscapeFormatter(self.escape).format(self, *args, **kwargs)
 
     # not in python 3
     if hasattr(text_type, '__getslice__'):
@@ -206,6 +208,17 @@ def _escape_argspec(obj, iterable, escape):
         if hasattr(value, '__html__') or isinstance(value, string_types):
             obj[key] = escape(value)
     return obj
+
+
+# new in python 2.6
+if hasattr(text_type, 'format'):
+    class EscapeFormatter(string.Formatter):
+        def __init__(self, escape):
+            self.escape = escape
+
+        def get_field(self, field_name, args, kwargs):
+            obj, first = super(EscapeFormatter, self).get_field(field_name, args, kwargs)
+            return self.escape(obj), first
 
 
 class _MarkupEscapeHelper(object):
