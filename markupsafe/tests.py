@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import gc
+import sys
 import unittest
 from markupsafe import Markup, escape, escape_silent
 from markupsafe._compat import text_type
@@ -64,6 +65,14 @@ class MarkupTestCase(unittest.TestCase):
             '<foo>',
             Markup('<bar>'),
         ), Markup('<em>&lt;foo&gt;:<bar></em>'))
+
+        # positional argument specifiers can be ommited
+        # in Python 2.7 and later
+        if sys.version_info >= (2, 7):
+            self.assertEqual(Markup('<em>{}:{}</em>').format(
+                '<foo>',
+                Markup('<bar>'),
+            ), Markup('<em>&lt;foo&gt;:<bar></em>'))
 
     def test_format_kwargs(self):
         self.assertEqual(Markup('<em>{foo}:{bar}</em>').format(

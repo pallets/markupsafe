@@ -216,6 +216,18 @@ if hasattr(text_type, 'format'):
         def __init__(self, escape):
             self.escape = escape
 
+        def parse(self, format_string):
+            num = 0
+            parses = super(EscapeFormatter, self).parse(format_string)
+            for literal_text, field_name, format_spec, conversion in parses:
+                if field_name is not None \
+                   and (field_name == '' \
+                        or field_name.startswith('[') \
+                        or field_name.startswith('.')):
+                    field_name = text_type(num) + field_name
+                    num += 1
+                yield literal_text, field_name, format_spec, conversion
+        
         def get_field(self, field_name, args, kwargs):
             obj, first = super(EscapeFormatter, self).get_field(field_name, args, kwargs)
             return self.escape(obj), first
