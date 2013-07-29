@@ -230,6 +230,8 @@ if hasattr(text_type, 'format'):
         
         def get_field(self, field_name, args, kwargs):
             obj, first = super(EscapeFormatter, self).get_field(field_name, args, kwargs)
+            if isinstance(obj, int_types + (float, complex)):
+                return obj, first
             return self.escape(obj), first
 
 
