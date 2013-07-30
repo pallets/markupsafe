@@ -61,6 +61,7 @@ class MarkupTestCase(unittest.TestCase):
         }, Markup('<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
 
     def test_format_args(self):
+        self.assertTrue(isinstance(Markup('{0}').format(1), Markup))
         self.assertEqual(Markup('<em>{0:X}:{1:1.2f}</em>').format(
             15,
             0.9999,

@@ -193,7 +193,7 @@ class Markup(text_type):
     # new in python 2.6
     if hasattr(text_type, 'format'):
         def format(self, *args, **kwargs):
-            return EscapeFormatter(self.escape).format(self, *args, **kwargs)
+            return self.__class__(EscapeFormatter(self.escape).format(self, *args, **kwargs))
 
     # not in python 3
     if hasattr(text_type, '__getslice__'):
