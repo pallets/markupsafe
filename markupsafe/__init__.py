@@ -9,6 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+import string
 from markupsafe._compat import text_type, string_types, int_types, \
      unichr, PY2
 
@@ -168,7 +169,7 @@ class Markup(text_type):
         orig = getattr(text_type, name)
         def func(self, *args, **kwargs):
             args = _escape_argspec(list(args), enumerate(args), self.escape)
-            #_escape_argspec(kwargs, kwargs.iteritems(), None)
+            kwargs = _escape_argspec(kwargs, kwargs.items(), self.escape)
             return self.__class__(orig(self, *args, **kwargs))
         func.__name__ = orig.__name__
         func.__doc__ = orig.__doc__
@@ -191,7 +192,8 @@ class Markup(text_type):
 
     # new in python 2.6
     if hasattr(text_type, 'format'):
-        format = make_wrapper('format')
+        def format(self, *args, **kwargs):
+            return self.__class__(EscapeFormatter(self.escape).format(self, *args, **kwargs))
 
     # not in python 3
     if hasattr(text_type, '__getslice__'):
@@ -206,6 +208,31 @@ def _escape_argspec(obj, iterable, escape):
         if hasattr(value, '__html__') or isinstance(value, string_types):
             obj[key] = escape(value)
     return obj
+
+
+# new in python 2.6
+if hasattr(text_type, 'format'):
+    class EscapeFormatter(string.Formatter):
+        def __init__(self, escape):
+            self.escape = escape
+
+        def parse(self, format_string):
+            num = 0
+            parses = super(EscapeFormatter, self).parse(format_string)
+            for literal_text, field_name, format_spec, conversion in parses:
+                if field_name is not None \
+                   and (field_name == '' \
+                        or field_name.startswith('[') \
+                        or field_name.startswith('.')):
+                    field_name = text_type(num) + field_name
+                    num += 1
+                yield literal_text, field_name, format_spec, conversion
+        
+        def get_field(self, field_name, args, kwargs):
+            obj, first = super(EscapeFormatter, self).get_field(field_name, args, kwargs)
+            if isinstance(obj, int_types + (float, complex)):
+                return obj, first
+            return self.escape(obj), first
 
 
 class _MarkupEscapeHelper(object):

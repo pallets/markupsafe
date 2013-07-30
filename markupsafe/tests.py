@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import gc
+import sys
 import unittest
 from markupsafe import Markup, escape, escape_silent
 from markupsafe._compat import text_type
@@ -59,6 +60,41 @@ class MarkupTestCase(unittest.TestCase):
             'bar': '<bar>',
         }, Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
 
+    def test_format_args(self):
+        self.assertTrue(isinstance(Markup('{0}').format(1), Markup))
+        self.assertEqual(Markup('<em>{0:X}:{1:1.2f}</em>').format(
+            15,
+            0.9999,
+        ), Markup(u'<em>F:1.00</em>'))
+        
+        self.assertEqual(Markup('<em>{0}:{1}</em>').format(
+            '<foo>',
+            Markup('<bar>'),
+        ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
+
+        # positional argument specifiers can be ommited
+        # in Python 2.7 and later
+        if sys.version_info >= (2, 7):
+            self.assertEqual(Markup('<em>{}:{}</em>').format(
+                '<foo>',
+                Markup('<bar>'),
+            ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
+
+    def test_format_kwargs(self):
+        self.assertEqual(Markup('<em>{foo}:{bar}</em>').format(
+            foo='<foo>',
+            bar=Markup('<bar>'),
+        ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
+
+        class Bar(object):
+            def __init__(self, bar):
+                self.bar = bar
+
+        self.assertEqual(Markup('<em>{foo[0][foo]}:{bar.bar}</em>').format(
+            foo=[{'foo': '<foo>'}],
+            bar=Bar(Markup('<bar>')),
+        ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
+        
     def test_escaping(self):
         # escaping and unescaping
         assert escape('"<>&\'') == '&#34;&lt;&gt;&amp;&#39;'
