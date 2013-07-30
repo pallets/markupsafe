@@ -49,28 +49,28 @@ class MarkupTestCase(unittest.TestCase):
         self.assertEqual(Markup('<em>%s:%s</em>') % (
             '<foo>',
             '<bar>',
-        ), Markup('<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
+        ), Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
 
     def test_dict_interpol(self):
         self.assertEqual(Markup('<em>%(foo)s</em>') % {
             'foo': '<foo>',
-        }, Markup('<em>&lt;foo&gt;</em>'))
+        }, Markup(u'<em>&lt;foo&gt;</em>'))
         self.assertEqual(Markup('<em>%(foo)s:%(bar)s</em>') % {
             'foo': '<foo>',
             'bar': '<bar>',
-        }, Markup('<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
+        }, Markup(u'<em>&lt;foo&gt;:&lt;bar&gt;</em>'))
 
     def test_format_args(self):
         self.assertTrue(isinstance(Markup('{0}').format(1), Markup))
         self.assertEqual(Markup('<em>{0:X}:{1:1.2f}</em>').format(
             15,
             0.9999,
-        ), Markup('<em>F:1.00</em>'))
+        ), Markup(u'<em>F:1.00</em>'))
         
         self.assertEqual(Markup('<em>{0}:{1}</em>').format(
             '<foo>',
             Markup('<bar>'),
-        ), Markup('<em>&lt;foo&gt;:<bar></em>'))
+        ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
 
         # positional argument specifiers can be ommited
         # in Python 2.7 and later
@@ -78,13 +78,13 @@ class MarkupTestCase(unittest.TestCase):
             self.assertEqual(Markup('<em>{}:{}</em>').format(
                 '<foo>',
                 Markup('<bar>'),
-            ), Markup('<em>&lt;foo&gt;:<bar></em>'))
+            ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
 
     def test_format_kwargs(self):
         self.assertEqual(Markup('<em>{foo}:{bar}</em>').format(
             foo='<foo>',
             bar=Markup('<bar>'),
-        ), Markup('<em>&lt;foo&gt;:<bar></em>'))
+        ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
 
         class Bar(object):
             def __init__(self, bar):
@@ -93,7 +93,7 @@ class MarkupTestCase(unittest.TestCase):
         self.assertEqual(Markup('<em>{foo[0][foo]}:{bar.bar}</em>').format(
             foo=[{'foo': '<foo>'}],
             bar=Bar(Markup('<bar>')),
-        ), Markup('<em>&lt;foo&gt;:<bar></em>'))
+        ), Markup(u'<em>&lt;foo&gt;:<bar></em>'))
         
     def test_escaping(self):
         # escaping and unescaping
@@ -109,7 +109,7 @@ class MarkupTestCase(unittest.TestCase):
     def test_escape_silent(self):
         assert escape_silent(None) == Markup()
         assert escape(None) == Markup(None)
-        assert escape_silent('<foo>') == Markup('&lt;foo&gt;')
+        assert escape_silent('<foo>') == Markup(u'&lt;foo&gt;')
 
     def test_splitting(self):
         self.assertEqual(Markup('a b').split(), [
@@ -137,8 +137,8 @@ class MarkupLeakTestCase(unittest.TestCase):
             for item in range(1000):
                 escape("foo")
                 escape("<foo>")
-                escape("foo")
-                escape("<foo>")
+                escape(u"foo")
+                escape(u"<foo>")
             counts.add(len(gc.get_objects()))
         assert len(counts) == 1, 'ouch, c extension seems to leak objects'
 

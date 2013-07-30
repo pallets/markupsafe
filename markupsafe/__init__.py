@@ -66,7 +66,7 @@ class Markup(text_type):
     """
     __slots__ = ()
 
-    def __new__(cls, base='', encoding=None, errors='strict'):
+    def __new__(cls, base=u'', encoding=None, errors='strict'):
         if hasattr(base, '__html__'):
             base = base.__html__()
         if encoding is None:
@@ -140,7 +140,7 @@ class Markup(text_type):
                     return unichr(int(name[1:]))
             except ValueError:
                 pass
-            return ''
+            return u''
         return _entity_re.sub(handle_match, text_type(self))
 
     def striptags(self):
@@ -151,7 +151,7 @@ class Markup(text_type):
         >>> Markup("Main &raquo;  <em>About</em>").striptags()
         u'Main \xbb About'
         """
-        stripped = ' '.join(_striptags_re.sub('', self).split())
+        stripped = u' '.join(_striptags_re.sub('', self).split())
         return Markup(stripped).unescape()
 
     @classmethod
