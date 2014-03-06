@@ -13,6 +13,15 @@ is_jython = 'java' in sys.platform
 is_pypy = hasattr(sys, 'pypy_version_info')
 
 
+# Remove old arguments that were once supported.  Thanks setuptools
+# 3.0 for just randomly removing functionality.
+for arg in '--with-speedups', '--without-speedups':
+    try:
+        sys.argv.remove(arg)
+    except ValueError:
+        pass
+
+
 ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError)
 if sys.platform == 'win32' and sys.version_info > (2, 6):
    # 2.6's distutils.msvc9compiler can raise an IOError when failing to
