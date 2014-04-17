@@ -71,8 +71,47 @@ class MarkupTestCase(unittest.TestCase):
             (Markup('%.2f') % 3.14159, '3.14'),
             (Markup('%s %s %s') % ('<', 123, '>'), '&lt; 123 &gt;'),
             (Markup('<em>{awesome}</em>').format(awesome='<awesome>'),
-             '<em>&lt;awesome&gt;</em>')):
+             '<em>&lt;awesome&gt;</em>'),
+            (Markup('{0[1][bar]}').format([0, {'bar': '<bar/>'}]),
+             '&lt;bar/&gt;'),
+            (Markup('{0[1][bar]}').format([0, {'bar': Markup('<bar/>')}]),
+             '<bar/>')):
             assert actual == expected, "%r should be %r!" % (actual, expected)
+
+    def test_custom_formatting(self):
+        class HasHTMLOnly(object):
+            def __html__(self):
+                return Markup('<foo>')
+
+        class HasHTMLAndFormat(object):
+            def __html__(self):
+                return Markup('<foo>')
+            def __html_format__(self, spec):
+                return Markup('<FORMAT>')
+
+        assert Markup('{0}').format(HasHTMLOnly()) == Markup('<foo>')
+        assert Markup('{0}').format(HasHTMLAndFormat()) == Markup('<FORMAT>')
+
+    def test_complex_custom_formatting(self):
+        class User(object):
+            def __init__(self, id, username):
+                self.id = id
+                self.username = username
+            def __html_format__(self, format_spec):
+                if format_spec == 'link':
+                    return Markup('<a href="/user/{0}">{1}</a>').format(
+                        self.id,
+                        self.__html__(),
+                    )
+                elif format_spec:
+                    raise ValueError('Invalid format spec')
+                return self.__html__()
+            def __html__(self):
+                return Markup('<span class=user>{0}</span>').format(self.username)
+
+        user = User(1, 'foo')
+        assert Markup('<p>User: {0:link}').format(user) == \
+            Markup('<p>User: <a href="/user/1"><span class=user>foo</span></a>')
 
     def test_all_set(self):
         import markupsafe as markup

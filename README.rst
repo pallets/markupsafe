@@ -21,6 +21,9 @@ u'42'
 >>> soft_unicode(Markup('foo'))
 Markup(u'foo')
 
+HTML Representations
+--------------------
+
 Objects can customize their HTML markup equivalent by overriding
 the `__html__` function:
 
@@ -32,6 +35,9 @@ the `__html__` function:
 Markup(u'<strong>Nice</strong>')
 >>> Markup(Foo())
 Markup(u'<strong>Nice</strong>')
+
+Silent Escapes
+--------------
 
 Since MarkupSafe 0.10 there is now also a separate escape function
 called `escape_silent` that returns an empty string for `None` for
@@ -49,3 +55,45 @@ object, you can create your own subclass that does that::
         @classmethod
         def escape(cls, s):
             return cls(escape(s))
+
+New-Style String Formatting
+---------------------------
+
+Starting with MarkupSafe 0.21 new style string formats from Python 2.6 and
+3.x are now fully supported.  Previously the escape behavior of those
+functions was spotty at best.  The new implementations operates under the
+following algorithm:
+
+1.  if an object has an ``__html_format__`` method it is called as
+    replacement for ``__format__`` with the format specifier.  It either
+    has to return a string or markup object.
+2.  if an object has an ``__html__`` method it is called.
+3.  otherwise the default format system of Python kicks in and the result
+    is HTML escaped.
+
+Here is how you can implement your own formatting:
+
+    class User(object):
+
+        def __init__(self, id, username):
+            self.id = id
+            self.username = username
+
+        def __html_format__(self, format_spec):
+            if format_spec == 'link':
+                return Markup('<a href="/user/{0}">{1}</a>').format(
+                    self.id,
+                    self.__html__(),
+                )
+            elif format_spec:
+                raise ValueError('Invalid format spec')
+            return self.__html__()
+
+        def __html__(self):
+            return Markup('<span class=user>{0}</span>').format(self.username)
+
+And to format that user:
+
+>>> user = User(1, 'foo')
+>>> Markup('<p>User: {0:link}').format(user)
+Markup(u'<p>User: <a href="/user/1"><span class=user>foo</span></a>')
