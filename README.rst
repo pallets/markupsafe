@@ -71,7 +71,7 @@ following algorithm:
 3.  otherwise the default format system of Python kicks in and the result
     is HTML escaped.
 
-Here is how you can implement your own formatting:
+Here is how you can implement your own formatting::
 
     class User(object):
 
