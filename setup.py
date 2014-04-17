@@ -3,7 +3,7 @@ import sys
 from setuptools import setup, Extension
 from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
-    DistutilsPlatformError
+     DistutilsPlatformError
 
 
 # fail safe compilation shamelessly stolen from the simplejson
@@ -24,9 +24,9 @@ for arg in '--with-speedups', '--without-speedups':
 
 ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError)
 if sys.platform == 'win32' and sys.version_info > (2, 6):
-   # 2.6's distutils.msvc9compiler can raise an IOError when failing to
-   # find the compiler
-   ext_errors += (IOError,)
+    # 2.6's distutils.msvc9compiler can raise an IOError when failing to
+    # find the compiler
+    ext_errors += (IOError,)
 
 
 class BuildFailed(Exception):
@@ -66,7 +66,7 @@ def run_setup(with_binary):
     ext_modules = [ext] if with_binary else []
     setup(
         name='MarkupSafe',
-        version='0.19',
+        version='0.20',
         url='http://github.com/mitsuhiko/markupsafe',
         license='BSD',
         author='Armin Ronacher',
