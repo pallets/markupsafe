@@ -10,7 +10,7 @@
 """
 import re
 from markupsafe._compat import text_type, string_types, int_types, \
-     unichr, PY2
+     unichr, iteritems, PY2
 
 
 __all__ = ['Markup', 'soft_unicode', 'escape', 'escape_silent']
@@ -168,7 +168,7 @@ class Markup(text_type):
         orig = getattr(text_type, name)
         def func(self, *args, **kwargs):
             args = _escape_argspec(list(args), enumerate(args), self.escape)
-            #_escape_argspec(kwargs, kwargs.iteritems(), None)
+            _escape_argspec(kwargs, iteritems(kwargs), self.escape)
             return self.__class__(orig(self, *args, **kwargs))
         func.__name__ = orig.__name__
         func.__doc__ = orig.__doc__

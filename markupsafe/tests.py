@@ -65,6 +65,15 @@ class MarkupTestCase(unittest.TestCase):
         assert Markup("<em>Foo &amp; Bar</em>").striptags() == "Foo & Bar"
         assert Markup("&lt;test&gt;").unescape() == "<test>"
 
+    def test_formatting(self):
+        for actual, expected in (
+            (Markup('%i') % 3.14, '3'),
+            (Markup('%.2f') % 3.14159, '3.14'),
+            (Markup('%s %s %s') % ('<', 123, '>'), '&lt; 123 &gt;'),
+            (Markup('<em>{awesome}</em>').format(awesome='<awesome>'),
+             '<em>&lt;awesome&gt;</em>')):
+            assert actual == expected, "%r should be %r!" % (actual, expected)
+
     def test_all_set(self):
         import markupsafe as markup
         for item in markup.__all__:
