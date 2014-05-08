@@ -42,7 +42,7 @@ class MarkupTestCase(unittest.TestCase):
             __str__ = __unicode__
         assert Markup(Foo()) == '<em>awesome</em>'
         assert Markup('<strong>%s</strong>') % Foo() == \
-               '<strong><em>awesome</em></strong>'
+            '<strong><em>awesome</em></strong>'
 
     def test_tuple_interpol(self):
         self.assertEqual(Markup('<em>%s:%s</em>') % (
