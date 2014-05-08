@@ -75,7 +75,9 @@ class MarkupTestCase(unittest.TestCase):
             (Markup('{0[1][bar]}').format([0, {'bar': '<bar/>'}]),
              '&lt;bar/&gt;'),
             (Markup('{0[1][bar]}').format([0, {'bar': Markup('<bar/>')}]),
-             '<bar/>')):
+             '<bar/>'),
+            (Markup('{}').format(0),
+             Markup('0'))):
             assert actual == expected, "%r should be %r!" % (actual, expected)
 
     def test_custom_formatting(self):
