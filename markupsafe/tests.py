@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import gc
+import sys
 import unittest
 from markupsafe import Markup, escape, escape_silent
 from markupsafe._compat import text_type
@@ -75,10 +76,14 @@ class MarkupTestCase(unittest.TestCase):
             (Markup('{0[1][bar]}').format([0, {'bar': '<bar/>'}]),
              '&lt;bar/&gt;'),
             (Markup('{0[1][bar]}').format([0, {'bar': Markup('<bar/>')}]),
-             '<bar/>'),
-            (Markup('{}').format(0),
-             Markup('0'))):
+             '<bar/>')):
             assert actual == expected, "%r should be %r!" % (actual, expected)
+
+    # This is new in 2.7
+    if sys.version_info > (2, 6):
+        def test_formatting_empty(self):
+            formatted = Markup('{}').format(0)
+            assert formatted == Markup('0')
 
     def test_custom_formatting(self):
         class HasHTMLOnly(object):
