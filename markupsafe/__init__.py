@@ -42,7 +42,7 @@ class Markup(text_type):
     >>> class Foo(object):
     ...  def __html__(self):
     ...   return '<a href="#">foo</a>'
-    ... 
+    ...
     >>> Markup(Foo())
     Markup(u'<a href="#">foo</a>')
 
@@ -118,7 +118,8 @@ class Markup(text_type):
     rsplit.__doc__ = text_type.rsplit.__doc__
 
     def splitlines(self, *args, **kwargs):
-        return list(map(self.__class__, text_type.splitlines(self, *args, **kwargs)))
+        return list(map(self.__class__, text_type.splitlines(
+            self, *args, **kwargs)))
     splitlines.__doc__ = text_type.splitlines.__doc__
 
     def unescape(self):
