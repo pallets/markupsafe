@@ -66,7 +66,7 @@ def run_setup(with_binary):
     ext_modules = [ext] if with_binary else []
     setup(
         name='MarkupSafe',
-        version='0.22',
+        version='0.23',
         url='http://github.com/mitsuhiko/markupsafe',
         license='BSD',
         author='Armin Ronacher',
