@@ -8,6 +8,7 @@
     :copyright: (c) 2010 by Armin Ronacher.
     :license: BSD, see LICENSE for more details.
 """
+from __future__ import unicode_literals
 import re
 import string
 from collections import Mapping
@@ -39,35 +40,35 @@ class Markup(text_type):
     converted into a unicode string and then assumed to be safe:
 
     >>> Markup("Hello <em>World</em>!")
-    Markup(u'Hello <em>World</em>!')
+    Markup('Hello <em>World</em>!')
     >>> class Foo(object):
     ...  def __html__(self):
     ...   return '<a href="#">foo</a>'
     ...
     >>> Markup(Foo())
-    Markup(u'<a href="#">foo</a>')
+    Markup('<a href="#">foo</a>')
 
     If you want object passed being always treated as unsafe you can use the
     :meth:`escape` classmethod to create a :class:`Markup` object:
 
     >>> Markup.escape("Hello <em>World</em>!")
-    Markup(u'Hello &lt;em&gt;World&lt;/em&gt;!')
+    Markup('Hello &lt;em&gt;World&lt;/em&gt;!')
 
     Operations on a markup string are markup aware which means that all
     arguments are passed through the :func:`escape` function:
 
     >>> em = Markup("<em>%s</em>")
     >>> em % "foo & bar"
-    Markup(u'<em>foo &amp; bar</em>')
+    Markup('<em>foo &amp; bar</em>')
     >>> strong = Markup("<strong>%(text)s</strong>")
     >>> strong % {'text': '<blink>hacker here</blink>'}
-    Markup(u'<strong>&lt;blink&gt;hacker here&lt;/blink&gt;</strong>')
+    Markup('<strong>&lt;blink&gt;hacker here&lt;/blink&gt;</strong>')
     >>> Markup("<em>Hello</em> ") + "<foo>"
-    Markup(u'<em>Hello</em> &lt;foo&gt;')
+    Markup('<em>Hello</em> &lt;foo&gt;')
     """
     __slots__ = ()
 
-    def __new__(cls, base=u'', encoding=None, errors='strict'):
+    def __new__(cls, base='', encoding=None, errors='strict'):
         if hasattr(base, '__html__'):
             base = base.__html__()
         if encoding is None:
@@ -128,7 +129,7 @@ class Markup(text_type):
         known HTML4 and XHTML entities:
 
         >>> Markup("Main &raquo; <em>About</em>").unescape()
-        u'Main \xbb <em>About</em>'
+        'Main \xbb <em>About</em>'
         """
         from markupsafe._constants import HTML_ENTITIES
         def handle_match(m):
@@ -142,7 +143,7 @@ class Markup(text_type):
                     return unichr(int(name[1:]))
             except ValueError:
                 pass
-            return u''
+            return ''
         return _entity_re.sub(handle_match, text_type(self))
 
     def striptags(self):
@@ -151,9 +152,9 @@ class Markup(text_type):
         normalized to one:
 
         >>> Markup("Main &raquo;  <em>About</em>").striptags()
-        u'Main \xbb About'
+        'Main \xbb About'
         """
-        stripped = u' '.join(_striptags_re.sub('', self).split())
+        stripped = ' '.join(_striptags_re.sub('', self).split())
         return Markup(stripped).unescape()
 
     @classmethod
