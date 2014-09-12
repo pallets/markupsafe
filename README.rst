@@ -3,23 +3,27 @@ MarkupSafe
 
 Implements a unicode subclass that supports HTML strings:
 
->>> from markupsafe import Markup, escape
->>> escape("<script>alert(document.cookie);</script>")
-Markup(u'&lt;script&gt;alert(document.cookie);&lt;/script&gt;')
->>> tmpl = Markup("<em>%s</em>")
->>> tmpl % "Peter > Lustig"
-Markup(u'<em>Peter &gt; Lustig</em>')
+.. code-block:: pycon
+
+    >>> from markupsafe import Markup, escape
+    >>> escape("<script>alert(document.cookie);</script>")
+    Markup(u'&lt;script&gt;alert(document.cookie);&lt;/script&gt;')
+    >>> tmpl = Markup("<em>%s</em>")
+    >>> tmpl % "Peter > Lustig"
+    Markup(u'<em>Peter &gt; Lustig</em>')
 
 If you want to make an object unicode that is not yet unicode
 but don't want to lose the taint information, you can use the
 `soft_unicode` function.  (On Python 3 you can also use `soft_str` which
 is a different name for the same function).
 
->>> from markupsafe import soft_unicode
->>> soft_unicode(42)
-u'42'
->>> soft_unicode(Markup('foo'))
-Markup(u'foo')
+.. code-block:: pycon
+
+    >>> from markupsafe import soft_unicode
+    >>> soft_unicode(42)
+    u'42'
+    >>> soft_unicode(Markup('foo'))
+    Markup(u'foo')
 
 HTML Representations
 --------------------
@@ -27,14 +31,16 @@ HTML Representations
 Objects can customize their HTML markup equivalent by overriding
 the `__html__` function:
 
->>> class Foo(object):
-...  def __html__(self):
-...   return '<strong>Nice</strong>'
-...
->>> escape(Foo())
-Markup(u'<strong>Nice</strong>')
->>> Markup(Foo())
-Markup(u'<strong>Nice</strong>')
+.. code-block:: pycon
+
+    >>> class Foo(object):
+    ...  def __html__(self):
+    ...   return '<strong>Nice</strong>'
+    ...
+    >>> escape(Foo())
+    Markup(u'<strong>Nice</strong>')
+    >>> Markup(Foo())
+    Markup(u'<strong>Nice</strong>')
 
 Silent Escapes
 --------------
@@ -45,7 +51,9 @@ consistency with other systems that return empty strings for `None`
 when escaping (for instance Pylons' webhelpers).
 
 If you also want to use this for the escape method of the Markup
-object, you can create your own subclass that does that::
+object, you can create your own subclass that does that:
+
+.. code-block:: python
 
     from markupsafe import Markup, escape_silent as escape
 
@@ -71,7 +79,9 @@ following algorithm:
 3.  otherwise the default format system of Python kicks in and the result
     is HTML escaped.
 
-Here is how you can implement your own formatting::
+Here is how you can implement your own formatting:
+
+.. code-block:: python
 
     class User(object):
 
@@ -94,8 +104,10 @@ Here is how you can implement your own formatting::
 
 And to format that user:
 
->>> user = User(1, 'foo')
->>> Markup('<p>User: {0:link}').format(user)
-Markup(u'<p>User: <a href="/user/1"><span class=user>foo</span></a>')
+.. code-block:: pycon
+
+    >>> user = User(1, 'foo')
+    >>> Markup('<p>User: {0:link}').format(user)
+    Markup(u'<p>User: <a href="/user/1"><span class=user>foo</span></a>')
 
 Markupsafe supports Python 2.6, 2.7 and Python 3.3 and higher.
