@@ -14,6 +14,7 @@ from collections import Mapping
 from markupsafe._compat import text_type, string_types, int_types, \
      unichr, iteritems, PY2
 
+__version__ = "0.23"
 
 __all__ = ['Markup', 'soft_unicode', 'escape', 'escape_silent']
 
