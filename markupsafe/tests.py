@@ -158,6 +158,7 @@ class MarkupLeakTestCase(unittest.TestCase):
                 escape("<foo>")
                 escape(u"foo")
                 escape(u"<foo>")
+            gc.collect()
             counts.add(len(gc.get_objects()))
         assert len(counts) == 1, 'ouch, c extension seems to leak objects'
 
