@@ -261,6 +261,8 @@ if hasattr(text_type, 'format'):
                 rv = value.__html__()
             else:
                 rv = string.Formatter.format_field(self, value, format_spec)
+                if isinstance(rv, bytes):
+                    rv = rv.decode('utf-8')
             return text_type(self.escape(rv))
 
 
