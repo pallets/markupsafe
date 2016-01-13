@@ -168,8 +168,9 @@ class MarkupLeakTestCase(unittest.TestCase):
                 escape("<foo>")
                 escape(u"foo")
                 escape(u"<foo>")
+            if hasattr(sys, 'pypy_version_info'): gc.collect()
             counts.add(len(gc.get_objects()))
-        assert len(counts) == 1, 'ouch, c extension seems to leak objects'
+        assert len(counts) == 1, 'ouch, c extension seems to leak objects, got: ' + str(len(counts))
 
 
 def suite():
