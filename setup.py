@@ -1,4 +1,6 @@
 import os
+import re
+import ast
 import sys
 from setuptools import setup, Extension, Feature
 from distutils.command.build_ext import build_ext
@@ -12,11 +14,15 @@ from distutils.errors import CCompilerError, DistutilsExecError, \
 is_jython = 'java' in sys.platform
 is_pypy = hasattr(sys, 'pypy_version_info')
 
+with open('markupsafe/__init__.py') as f:
+    version = ast.literal_eval(re.search(
+        '^__version__\s+=\s+(.*?)$(?sm)', f.read()).group(1))
+
 
 speedups = Feature(
     'optional C speed-enhancement module',
     standard=True,
-    ext_modules = [
+    ext_modules=[
         Extension('markupsafe._speedups', ['markupsafe/_speedups.c']),
     ],
 )
@@ -71,7 +77,7 @@ def run_setup(with_binary):
         features['speedups'] = speedups
     setup(
         name='MarkupSafe',
-        version='0.23',
+        version=version,
         url='http://github.com/mitsuhiko/markupsafe',
         license='BSD',
         author='Armin Ronacher',
