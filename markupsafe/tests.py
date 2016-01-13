@@ -3,7 +3,7 @@ import gc
 import sys
 import unittest
 from markupsafe import Markup, escape, escape_silent
-from markupsafe._compat import text_type
+from markupsafe._compat import text_type, PY2
 
 
 class MarkupTestCase(unittest.TestCase):
@@ -68,8 +68,8 @@ class MarkupTestCase(unittest.TestCase):
     def test_unescape(self):
         assert Markup("&lt;test&gt;").unescape() == "<test>"
         assert "jack & tavi are cooler than mike & russ" == \
-                Markup("jack & tavi are cooler than mike &amp; russ").unescape(), \
-                Markup("jack & tavi are cooler than mike &amp; russ").unescape()
+            Markup("jack & tavi are cooler than mike &amp; russ").unescape(), \
+            Markup("jack & tavi are cooler than mike &amp; russ").unescape()
 
         # Test that unescape is idempotent
         original = '&foo&#x3b;'
@@ -134,11 +134,12 @@ class MarkupTestCase(unittest.TestCase):
 
     def test_formatting_with_objects(self):
         class Stringable(object):
-            def __str__(self):
-                return 'some other value'
             def __unicode__(self):
                 return u'строка'
-            if not PY2:
+            if PY2:
+                def __str__(self):
+                    return 'some other value'
+            else:
                 __str__ = __unicode__
 
         assert Markup('{s}').format(s=Stringable()) == \
@@ -182,9 +183,11 @@ class MarkupLeakTestCase(unittest.TestCase):
                 escape("<foo>")
                 escape(u"foo")
                 escape(u"<foo>")
-            if hasattr(sys, 'pypy_version_info'): gc.collect()
+            if hasattr(sys, 'pypy_version_info'):
+                gc.collect()
             counts.add(len(gc.get_objects()))
-        assert len(counts) == 1, 'ouch, c extension seems to leak objects, got: ' + str(len(counts))
+        assert len(counts) == 1, 'ouch, c extension seems to ' \
+            'leak objects, got: ' + str(len(counts))
 
 
 def suite():
