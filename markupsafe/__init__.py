@@ -260,7 +260,12 @@ if hasattr(text_type, 'format'):
                                      'its __html__ method.')
                 rv = value.__html__()
             else:
-                rv = string.Formatter.format_field(self, value, format_spec)
+                # We need to make sure the format spec is unicode here as
+                # otherwise the wrong callback methods are invoked.  For
+                # instance a byte string there would invoke __str__ and
+                # not __unicode__.
+                rv = string.Formatter.format_field(
+                    self, value, text_type(format_spec))
             return text_type(self.escape(rv))
 
 

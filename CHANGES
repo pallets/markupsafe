@@ -1,6 +1,12 @@
 MarkupSafe Changelog
 ====================
 
+Version 1.0
+-----------
+
+- Fixed custom types not invoking `__unicode__` when used
+  with `format()`.
+
 Version 0.18
 ------------
 

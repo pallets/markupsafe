@@ -120,6 +120,16 @@ class MarkupTestCase(unittest.TestCase):
         assert Markup('<p>User: {0:link}').format(user) == \
             Markup('<p>User: <a href="/user/1"><span class=user>foo</span></a>')
 
+    def test_formatting_with_objects(self):
+        class Stringable(object):
+            def __str__(self):
+                return 'some other value'
+            def __unicode__(self):
+                return u'строка'
+
+        assert Markup('{s}').format(s=Stringable()) == \
+            Markup(u'строка')
+
     def test_all_set(self):
         import markupsafe as markup
         for item in markup.__all__:
