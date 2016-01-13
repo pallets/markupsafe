@@ -138,6 +138,8 @@ class MarkupTestCase(unittest.TestCase):
                 return 'some other value'
             def __unicode__(self):
                 return u'строка'
+            if not PY2:
+                __str__ = __unicode__
 
         assert Markup('{s}').format(s=Stringable()) == \
             Markup(u'строка')
