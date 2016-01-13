@@ -6,6 +6,8 @@ Version 1.0
 
 - Fixed custom types not invoking `__unicode__` when used
   with `format()`.
+- Added `__version__` module attribute
+- Improve unescape code to leave lone ampersands alone.
 
 Version 0.18
 ------------
