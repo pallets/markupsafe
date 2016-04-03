@@ -78,7 +78,7 @@ def run_setup(with_binary):
     setup(
         name='MarkupSafe',
         version=version,
-        url='http://github.com/mitsuhiko/markupsafe',
+        url='http://github.com/pallets/markupsafe',
         license='BSD',
         author='Armin Ronacher',
         author_email='armin.ronacher@active-4.com',
