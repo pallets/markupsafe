@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import re
 import ast
@@ -98,7 +99,7 @@ def run_setup(with_binary):
             'Topic :: Text Processing :: Markup :: HTML'
         ],
         packages=['markupsafe'],
-        test_suite='markupsafe.tests.suite',
+        test_suite='tests.suite',
         include_package_data=True,
         cmdclass={'build_ext': ve_build_ext},
         features=features,

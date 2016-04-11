@@ -1,2 +1,2 @@
-include LICENSE README.rst AUTHORS
+include AUTHORS CHANGES LICENSE tests.py tox.ini
 recursive-include markupsafe *.c
