@@ -92,11 +92,9 @@ class MarkupTestCase(unittest.TestCase):
              '<bar/>')):
             assert actual == expected, "%r should be %r!" % (actual, expected)
 
-    # This is new in 2.7
-    if sys.version_info >= (2, 7):
-        def test_formatting_empty(self):
-            formatted = Markup('{}').format(0)
-            assert formatted == Markup('0')
+    def test_formatting_empty(self):
+        formatted = Markup('{}').format(0)
+        assert formatted == Markup('0')
 
     def test_custom_formatting(self):
         class HasHTMLOnly(object):
