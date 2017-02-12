@@ -8,20 +8,24 @@
  * :copyright: © 2010 by the Pallets team.
  * :license: BSD, see LICENSE for more details.
  */
-
 #include <Python.h>
 
+#if PY_MAJOR_VERSION < 3
 #define ESCAPED_CHARS_TABLE_SIZE 63
 #define UNICHR(x) (PyUnicode_AS_UNICODE((PyUnicodeObject*)PyUnicode_DecodeASCII(x, strlen(x), NULL)));
 
-static PyObject* markup;
 static Py_ssize_t escaped_chars_delta_len[ESCAPED_CHARS_TABLE_SIZE];
 static Py_UNICODE *escaped_chars_repl[ESCAPED_CHARS_TABLE_SIZE];
+#endif
+
+static PyObject* markup;
 
 static int
 init_constants(void)
 {
 	PyObject *module;
+
+#if PY_MAJOR_VERSION < 3
 	/* mapping of characters to replace */
 	escaped_chars_repl['"'] = UNICHR("&#34;");
 	escaped_chars_repl['\''] = UNICHR("&#39;");
@@ -34,6 +38,7 @@ init_constants(void)
 	escaped_chars_delta_len['"'] = escaped_chars_delta_len['\''] = \
 		escaped_chars_delta_len['&'] = 4;
 	escaped_chars_delta_len['<'] = escaped_chars_delta_len['>'] = 3;
+#endif
 
 	/* import markup type so that we can mark the return value */
 	module = PyImport_ImportModule("markupsafe");
@@ -45,6 +50,7 @@ init_constants(void)
 	return 1;
 }
 
+#if PY_MAJOR_VERSION < 3
 static PyObject*
 escape_unicode(PyUnicodeObject *in)
 {
@@ -105,7 +111,174 @@ escape_unicode(PyUnicodeObject *in)
 
 	return (PyObject*)out;
 }
+#else /* PY_MAJOR_VERSION < 3 */
 
+#define GET_DELTA(inp, inp_end, delta) \
+	while (inp < inp_end) {	 \
+		switch (*inp++) {	   \
+		case '"':			   \
+		case '\'':			  \
+		case '&':			   \
+			delta += 4;		 \
+			break;			  \
+		case '<':			   \
+		case '>':			   \
+			delta += 3;		 \
+			break;			  \
+		}					   \
+	}
+
+#define DO_ESCAPE(inp, inp_end, outp) \
+	{  \
+		Py_ssize_t ncopy = 0;  \
+		while (inp < inp_end) {  \
+			switch (*inp) {  \
+			case '"':  \
+				memcpy(outp, inp-ncopy, sizeof(*outp)*ncopy); \
+				outp += ncopy; ncopy = 0; \
+				*outp++ = '&';  \
+				*outp++ = '#';  \
+				*outp++ = '3';  \
+				*outp++ = '4';  \
+				*outp++ = ';';  \
+				break;  \
+			case '\'':  \
+				memcpy(outp, inp-ncopy, sizeof(*outp)*ncopy); \
+				outp += ncopy; ncopy = 0; \
+				*outp++ = '&';  \
+				*outp++ = '#';  \
+				*outp++ = '3';  \
+				*outp++ = '9';  \
+				*outp++ = ';';  \
+				break;  \
+			case '&':  \
+				memcpy(outp, inp-ncopy, sizeof(*outp)*ncopy); \
+				outp += ncopy; ncopy = 0; \
+				*outp++ = '&';  \
+				*outp++ = 'a';  \
+				*outp++ = 'm';  \
+				*outp++ = 'p';  \
+				*outp++ = ';';  \
+				break;  \
+			case '<':  \
+				memcpy(outp, inp-ncopy, sizeof(*outp)*ncopy); \
+				outp += ncopy; ncopy = 0; \
+				*outp++ = '&';  \
+				*outp++ = 'l';  \
+				*outp++ = 't';  \
+				*outp++ = ';';  \
+				break;  \
+			case '>':  \
+				memcpy(outp, inp-ncopy, sizeof(*outp)*ncopy); \
+				outp += ncopy; ncopy = 0; \
+				*outp++ = '&';  \
+				*outp++ = 'g';  \
+				*outp++ = 't';  \
+				*outp++ = ';';  \
+				break;  \
+			default:  \
+				ncopy++; \
+			}  \
+            inp++; \
+		}  \
+		memcpy(outp, inp-ncopy, sizeof(*outp)*ncopy); \
+	}
+
+static PyObject*
+escape_unicode_kind1(PyUnicodeObject *in)
+{
+	Py_UCS1 *inp = PyUnicode_1BYTE_DATA(in);
+	Py_UCS1 *inp_end = inp + PyUnicode_GET_LENGTH(in);
+	Py_UCS1 *outp;
+	PyObject *out;
+	Py_ssize_t delta = 0;
+
+	GET_DELTA(inp, inp_end, delta);
+	if (!delta) {
+		Py_INCREF(in);
+		return (PyObject*)in;
+	}
+
+	out = PyUnicode_New(PyUnicode_GET_LENGTH(in) + delta,
+						PyUnicode_IS_ASCII(in) ? 127 : 255);
+	if (!out)
+		return NULL;
+
+	inp = PyUnicode_1BYTE_DATA(in);
+	outp = PyUnicode_1BYTE_DATA(out);
+	DO_ESCAPE(inp, inp_end, outp);
+	return out;
+}
+
+static PyObject*
+escape_unicode_kind2(PyUnicodeObject *in)
+{
+	Py_UCS2 *inp = PyUnicode_2BYTE_DATA(in);
+	Py_UCS2 *inp_end = inp + PyUnicode_GET_LENGTH(in);
+	Py_UCS2 *outp;
+	PyObject *out;
+	Py_ssize_t delta = 0;
+
+	GET_DELTA(inp, inp_end, delta);
+	if (!delta) {
+		Py_INCREF(in);
+		return (PyObject*)in;
+	}
+
+	out = PyUnicode_New(PyUnicode_GET_LENGTH(in) + delta, 65535);
+	if (!out)
+		return NULL;
+
+	inp = PyUnicode_2BYTE_DATA(in);
+	outp = PyUnicode_2BYTE_DATA(out);
+	DO_ESCAPE(inp, inp_end, outp);
+	return out;
+}
+
+
+static PyObject*
+escape_unicode_kind4(PyUnicodeObject *in)
+{
+	Py_UCS4 *inp = PyUnicode_4BYTE_DATA(in);
+	Py_UCS4 *inp_end = inp + PyUnicode_GET_LENGTH(in);
+	Py_UCS4 *outp;
+	PyObject *out;
+	Py_ssize_t delta = 0;
+
+	GET_DELTA(inp, inp_end, delta);
+	if (!delta) {
+		Py_INCREF(in);
+		return (PyObject*)in;
+	}
+
+	out = PyUnicode_New(PyUnicode_GET_LENGTH(in) + delta, 1114111);
+	if (!out)
+		return NULL;
+
+	inp = PyUnicode_4BYTE_DATA(in);
+	outp = PyUnicode_4BYTE_DATA(out);
+	DO_ESCAPE(inp, inp_end, outp);
+	return out;
+}
+
+static PyObject*
+escape_unicode(PyUnicodeObject *in)
+{
+	if (PyUnicode_READY(in))
+		return NULL;
+
+	switch (PyUnicode_KIND(in)) {
+	case PyUnicode_1BYTE_KIND:
+		return escape_unicode_kind1(in);
+	case PyUnicode_2BYTE_KIND:
+		return escape_unicode_kind2(in);
+	case PyUnicode_4BYTE_KIND:
+		return escape_unicode_kind4(in);
+	}
+	assert(0);  /* shouldn't happen */
+	return NULL;
+}
+#endif /* PY_MAJOR_VERSION < 3 */
 
 static PyObject*
 escape(PyObject *self, PyObject *text)
