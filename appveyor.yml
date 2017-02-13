@@ -9,12 +9,15 @@ environment:
   # See http://stackoverflow.com/a/9407178/1354930
   global:
     PIP: "pip"
+    TOX: "tox"
 
   matrix:
-#    - PYTHON: "C:\\Python26"
-#      PIP: "pip.__main__"
-#    - PYTHON: "C:\\Python26-x64"
-#      PIP: "pip.__main__"
+    - PYTHON: "C:\\Python26"
+      PIP: "pip.__main__"
+      TOX: "tox.__main__"
+    - PYTHON: "C:\\Python26-x64"
+      PIP: "pip.__main__"
+      TOX: "tox.__main__"
     - PYTHON: "C:\\Python27"
     - PYTHON: "C:\\Python27-x64"
     - PYTHON: "C:\\Python33"
@@ -39,7 +42,7 @@ build: off  # Not a C# project, build stuff at the test step instead.
 
 test_script:
   # Run the project tests
-  - "%PYTHON%\\python.exe -m tox -e py"
+  - "%PYTHON%\\python.exe -m %TOX% -e py"
 
 after_test:
   # if tests OK, create whl package
