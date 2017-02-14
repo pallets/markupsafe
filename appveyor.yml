@@ -59,7 +59,7 @@ artifacts:
 #deploy:
 #  - provider: GitHub
 #    auth_token:
-#      secure: <your encrypted token>    # encrypoted github token
+#      secure: <your encrypted token>    # encrypted github token
 #    release: $APPVEYOR_REPO_TAG_NAME
 #    artifact: /.*\.whl/                 # upload all the wheels.
 #    draft: false
