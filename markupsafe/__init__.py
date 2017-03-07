@@ -185,28 +185,24 @@ class Markup(text_type):
                   'translate', 'expandtabs', 'swapcase', 'zfill':
         locals()[method] = make_simple_escaping_wrapper(method)
 
-    # new in python 2.5
-    if hasattr(text_type, 'partition'):
-        def partition(self, sep):
-            return tuple(map(self.__class__,
-                             text_type.partition(self, self.escape(sep))))
-        def rpartition(self, sep):
-            return tuple(map(self.__class__,
-                             text_type.rpartition(self, self.escape(sep))))
+    def partition(self, sep):
+        return tuple(map(self.__class__,
+                            text_type.partition(self, self.escape(sep))))
+    def rpartition(self, sep):
+        return tuple(map(self.__class__,
+                            text_type.rpartition(self, self.escape(sep))))
 
-    # new in python 2.6
-    if hasattr(text_type, 'format'):
-        def format(*args, **kwargs):
-            self, args = args[0], args[1:]
-            formatter = EscapeFormatter(self.escape)
-            kwargs = _MagicFormatMapping(args, kwargs)
-            return self.__class__(formatter.vformat(self, args, kwargs))
+    def format(*args, **kwargs):
+        self, args = args[0], args[1:]
+        formatter = EscapeFormatter(self.escape)
+        kwargs = _MagicFormatMapping(args, kwargs)
+        return self.__class__(formatter.vformat(self, args, kwargs))
 
-        def __html_format__(self, format_spec):
-            if format_spec:
-                raise ValueError('Unsupported format specification '
-                                 'for Markup.')
-            return self
+    def __html_format__(self, format_spec):
+        if format_spec:
+            raise ValueError('Unsupported format specification '
+                                'for Markup.')
+        return self
 
     # not in python 3
     if hasattr(text_type, '__getslice__'):

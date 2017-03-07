@@ -67,10 +67,10 @@ object, you can create your own subclass that does that:
 New-Style String Formatting
 ---------------------------
 
-Starting with MarkupSafe 0.21 new style string formats from Python 2.6 and
-3.x are now fully supported.  Previously the escape behavior of those
-functions was spotty at best.  The new implementations operates under the
-following algorithm:
+Starting with MarkupSafe 0.21 new style string formats from Python 3.x are
+now fully supported.  Previously the escape behavior of those functions
+was spotty at best.  The new implementations operates under the following
+algorithm:
 
 1.  if an object has an ``__html_format__`` method it is called as
     replacement for ``__format__`` with the format specifier.  It either
@@ -110,4 +110,4 @@ And to format that user:
     >>> Markup('<p>User: {0:link}').format(user)
     Markup(u'<p>User: <a href="/user/1"><span class=user>foo</span></a>')
 
-Markupsafe supports Python 2.6, 2.7 and Python 3.3 and higher.
+Markupsafe supports Python 2.7 and Python 3.3 and higher.
