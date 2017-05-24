@@ -174,12 +174,12 @@ class MarkupTestCase(unittest.TestCase):
         self.assertEqual(Markup('a') * 3, Markup('aaa'))
 
     def test_escape_return_type(self):
-        self.assertIsInstance(escape('a'), Markup)
-        self.assertIsInstance(escape(Markup('a')), Markup)
+        self.assertTrue(isinstance(escape('a'), Markup))
+        self.assertTrue(isinstance(escape(Markup('a')), Markup))
         class Foo:
             def __html__(self):
                 return '<strong>Foo</strong>'
-        self.assertIsInstance(escape(Foo()), Markup)
+        self.assertTrue(isinstance(escape(Foo()), Markup))
 
 
 class MarkupLeakTestCase(unittest.TestCase):
