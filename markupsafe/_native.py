@@ -18,7 +18,7 @@ def escape(s):
     such characters in HTML.  Marks return value as markup string.
     """
     if hasattr(s, '__html__'):
-        return s.__html__()
+        return Markup(s.__html__())
     return Markup(text_type(s)
         .replace('&', '&amp;')
         .replace('>', '&gt;')

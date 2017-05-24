@@ -131,8 +131,11 @@ escape(PyObject *self, PyObject *text)
 	/* if the object has an __html__ method that performs the escaping */
 	html = PyObject_GetAttrString(text, "__html__");
 	if (html) {
-		rv = PyObject_CallObject(html, NULL);
+		s = PyObject_CallObject(html, NULL);
 		Py_DECREF(html);
+		/* Convert to Markup object */
+		rv = PyObject_CallFunctionObjArgs(markup, (PyObject*)s, NULL);
+		Py_DECREF(s);
 		return rv;
 	}
 

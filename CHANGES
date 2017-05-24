@@ -1,6 +1,16 @@
 MarkupSafe Changelog
 ====================
 
+Version 1.1
+-----------
+
+unreleased
+
+- ``escape`` wraps ``__html__`` result in ``Markup``, consistent with
+  documented behavior. (`#69`_)
+
+.. _#69: https://github.com/pallets/markupsafe/pull/69
+
 Version 1.0
 -----------
 
