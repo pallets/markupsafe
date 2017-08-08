@@ -64,7 +64,11 @@ class MarkupTestCase(unittest.TestCase):
     def test_escaping(self):
         # escaping
         assert escape('"<>&\'') == '&#34;&lt;&gt;&amp;&#39;'
+        assert escape('"<>&\'\b') == '&#34;&lt;&gt;&amp;&#39;\\b'
+        assert escape('\b') == r'\b'
+        assert escape('\b') == '\\b'
         assert Markup("<em>Foo &amp; Bar</em>").striptags() == "Foo & Bar"
+        assert Markup("<em>Foo &amp; Bar\b</em>").striptags() == r"Foo & Bar"
 
     def test_unescape(self):
         assert Markup("&lt;test&gt;").unescape() == "<test>"

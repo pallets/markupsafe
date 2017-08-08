@@ -6,6 +6,9 @@ Version 1.1
 
 unreleased
 
+- The ascii control character `\b` is now escaped to the raw string "\b" by
+  ``escape``, and it is removed by ``Markup.striptags``.
+
 - ``escape`` wraps ``__html__`` result in ``Markup``, consistent with
   documented behavior. (`#69`_)
 
