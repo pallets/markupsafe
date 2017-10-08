@@ -110,4 +110,4 @@ And to format that user:
     >>> Markup('<p>User: {0:link}').format(user)
     Markup(u'<p>User: <a href="/user/1"><span class=user>foo</span></a>')
 
-Markupsafe supports Python 2.6, 2.7 and Python 3.3 and higher.
+Markupsafe supports Python 2.7 and Python 3.3 and higher.
