@@ -185,14 +185,12 @@ class Markup(text_type):
                   'translate', 'expandtabs', 'swapcase', 'zfill':
         locals()[method] = make_simple_escaping_wrapper(method)
 
-    # new in python 2.5
-    if hasattr(text_type, 'partition'):
-        def partition(self, sep):
-            return tuple(map(self.__class__,
-                             text_type.partition(self, self.escape(sep))))
-        def rpartition(self, sep):
-            return tuple(map(self.__class__,
-                             text_type.rpartition(self, self.escape(sep))))
+    def partition(self, sep):
+        return tuple(map(self.__class__,
+                         text_type.partition(self, self.escape(sep))))
+    def rpartition(self, sep):
+        return tuple(map(self.__class__,
+                         text_type.rpartition(self, self.escape(sep))))
 
     # new in python 2.6
     if hasattr(text_type, 'format'):
