@@ -1,0 +1,61 @@
+environment:
+  global:
+    WHEEL_VERSION: "wheel"  # 2.6, 3.3 need ==0.29
+    # pip module, 2.6 needs .__main__, https://stackoverflow.com/a/9407178
+    PIP: "pip"
+    TOX: "tox"
+    TOXENV: "py"
+
+  matrix:
+    - PYTHON: "C:\\Python36-x64"
+    - PYTHON: "C:\\Python35-x64"
+    - PYTHON: "C:\\Python34-x64"
+    - PYTHON: "C:\\Python33-x64"
+      WHEEL_VERSION: "wheel==0.29"
+    - PYTHON: "C:\\Python27-x64"
+    - PYTHON: "C:\\Python26-x64"
+      WHEEL_VERSION: "wheel==0.29"
+      PIP: "pip.__main__"
+      TOX: "tox.__main__"
+
+install:
+  - "%PYTHON%\\python.exe -m %PIP% install -U pip setuptools %WHEEL_VERSION% tox"
+
+build: off  # Not a C# project, build stuff at the test step instead.
+
+test_script:
+  - "%PYTHON%\\python.exe -m %TOX%"
+
+cache:
+  - "C:\\Users\\appveyor\\pip\\wheels"
+
+for:
+  -
+    # build wheels on master branch
+    branches:
+      only:
+        - master
+
+    environment:
+      # merge in 32-bit matrix
+      matrix:
+        - PYTHON: "C:\\Python36"
+        - PYTHON: "C:\\Python35"
+        - PYTHON: "C:\\Python34"
+        - PYTHON: "C:\\Python33"
+          WHEEL_VERSION: "wheel==0.29"
+        - PYTHON: "C:\\Python27"
+        - PYTHON: "C:\\Python26"
+          WHEEL_VERSION: "wheel==0.29"
+          PIP: "pip.__main__"
+          TOX: "tox.__main__"
+
+    install:
+      - "%PYTHON%\\python.exe -m %PIP% install -U pip setuptools %WHEEL_VERSION% tox"
+
+    after_test:
+      - "%PYTHON%\\python.exe setup.py bdist_wheel"
+
+    artifacts:
+      - path: dist\*.whl
+        type: whl
