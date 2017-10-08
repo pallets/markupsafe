@@ -92,11 +92,9 @@ class MarkupTestCase(unittest.TestCase):
              '<bar/>')):
             assert actual == expected, "%r should be %r!" % (actual, expected)
 
-    # This is new in 2.7
-    if sys.version_info >= (2, 7):
-        def test_formatting_empty(self):
-            formatted = Markup('{}').format(0)
-            assert formatted == Markup('0')
+    def test_formatting_empty(self):
+        formatted = Markup('{}').format(0)
+        assert formatted == Markup('0')
 
     def test_custom_formatting(self):
         class HasHTMLOnly(object):
@@ -174,12 +172,12 @@ class MarkupTestCase(unittest.TestCase):
         self.assertEqual(Markup('a') * 3, Markup('aaa'))
 
     def test_escape_return_type(self):
-        self.assertTrue(isinstance(escape('a'), Markup))
-        self.assertTrue(isinstance(escape(Markup('a')), Markup))
+        self.assertIsInstance(escape('a'), Markup)
+        self.assertIsInstance(escape(Markup('a')), Markup)
         class Foo:
             def __html__(self):
                 return '<strong>Foo</strong>'
-        self.assertTrue(isinstance(escape(Foo()), Markup))
+        self.assertIsInstance(escape(Foo()), Markup)
 
 
 class MarkupLeakTestCase(unittest.TestCase):

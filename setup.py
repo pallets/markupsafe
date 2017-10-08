@@ -30,10 +30,7 @@ speedups = Feature(
 
 # Known errors when running build_ext.build_extension method
 ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError)
-if sys.platform == 'win32' and sys.version_info > (2, 6):
-    # 2.6's distutils.msvc9compiler can raise an IOError when failing to
-    # find the compiler
-    ext_errors += (IOError,)
+
 # Known errors when running build_ext.run method
 run_errors = (DistutilsPlatformError,)
 if sys.platform == 'darwin':
@@ -94,10 +91,8 @@ def run_setup(with_binary):
             'Operating System :: OS Independent',
             'Programming Language :: Python',
             'Programming Language :: Python :: 2',
-            'Programming Language :: Python :: 2.6',
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.3',
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
