@@ -1,27 +1,26 @@
-### ----------------------
-### General Configuration
-### ----------------------
-
 environment:
-  # Set a global environment variable that points to the `pip` command.
-  # The Python26 builds overwrite this variable because it needs
-  # `python -m module.__main__` rather than just `python -m module`.
-  # See http://stackoverflow.com/a/9407178/1354930
   global:
+    WHEEL_VERSION: "wheel"  # 2.6, 3.3 need ==0.29
+    # pip module, 2.6 needs .__main__, https://stackoverflow.com/a/9407178
     PIP: "pip"
     TOX: "tox"
+    TOXENV: "py"
 
   matrix:
     - PYTHON: "C:\\Python26"
+      WHEEL_VERSION: "wheel==0.29"
       PIP: "pip.__main__"
       TOX: "tox.__main__"
     - PYTHON: "C:\\Python26-x64"
+      WHEEL_VERSION: "wheel==0.29"
       PIP: "pip.__main__"
       TOX: "tox.__main__"
     - PYTHON: "C:\\Python27"
     - PYTHON: "C:\\Python27-x64"
     - PYTHON: "C:\\Python33"
+      WHEEL_VERSION: "wheel==0.29"
     - PYTHON: "C:\\Python33-x64"
+      WHEEL_VERSION: "wheel==0.29"
     - PYTHON: "C:\\Python34"
     - PYTHON: "C:\\Python34-x64"
     - PYTHON: "C:\\Python35"
@@ -30,40 +29,17 @@ environment:
     - PYTHON: "C:\\Python36-x64"
 
 install:
-  # Check that we have the expected version and architecture for Python
   - "%PYTHON%\\python.exe --version"
-
-  # install dependencies
-
-  - "%PYTHON%\\python.exe -m %PIP% install --upgrade pip wheel"
-  - "%PYTHON%\\python.exe -m %PIP% install tox"
+  - "%PYTHON%\\python.exe -m %PIP% install -U pip setuptools %WHEEL_VERSION% tox"
 
 build: off  # Not a C# project, build stuff at the test step instead.
 
 test_script:
-  # Run the project tests
-  - "%PYTHON%\\python.exe -m %TOX% -e py"
+  - "%PYTHON%\\python.exe -m %TOX%"
 
 after_test:
-  # if tests OK, create whl package
   - "%PYTHON%\\python.exe setup.py bdist_wheel"
 
 artifacts:
-  # Upload the wheel and EXE to AppVeyor
   - path: dist\*.whl
     type: whl
-
-# This is left to the package maintainer to update with the secure tokens.
-# See https://www.appveyor.com/docs/deployment/github/
-# and https://www.appveyor.com/docs/build-configuration/#secure-variables
-#deploy:
-#  - provider: GitHub
-#    auth_token:
-#      secure: <your encrypted token>    # encrypted github token
-#    release: $APPVEYOR_REPO_TAG_NAME
-#    artifact: /.*\.whl/                 # upload all the wheels.
-#    draft: false
-#    prerelease: false
-#    on:
-#      branch: master                    # release from master branch only
-#      appveyor_repo_tag: true           # deploy only on tags
