@@ -15,7 +15,7 @@ Implements a unicode subclass that supports HTML strings:
 If you want to make an object unicode that is not yet unicode
 but don't want to lose the taint information, you can use the
 ``soft_unicode`` function.  (On Python 3 you can also use ``soft_str`` which
-is a different name for the same function).
+is a different name for the same function.)
 
 .. code-block:: python
 
@@ -111,3 +111,10 @@ And to format that user:
     Markup(u'<p>User: <a href="/user/1"><span class=user>foo</span></a>')
 
 Markupsafe supports Python 2.6, 2.7 and Python 3.3 and higher.
+
+Build
+-----
+
+https://travis-ci.org/pallets/markupsafe
+
+
