@@ -1,9 +1,6 @@
 MarkupSafe
 ==========
 
-.. image:: https://travis-ci.org/pallets/markupsafe.svg?branch=master
-    :target: https://travis-ci.org/pallets/markupsafe
-
 Implements a unicode subclass that supports HTML strings:
 
 .. code-block:: python
@@ -114,3 +111,10 @@ And to format that user:
     Markup(u'<p>User: <a href="/user/1"><span class=user>foo</span></a>')
 
 Markupsafe supports Python 2.6, 2.7 and Python 3.3 and higher.
+
+Build
+-----
+
+https://travis-ci.org/pallets/markupsafe
+
+
