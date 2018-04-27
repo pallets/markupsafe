@@ -25,6 +25,7 @@ def escape(s):
         .replace('<', '&lt;')
         .replace("'", '&#39;')
         .replace('"', '&#34;')
+        .replace('\b', r'\b')
     )
 
 

@@ -156,7 +156,7 @@ class Markup(text_type):
         u'Main \xbb About'
         """
         stripped = u' '.join(_striptags_re.sub('', self).split())
-        return Markup(stripped).unescape()
+        return Markup(stripped).unescape().replace('\b', '')
 
     @classmethod
     def escape(cls, s):

@@ -29,12 +29,14 @@ init_constants(void)
 	escaped_chars_repl['&'] = UNICHR("&amp;");
 	escaped_chars_repl['<'] = UNICHR("&lt;");
 	escaped_chars_repl['>'] = UNICHR("&gt;");
+	escaped_chars_repl['\b'] = UNICHR("\\b");
 
 	/* lengths of those characters when replaced - 1 */
 	memset(escaped_chars_delta_len, 0, sizeof (escaped_chars_delta_len));
 	escaped_chars_delta_len['"'] = escaped_chars_delta_len['\''] = \
 		escaped_chars_delta_len['&'] = 4;
 	escaped_chars_delta_len['<'] = escaped_chars_delta_len['>'] = 3;
+	escaped_chars_delta_len['\b'] = escaped_chars_delta_len[8] = 1;
 
 	/* import markup type so that we can mark the return value */
 	module = PyImport_ImportModule("markupsafe");
