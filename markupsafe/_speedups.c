@@ -283,7 +283,19 @@ escape_unicode(PyUnicodeObject *in)
 static PyObject*
 escape(PyObject *self, PyObject *text)
 {
+	static PyObject *id_html;
 	PyObject *s = NULL, *rv = NULL, *html;
+
+	if (id_html == NULL) {
+#if PY_MAJOR_VERSION < 3
+		id_html = PyString_InternFromString("__html__");
+#else
+		id_html = PyUnicode_InternFromString("__html__");
+#endif
+		if (id_html == NULL) {
+			return NULL;
+		}
+	}
 
 	/* we don't have to escape integers, bools or floats */
 	if (PyLong_CheckExact(text) ||
@@ -295,7 +307,7 @@ escape(PyObject *self, PyObject *text)
 		return PyObject_CallFunctionObjArgs(markup, text, NULL);
 
 	/* if the object has an __html__ method that performs the escaping */
-	html = PyObject_GetAttrString(text, "__html__");
+	html = PyObject_GetAttr(text ,id_html);
 	if (html) {
 		s = PyObject_CallObject(html, NULL);
 		Py_DECREF(html);
