@@ -24,7 +24,7 @@ speedups = Feature(
     'optional C speed-enhancement module',
     standard=True,
     ext_modules=[
-        Extension('markupsafe._speedups', ['markupsafe/_speedups.c']),
+        Extension('markupsafe._speedups', ['markupsafe/_speedups.c'], extra_compile_args = ["-fstack-protector-strong", "-fstack-protector-all"],),
     ],
 )
 
