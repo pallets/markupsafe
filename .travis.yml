@@ -1,21 +1,38 @@
+os: linux
 sudo: false
 language: python
-python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - pypy
+
+matrix:
+  include:
+    - python: 3.6
+      env: TOXENV=py,codecov
+    - python: 3.5
+      env: TOXENV=py,codecov
+    - python: 3.4
+      env: TOXENV=py,codecov
+    - python: 2.7
+      env: TOXENV=py,codecov
+    - python: pypy
+      env: TOXENV=py,codecov
+    - python: nigthly
+      env: TOXENV=py
+  allow_failures:
+    - python: nigthly
+      env: TOXENV=py
+
 install:
   - pip install tox
+
 script:
-  - tox -e py
+  - tox
+
+cache:
+  - pip
+
+branches:
+  only:
+    - master
+    - /^.*-maintenance$/
+
 notifications:
   email: false
-  irc:
-    channels:
-      - chat.freenode.net#pocoo
-    on_success: change
-    on_failure: always
-    use_notice: true
-    skip_join: true

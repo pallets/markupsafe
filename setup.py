@@ -1,43 +1,31 @@
 #!/usr/bin/env python
-import os
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+
+import io
 import re
-import ast
 import sys
-from setuptools import setup, Extension, Feature
-from distutils.command.build_ext import build_ext
-from distutils.errors import CCompilerError, DistutilsExecError, \
-     DistutilsPlatformError
+from collections import OrderedDict
+from distutils.errors import (
+    CCompilerError, DistutilsExecError,
+    DistutilsPlatformError
+)
 
+from setuptools import Extension, setup
+from setuptools.command.build_ext import build_ext
 
-# fail safe compilation shamelessly stolen from the simplejson
-# setup.py file.  Original author: Bob Ippolito
+with io.open('README.rst', 'rt', encoding='utf8') as f:
+    readme = f.read()
+
+with io.open('markupsafe/__init__.py', 'rt', encoding='utf8') as f:
+    version = re.search(r'__version__ = \'(.*?)\'', f.read()).group(1)
 
 is_jython = 'java' in sys.platform
 is_pypy = hasattr(sys, 'pypy_version_info')
 
-with open('markupsafe/__init__.py') as f:
-    version = ast.literal_eval(re.search(
-        '^__version__\s+=\s+(.*?)$(?sm)', f.read()).group(1))
-
-
-speedups = Feature(
-    'optional C speed-enhancement module',
-    standard=True,
-    ext_modules=[
-        Extension('markupsafe._speedups', ['markupsafe/_speedups.c']),
-    ],
-)
-
-# Known errors when running build_ext.build_extension method
-ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError)
-if sys.platform == 'win32' and sys.version_info > (2, 6):
-    # 2.6's distutils.msvc9compiler can raise an IOError when failing to
-    # find the compiler
-    ext_errors += (IOError,)
-# Known errors when running build_ext.run method
-run_errors = (DistutilsPlatformError,)
-if sys.platform == 'darwin':
-    run_errors += (SystemError,)
+ext_modules = [
+    Extension('markupsafe._speedups', ['markupsafe/_speedups.c']),
+]
 
 
 class BuildFailed(Exception):
@@ -50,13 +38,13 @@ class ve_build_ext(build_ext):
     def run(self):
         try:
             build_ext.run(self)
-        except run_errors:
+        except DistutilsPlatformError:
             raise BuildFailed()
 
     def build_extension(self, ext):
         try:
             build_ext.build_extension(self, ext)
-        except ext_errors:
+        except (CCompilerError, DistutilsExecError, DistutilsPlatformError):
             raise BuildFailed()
         except ValueError:
             # this can happen on Windows 64 bit, see Python issue 7511
@@ -65,29 +53,22 @@ class ve_build_ext(build_ext):
             raise
 
 
-def echo(msg=''):
-    sys.stdout.write(msg + '\n')
-
-
-readme = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
-
-
 def run_setup(with_binary):
-    features = {}
-    if with_binary:
-        features['speedups'] = speedups
     setup(
         name='MarkupSafe',
         version=version,
         url='https://www.palletsprojects.com/p/markupsafe/',
+        project_urls=OrderedDict((
+            ('Code', 'https://github.com/pallets/markupsafe'),
+            ('Issue tracker', 'https://github.com/pallets/markupsafe/issues'),
+        )),
         license='BSD',
         author='Armin Ronacher',
         author_email='armin.ronacher@active-4.com',
         maintainer='Pallets team',
         maintainer_email='contact@palletsprojects.com',
-        description='Implements a XML/HTML/XHTML Markup safe string for Python',
+        description='Safely add untrusted strings to XML/HTML markup.',
         long_description=readme,
-        zip_safe=False,
         classifiers=[
             'Development Status :: 5 - Production/Stable',
             'Environment :: Web Environment',
@@ -103,39 +84,51 @@ def run_setup(with_binary):
             'Programming Language :: Python :: 3.6',
             'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
             'Topic :: Software Development :: Libraries :: Python Modules',
-            'Topic :: Text Processing :: Markup :: HTML'
+            'Topic :: Text Processing :: Markup :: HTML',
         ],
+        python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
+        extras_require={
+            'dev': [
+                'pytest',
+                'coverage',
+                'tox',
+            ],
+        },
         packages=['markupsafe'],
-        test_suite='tests.suite',
         include_package_data=True,
+        zip_safe=False,
         cmdclass={'build_ext': ve_build_ext},
-        features=features,
+        ext_modules=ext_modules if with_binary else [],
     )
 
 
-def try_building_extension():
-    try:
-        run_setup(True)
-    except BuildFailed:
-        LINE = '=' * 74
-        BUILD_EXT_WARNING = 'WARNING: The C extension could not be ' \
-                            'compiled, speedups are not enabled.'
-
-        echo(LINE)
-        echo(BUILD_EXT_WARNING)
-        echo('Failure information, if any, is above.')
-        echo('Retrying the build without the C extension now.')
-        echo()
-
-        run_setup(False)
-
-        echo(LINE)
-        echo(BUILD_EXT_WARNING)
-        echo('Plain-Python installation succeeded.')
-        echo(LINE)
+def show_message(*lines):
+    print('=' * 74)
+    for line in lines:
+        print(line)
+    print('=' * 74)
 
 
 if not (is_pypy or is_jython):
-    try_building_extension()
+    try:
+        run_setup(True)
+    except BuildFailed:
+        show_message(
+            'WARNING: The C extension could not be compiled, speedups'
+            ' are not enabled.',
+            'Failure information, if any, is above.',
+            'Retrying the build without the C extension now.'
+        )
+        run_setup(False)
+        show_message(
+            'WARNING: The C extension could not be compiled,  speedups'
+            ' are not enabled.',
+            'Plain-Python build succeeded.'
+        )
 else:
     run_setup(False)
+    show_message(
+        'WARNING: C extensions are not supported on this Python'
+        ' platform, speedups are not enabled.',
+        'Plain-Python build succeeded.'
+    )
