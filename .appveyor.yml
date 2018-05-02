@@ -1,16 +1,16 @@
 environment:
   global:
-    TOXENV: "py"
+    TOXENV: py
 
   matrix:
-    - PYTHON: C:\Python27
-    - PYTHON: C:\Python27-x64
-    - PYTHON: C:\Python34
-    - PYTHON: C:\Python34-x64
-    - PYTHON: C:\Python35
-    - PYTHON: C:\Python35-x64
-    - PYTHON: C:\Python36
     - PYTHON: C:\Python36-x64
+    - PYTHON: C:\Python36
+    - PYTHON: C:\Python35-x64
+    - PYTHON: C:\Python35
+    - PYTHON: C:\Python34-x64
+    - PYTHON: C:\Python34
+    - PYTHON: C:\Python27-x64
+    - PYTHON: C:\Python27
 
 init:
   - SET PATH=%PYTHON%;%PATH%
@@ -18,14 +18,19 @@ init:
 install:
   - python -m pip install -U pip setuptools wheel tox
 
-build: off  # Not a C# project, build stuff at the test step instead.
+build: false
 
 test_script:
   - python -m tox
 
 after_test:
-  - python setup.py bdist_wheel
+  - python setup.py release bdist_wheel
 
 artifacts:
   - path: dist\*.whl
     type: whl
+
+branches:
+  only:
+    - master
+    - /^.*-maintenance$/
