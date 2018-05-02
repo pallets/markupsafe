@@ -1,2 +1,3 @@
-include AUTHORS CHANGES.rst LICENSE tests.py
+include AUTHORS.rst CHANGES.rst LICENSE.rst tox.ini
 recursive-include markupsafe *.c
+graft tests
