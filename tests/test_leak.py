@@ -1,0 +1,29 @@
+# -*- coding: utf-8 -*-
+import gc
+import sys
+
+import pytest
+
+from markupsafe import escape
+
+
+@pytest.mark.skipif(
+    hasattr(escape, 'func_code'),
+    reason='only test memory leak with speedups'
+)
+def test_markup_leaks():
+    counts = set()
+
+    for count in range(20):
+        for item in range(1000):
+            escape("foo")
+            escape("<foo>")
+            escape(u"foo")
+            escape(u"<foo>")
+
+        if hasattr(sys, 'pypy_version_info'):
+            gc.collect()
+
+        counts.add(len(gc.get_objects()))
+
+    assert len(counts) == 1
