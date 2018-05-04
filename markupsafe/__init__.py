@@ -1,70 +1,66 @@
 # -*- coding: utf-8 -*-
 """
-    markupsafe
-    ~~~~~~~~~~
+markupsafe
+~~~~~~~~~~
 
-    Implements a Markup string.
+Implements an escape function and a Markup string to replace HTML
+special characters with safe representations.
 
-    :copyright: (c) 2010 by Armin Ronacher.
-    :license: BSD, see LICENSE for more details.
+:copyright: © 2010 by the Pallets team.
+:license: BSD, see LICENSE for more details.
 """
+from collections import Mapping
+
 import re
 import string
-from collections import Mapping
-from markupsafe._compat import text_type, string_types, int_types, \
-     unichr, iteritems, PY2
+
+from markupsafe._compat import (
+    PY2, int_types, iteritems, string_types, text_type, unichr
+)
 
 __version__ = '1.1'
 
 __all__ = ['Markup', 'soft_unicode', 'escape', 'escape_silent']
-
 
 _striptags_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 _entity_re = re.compile(r'&([^& ;]+);')
 
 
 class Markup(text_type):
-    r"""Marks a string as being safe for inclusion in HTML/XML output without
-    needing to be escaped.  This implements the `__html__` interface a couple
-    of frameworks and web applications use.  :class:`Markup` is a direct
-    subclass of `unicode` and provides all the methods of `unicode` just that
-    it escapes arguments passed and always returns `Markup`.
+    """A string that is ready to be safely inserted into an HTML or XML
+    document, either because it was escaped or because it was marked
+    safe.
 
-    The `escape` function returns markup objects so that double escaping can't
-    happen.
+    Passing an object to the constructor converts it to text and wraps
+    it to mark it safe without escaping. To escape the text, use the
+    :meth:`escape` class method instead.
 
-    The constructor of the :class:`Markup` class can be used for three
-    different things:  When passed an unicode object it's assumed to be safe,
-    when passed an object with an HTML representation (has an `__html__`
-    method) that representation is used, otherwise the object passed is
-    converted into a unicode string and then assumed to be safe:
+    >>> Markup('Hello, <em>World</em>!')
+    Markup('Hello, <em>World</em>!')
+    >>> Markup(42)
+    Markup('42')
+    >>> Markup.escape('Hello, <em>World</em>!')
+    Markup('Hello &lt;em&gt;World&lt;/em&gt;!')
 
-    >>> Markup("Hello <em>World</em>!")
-    Markup(u'Hello <em>World</em>!')
-    >>> class Foo(object):
-    ...  def __html__(self):
-    ...   return '<a href="#">foo</a>'
+    This implements the ``__html__()`` interface that some frameworks
+    use. Passing an object that implements ``__html__()`` will wrap the
+    output of that method, marking it safe.
+
+    >>> class Foo:
+    ...     def __html__(self):
+    ...         return '<a href="/foo">foo</a>'
     ...
     >>> Markup(Foo())
-    Markup(u'<a href="#">foo</a>')
+    Markup('<a href="/foo">foo</a>')
 
-    If you want object passed being always treated as unsafe you can use the
-    :meth:`escape` classmethod to create a :class:`Markup` object:
+    This is a subclass of the text type (``str`` in Python 3,
+    ``unicode`` in Python 2). It has the same methods as that type, but
+    all methods escape their arguments and return a ``Markup`` instance.
 
-    >>> Markup.escape("Hello <em>World</em>!")
-    Markup(u'Hello &lt;em&gt;World&lt;/em&gt;!')
-
-    Operations on a markup string are markup aware which means that all
-    arguments are passed through the :func:`escape` function:
-
-    >>> em = Markup("<em>%s</em>")
-    >>> em % "foo & bar"
-    Markup(u'<em>foo &amp; bar</em>')
-    >>> strong = Markup("<strong>%(text)s</strong>")
-    >>> strong % {'text': '<blink>hacker here</blink>'}
-    Markup(u'<strong>&lt;blink&gt;hacker here&lt;/blink&gt;</strong>')
-    >>> Markup("<em>Hello</em> ") + "<foo>"
-    Markup(u'<em>Hello</em> &lt;foo&gt;')
+    >>> Markup('<em>%s</em>') % 'foo & bar'
+    Markup('<em>foo &amp; bar</em>')
+    >>> Markup('<em>Hello</em> ') + '<foo>'
+    Markup('<em>Hello</em> &lt;foo&gt;')
     """
     __slots__ = ()
 
@@ -125,11 +121,11 @@ class Markup(text_type):
     splitlines.__doc__ = text_type.splitlines.__doc__
 
     def unescape(self):
-        r"""Unescape markup again into an text_type string.  This also resolves
-        known HTML4 and XHTML entities:
+        """Convert escaped markup back into a text string. This replaces
+        HTML entities with the characters they represent.
 
-        >>> Markup("Main &raquo; <em>About</em>").unescape()
-        u'Main \xbb <em>About</em>'
+        >>> Markup('Main &raquo; <em>About</em>').unescape()
+        'Main » <em>About</em>'
         """
         from markupsafe._constants import HTML_ENTITIES
         def handle_match(m):
@@ -148,21 +144,19 @@ class Markup(text_type):
         return _entity_re.sub(handle_match, text_type(self))
 
     def striptags(self):
-        r"""Unescape markup into an text_type string and strip all tags.  This
-        also resolves known HTML4 and XHTML entities.  Whitespace is
-        normalized to one:
+        """:meth:`unescape` the markup, remove tags, and normalize
+        whitespace to single spaces.
 
-        >>> Markup("Main &raquo;  <em>About</em>").striptags()
-        u'Main \xbb About'
+        >>> Markup('Main &raquo;\t<em>About</em>').striptags()
+        'Main » About'
         """
         stripped = u' '.join(_striptags_re.sub('', self).split())
         return Markup(stripped).unescape()
 
     @classmethod
     def escape(cls, s):
-        """Escape the string.  Works like :func:`escape` with the difference
-        that for subclasses of :class:`Markup` this function would return the
-        correct subclass.
+        """Escape a string. Calls :func:`escape` and ensures that for
+        subclasses the correct type is returned.
         """
         rv = escape(s)
         if rv.__class__ is not cls:
@@ -254,9 +248,12 @@ if hasattr(text_type, 'format'):
                 rv = value.__html_format__(format_spec)
             elif hasattr(value, '__html__'):
                 if format_spec:
-                    raise ValueError('No format specification allowed '
-                                     'when formatting an object with '
-                                     'its __html__ method.')
+                    raise ValueError(
+                        'Format specifier {0} given, but {1} does not'
+                        ' define __html_format__. A class that defines'
+                        ' __html__ must define __html_format__ to work'
+                        ' with format specifiers.'.format(
+                            format_spec, type(value)))
                 rv = value.__html__()
             else:
                 # We need to make sure the format spec is unicode here as

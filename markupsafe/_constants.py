@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-    markupsafe._constants
-    ~~~~~~~~~~~~~~~~~~~~~
+markupsafe._constants
+~~~~~~~~~~~~~~~~~~~~~
 
-    Highlevel implementation of the Markup string.
-
-    :copyright: (c) 2010 by Armin Ronacher.
-    :license: BSD, see LICENSE for more details.
+:copyright: © 2010 by the Pallets team.
+:license: BSD, see LICENSE for more details.
 """
-
 
 HTML_ENTITIES = {
     'AElig': 198,

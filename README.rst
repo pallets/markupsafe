@@ -13,9 +13,11 @@ Installing
 
 Install and update using `pip`_:
 
-.. code-block:: none
+.. code-block:: text
 
     pip install -U MarkupSafe
+
+.. _pip: https://pip.pypa.io/en/stable/quickstart/
 
 
 Examples
@@ -53,17 +55,15 @@ projects, `please donate today`_.
 Links
 -----
 
-* Website: https://www.palletsprojects.com/p/markupsafe/
-* Documentation: https://markupsafe.readthedocs.io/
-* License: `BSD <https://github.com/pallets/markupsafe/blob/master/LICENSE.rst>`_
-* Releases: https://pypi.org/project/MarkupSafe/
-* Code: https://github.com/pallets/markupsafe
-* Issue tracker: https://github.com/pallets/markupsafe/issues
-* Test status:
+*   Website: https://www.palletsprojects.com/p/markupsafe/
+*   Documentation: https://markupsafe.readthedocs.io/
+*   License: `BSD <https://github.com/pallets/markupsafe/blob/master/LICENSE.rst>`_
+*   Releases: https://pypi.org/project/MarkupSafe/
+*   Code: https://github.com/pallets/markupsafe
+*   Issue tracker: https://github.com/pallets/markupsafe/issues
+*   Test status:
 
-  * Linux, Mac: https://travis-ci.org/pallets/markupsafe
-  * Windows: https://ci.appveyor.com/project/pallets/markupsafe
+    *   Linux, Mac: https://travis-ci.org/pallets/markupsafe
+    *   Windows: https://ci.appveyor.com/project/pallets/markupsafe
 
-* Test coverage: https://codecov.io/gh/pallets/markupsafe
-
-.. _pip: https://pip.pypa.io/en/stable/quickstart/
+*   Test coverage: https://codecov.io/gh/pallets/markupsafe
