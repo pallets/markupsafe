@@ -2,18 +2,17 @@
  * markupsafe._speedups
  * ~~~~~~~~~~~~~~~~~~~~
  *
- * This module implements functions for automatic escaping in C for better
- * performance.
+ * C implementation of escaping for better performance. Used instead of
+ * the native Python implementation when compiled.
  *
- * :copyright: (c) 2010 by Armin Ronacher.
- * :license: BSD.
+ * :copyright: © 2010 by the Pallets team.
+ * :license: BSD, see LICENSE for more details.
  */
 
 #include <Python.h>
 
 #define ESCAPED_CHARS_TABLE_SIZE 63
 #define UNICHR(x) (PyUnicode_AS_UNICODE((PyUnicodeObject*)PyUnicode_DecodeASCII(x, strlen(x), NULL)));
-
 
 static PyObject* markup;
 static Py_ssize_t escaped_chars_delta_len[ESCAPED_CHARS_TABLE_SIZE];

@@ -67,7 +67,7 @@ def run_setup(with_binary):
         author_email='armin.ronacher@active-4.com',
         maintainer='Pallets team',
         maintainer_email='contact@palletsprojects.com',
-        description='Safely add untrusted strings to XML/HTML markup.',
+        description='Safely add untrusted strings to HTML/XML markup.',
         long_description=readme,
         classifiers=[
             'Development Status :: 5 - Production/Stable',
@@ -92,6 +92,12 @@ def run_setup(with_binary):
                 'pytest',
                 'coverage',
                 'tox',
+                'sphinx',
+                'pallets-sphinx-themes',
+            ],
+            'docs': [
+                'sphinx',
+                'pallets-sphinx-themes',
             ],
         },
         packages=['markupsafe'],

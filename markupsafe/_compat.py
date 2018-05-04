@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-    markupsafe._compat
-    ~~~~~~~~~~~~~~~~~~
+markupsafe._compat
+~~~~~~~~~~~~~~~~~~
 
-    Compatibility module for different Python versions.
-
-    :copyright: (c) 2013 by Armin Ronacher.
-    :license: BSD, see LICENSE for more details.
+:copyright: © 2010 by the Pallets team.
+:license: BSD, see LICENSE for more details.
 """
 import sys
 
