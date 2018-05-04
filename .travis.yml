@@ -16,7 +16,7 @@ matrix:
       env: TOXENV=py,codecov
     - python: pypy
       env: TOXENV=py,codecov
-    - python: nigthly
+    - python: nightly
       env: TOXENV=py
   allow_failures:
     - python: nigthly
