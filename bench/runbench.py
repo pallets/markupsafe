@@ -2,6 +2,7 @@
 """
     Runs the benchmarks
 """
+from __future__ import print_function
 import sys
 import os
 import re
@@ -30,13 +31,13 @@ def run_bench(name):
 
 
 def main():
-    print '=' * 80
-    print 'Running benchmark for MarkupSafe'
-    print '-' * 80
+    print('=' * 80)
+    print('Running benchmark for MarkupSafe')
+    print('-' * 80)
     os.chdir(bench_directory)
     for bench in list_benchmarks():
         run_bench(bench)
-    print '-' * 80
+    print('-' * 80)
 
 
 if __name__ == '__main__':
