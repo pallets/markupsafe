@@ -127,7 +127,7 @@ if not (is_pypy or is_jython):
         )
         run_setup(False)
         show_message(
-            'WARNING: The C extension could not be compiled,  speedups'
+            'WARNING: The C extension could not be compiled, speedups'
             ' are not enabled.',
             'Plain-Python build succeeded.'
         )

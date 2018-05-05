@@ -8,7 +8,7 @@ from markupsafe import escape
 
 
 @pytest.mark.skipif(
-    hasattr(escape, 'func_code'),
+    escape.__module__ == 'markupsafe._native',
     reason='only test memory leak with speedups'
 )
 def test_markup_leaks():
