@@ -16,7 +16,7 @@ from markupsafe._compat import (
     PY2, int_types, iteritems, string_types, text_type, unichr, Mapping
 )
 
-__version__ = '1.1'
+__version__ = '1.1.dev'
 
 __all__ = ['Markup', 'soft_unicode', 'escape', 'escape_silent']
 
