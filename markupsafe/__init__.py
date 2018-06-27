@@ -9,13 +9,11 @@ special characters with safe representations.
 :copyright: © 2010 by the Pallets team.
 :license: BSD, see LICENSE for more details.
 """
-from collections import Mapping
-
 import re
 import string
 
 from markupsafe._compat import (
-    PY2, int_types, iteritems, string_types, text_type, unichr
+    PY2, int_types, iteritems, string_types, text_type, unichr, Mapping
 )
 
 __version__ = '1.1'
