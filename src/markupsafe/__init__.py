@@ -191,11 +191,11 @@ class Markup(text_type):
         kwargs = _MagicFormatMapping(args, kwargs)
         return self.__class__(formatter.vformat(self, args, kwargs))
 
-        def __html_format__(self, format_spec):
-            if format_spec:
-                raise ValueError('Unsupported format specification '
-                                 'for Markup.')
-            return self
+    def __html_format__(self, format_spec):
+        if format_spec:
+            raise ValueError('Unsupported format specification '
+                             'for Markup.')
+        return self
 
     # not in python 3
     if hasattr(text_type, '__getslice__'):
