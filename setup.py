@@ -11,20 +11,20 @@ from distutils.errors import (
     DistutilsPlatformError
 )
 
-from setuptools import Extension, setup
+from setuptools import Extension, setup, find_packages
 from setuptools.command.build_ext import build_ext
 
 with io.open('README.rst', 'rt', encoding='utf8') as f:
     readme = f.read()
 
-with io.open('markupsafe/__init__.py', 'rt', encoding='utf8') as f:
+with io.open('src/markupsafe/__init__.py', 'rt', encoding='utf8') as f:
     version = re.search(r'__version__ = \'(.*?)\'', f.read()).group(1)
 
 is_jython = 'java' in sys.platform
 is_pypy = hasattr(sys, 'pypy_version_info')
 
 ext_modules = [
-    Extension('markupsafe._speedups', ['markupsafe/_speedups.c']),
+    Extension('markupsafe._speedups', ['src/markupsafe/_speedups.c']),
 ]
 
 
@@ -100,7 +100,8 @@ def run_setup(with_binary):
                 'pallets-sphinx-themes',
             ],
         },
-        packages=['markupsafe'],
+        packages=find_packages("src"),
+        package_dir={"": "src"},
         include_package_data=True,
         zip_safe=False,
         cmdclass={'build_ext': ve_build_ext},

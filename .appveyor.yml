@@ -3,6 +3,8 @@ environment:
     TOXENV: py
 
   matrix:
+    - PYTHON: C:\Python37-x64
+    - PYTHON: C:\Python37
     - PYTHON: C:\Python36-x64
     - PYTHON: C:\Python36
     - PYTHON: C:\Python35-x64
@@ -16,12 +18,13 @@ init:
   - SET PATH=%PYTHON%;%PATH%
 
 install:
-  - python -m pip install -U pip setuptools wheel tox
+  - python -m pip install -IU pip
+  - python -m pip install -IU setuptools wheel tox
 
 build: false
 
 test_script:
-  - python -m tox
+  - python -m tox --skip-missing-interpreters=false
 
 after_test:
   - python setup.py release bdist_wheel
@@ -33,4 +36,7 @@ artifacts:
 branches:
   only:
     - master
-    - /^.*-maintenance$/
+    - /^.*\.x$/
+
+cache:
+  - '%LOCALAPPDATA%\pip\Cache'
