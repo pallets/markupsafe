@@ -1,40 +1,41 @@
 os: linux
 sudo: false
 language: python
+python:
+  - "3.6"
+  - "3.5"
+  - "3.4"
+  - "2.7"
+  - "nightly"
+  - "pypy3"
+env: TOXENV=py,codecov
 
 matrix:
   include:
-    - python: 3.6
-      env: TOXENV=py,codecov
-    - python: 3.6
-      env: TOXENV=docs-html
-    - python: 3.5
-      env: TOXENV=py,codecov
-    - python: 3.4
-      env: TOXENV=py,codecov
-    - python: 2.7
-      env: TOXENV=py,codecov
-    - python: pypy
-      env: TOXENV=py,codecov
-    - python: nightly
-      env: TOXENV=py
+    - dist: xenial
+      sudo: required
+      python: "3.7"
+    - env: TOXENV=docs-html
   allow_failures:
-    - python: nigthly
-      env: TOXENV=py
+    - python: nightly
+    - python: pypy3
+  fast_finish: true
 
 install:
   - pip install tox
 
 script:
-  - tox
+  - tox --skip-missing-interpreters=false
 
 cache:
-  - pip
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.cache/pre-commit
 
 branches:
   only:
     - master
-    - /^.*-maintenance$/
+    - /^.*\.x$/
 
 notifications:
   email: false
