@@ -18,8 +18,8 @@ init:
   - SET PATH=%PYTHON%;%PATH%
 
 install:
-  - python -m pip install -IU pip
-  - python -m pip install -IU setuptools wheel tox
+  - python -m pip install -U pip
+  - python -m pip install -U setuptools wheel tox
 
 build: false
 
@@ -27,11 +27,21 @@ test_script:
   - python -m tox --skip-missing-interpreters=false
 
 after_test:
-  - python setup.py release bdist_wheel
+  - python setup.py bdist_wheel
 
 artifacts:
   - path: dist\*.whl
     type: whl
+
+deploy:
+  provider: S3
+  access_key_id:
+    secure: "KP/pEANcoiWbT6ie9cwmMseUN2Z/VZEmcN2kAlA8rdY="
+  secret_access_key:
+    secure: "kaYMEi5krUfR1pKRyXbuL7Lkxwrv6T6qwfhl0bE0BPqKCSOU1REx23OYz97UtAGq"
+  bucket: pallets-wheels
+  region: us-east-1
+  folder: markupsafe
 
 branches:
   only:
