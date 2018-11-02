@@ -1,37 +1,21 @@
 environment:
   global:
-    TOXENV: py
-
-  matrix:
-    - PYTHON: C:\Python37-x64
-    - PYTHON: C:\Python37
-    - PYTHON: C:\Python36-x64
-    - PYTHON: C:\Python36
-    - PYTHON: C:\Python35-x64
-    - PYTHON: C:\Python35
-    - PYTHON: C:\Python34-x64
-    - PYTHON: C:\Python34
-    - PYTHON: C:\Python27-x64
-    - PYTHON: C:\Python27
+    PYTHON: C:\Python37-x64
+    CIBW_TEST_REQUIRES: pytest
+    CIBW_TEST_COMMAND: pytest {project}\tests
 
 init:
-  - SET PATH=%PYTHON%;%PATH%
+  - set PATH=%PYTHON%\Scripts;%PYTHON%;%PATH%
 
 install:
   - python -m pip install -U pip
-  - python -m pip install -U setuptools wheel tox
+  - python -m pip install -U cibuildwheel
 
-build: false
-
-test_script:
-  - python -m tox --skip-missing-interpreters=false
-
-after_test:
-  - python setup.py bdist_wheel
+build_script:
+  - python -m cibuildwheel --output-dir dist
 
 artifacts:
   - path: dist\*.whl
-    type: whl
 
 deploy:
   provider: S3
