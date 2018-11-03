@@ -1,17 +1,19 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from __future__ import print_function
+
+import sys
 
 import io
 import re
-import sys
-from collections import OrderedDict
 from distutils.errors import (
-    CCompilerError, DistutilsExecError,
-    DistutilsPlatformError
+    CCompilerError,
+    DistutilsExecError,
+    DistutilsPlatformError,
 )
-
-from setuptools import Extension, setup, find_packages
+from setuptools import (
+    Extension,
+    find_packages,
+    setup,
+)
 from setuptools.command.build_ext import build_ext
 
 with io.open('README.rst', 'rt', encoding='utf8') as f:
@@ -58,14 +60,15 @@ def run_setup(with_binary):
         name='MarkupSafe',
         version=version,
         url='https://www.palletsprojects.com/p/markupsafe/',
-        project_urls=OrderedDict((
-            ('Code', 'https://github.com/pallets/markupsafe'),
-            ('Issue tracker', 'https://github.com/pallets/markupsafe/issues'),
-        )),
+        project_urls={
+            "Documentation": "https://markupsafe.palletsprojects.com/",
+            "Code": "https://github.com/pallets/markupsafe",
+            "Issue tracker": "https://github.com/pallets/markupsafe/issues",
+        },
         license='BSD',
         author='Armin Ronacher',
         author_email='armin.ronacher@active-4.com',
-        maintainer='Pallets team',
+        maintainer='Pallets Team',
         maintainer_email='contact@palletsprojects.com',
         description='Safely add untrusted strings to HTML/XML markup.',
         long_description=readme,
@@ -82,28 +85,15 @@ def run_setup(with_binary):
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
             'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
             'Topic :: Software Development :: Libraries :: Python Modules',
             'Topic :: Text Processing :: Markup :: HTML',
         ],
-        python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
-        extras_require={
-            'dev': [
-                'pytest',
-                'coverage',
-                'tox',
-                'sphinx',
-                'pallets-sphinx-themes',
-            ],
-            'docs': [
-                'sphinx',
-                'pallets-sphinx-themes',
-            ],
-        },
         packages=find_packages("src"),
         package_dir={"": "src"},
         include_package_data=True,
-        zip_safe=False,
+        python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
         cmdclass={'build_ext': ve_build_ext},
         ext_modules=ext_modules if with_binary else [],
     )

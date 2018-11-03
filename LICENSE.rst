@@ -1,19 +1,21 @@
+`BSD 3-Clause <https://opensource.org/licenses/BSD-3-Clause>`_
+
 Copyright © 2010 by the Pallets team.
 
 Some rights reserved.
 
-Redistribution and use in source and binary forms of the software as
-well as documentation, with or without modification, are permitted
-provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
 
-*   Redistributions of source code must retain the above copyright
+-   Redistributions of source code must retain the above copyright
     notice, this list of conditions and the following disclaimer.
 
-*   Redistributions in binary form must reproduce the above copyright
+-   Redistributions in binary form must reproduce the above copyright
     notice, this list of conditions and the following disclaimer in the
     documentation and/or other materials provided with the distribution.
 
-*   Neither the name of the copyright holder nor the names of its
+-   Neither the name of the copyright holder nor the names of its
     contributors may be used to endorse or promote products derived from
     this software without specific prior written permission.
 

@@ -1,3 +1,8 @@
-include AUTHORS.rst CHANGES.rst LICENSE.rst tox.ini
-recursive-include src/markupsafe *.c
+include CHANGES.rst
+include LICENSE.rst
+include README.rst
+include tox.ini
+graft docs
+prune docs/_build
 graft tests
+recursive-exclude *.py[co]
