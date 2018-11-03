@@ -27,9 +27,27 @@ Markup('&lt;em&gt;Hello&lt;/em&gt; &lt;strong&gt;World&lt;/strong&gt;')
     refer to the :class:`str` class. In Python 2, this would be the
     ``unicode`` class instead.
 
+
+Installing
+----------
+
+Install and update using `pip`_:
+
+.. code-block:: text
+
+    pip install -U MarkupSafe
+
+.. _pip: https://pip.pypa.io/en/stable/quickstart/
+
+
+Table of Contents
+-----------------
+
 .. toctree::
     :maxdepth: 2
 
     escaping
     html
     formatting
+    license
+    changes
