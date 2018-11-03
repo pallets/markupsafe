@@ -21,7 +21,7 @@ html_theme_options = {"index_sidebar_logo": False}
 html_context = {
     "project_links": [
         ProjectLink("Donate to Pallets", "https://palletsprojects.com/donate"),
-        ProjectLink("Website", "https://palletsprojects.com/p/MarkupSafe/"),
+        ProjectLink("Website", "https://palletsprojects.com/p/markupsafe/"),
         ProjectLink("PyPI releases", "https://pypi.org/project/MarkupSafe/"),
         ProjectLink("Source Code", "https://github.com/pallets/markupsafe/"),
         ProjectLink("Issue Tracker", "https://github.com/pallets/markupsafe/issues/"),
