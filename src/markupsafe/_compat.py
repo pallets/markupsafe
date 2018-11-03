@@ -15,12 +15,19 @@ if not PY2:
     string_types = (str,)
     unichr = chr
     int_types = (int,)
-    iteritems = lambda x: iter(x.items())
+
+    def iteritems(x):
+        return iter(x.items())
+
     from collections.abc import Mapping
+
 else:
     text_type = unicode
     string_types = (str, unicode)
     unichr = unichr
     int_types = (int, long)
-    iteritems = lambda x: x.iteritems()
+
+    def iteritems(x):
+        return x.iteritems()
+
     from collections import Mapping
