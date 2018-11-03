@@ -8,8 +8,8 @@ Native Python implementation used when the C module is not compiled.
 :copyright: © 2010 by the Pallets team.
 :license: BSD, see LICENSE for more details.
 """
-from markupsafe import Markup
-from markupsafe._compat import text_type
+from . import Markup
+from ._compat import text_type
 
 
 def escape(s):
@@ -23,14 +23,15 @@ def escape(s):
     :param s: An object to be converted to a string and escaped.
     :return: A :class:`Markup` string with the escaped text.
     """
-    if hasattr(s, '__html__'):
+    if hasattr(s, "__html__"):
         return Markup(s.__html__())
-    return Markup(text_type(s)
-        .replace('&', '&amp;')
-        .replace('>', '&gt;')
-        .replace('<', '&lt;')
-        .replace("'", '&#39;')
-        .replace('"', '&#34;')
+    return Markup(
+        text_type(s)
+        .replace("&", "&amp;")
+        .replace(">", "&gt;")
+        .replace("<", "&lt;")
+        .replace("'", "&#39;")
+        .replace('"', "&#34;")
     )
 
 
