@@ -56,7 +56,7 @@ Links
 -----
 
 *   Website: https://www.palletsprojects.com/p/markupsafe/
-*   Documentation: https://markupsafe.readthedocs.io/
+*   Documentation: https://markupsafe.palletsprojects.com/
 *   License: `BSD <https://github.com/pallets/markupsafe/blob/master/LICENSE.rst>`_
 *   Releases: https://pypi.org/project/MarkupSafe/
 *   Code: https://github.com/pallets/markupsafe
