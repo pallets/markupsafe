@@ -1,7 +1,7 @@
 Version 1.1.0
 -------------
 
-Unreleased
+Released 2018-11-05
 
 -   Drop support for Python 2.6 and 3.3.
 -   Build wheels for Linux, Mac, and Windows, allowing systems without

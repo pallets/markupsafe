@@ -5,4 +5,4 @@ include tox.ini
 graft docs
 prune docs/_build
 graft tests
-recursive-exclude *.py[co]
+global-exclude *.py[co]
