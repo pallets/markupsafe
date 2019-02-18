@@ -311,6 +311,9 @@ escape(PyObject *self, PyObject *text)
 	if (html) {
 		s = PyObject_CallObject(html, NULL);
 		Py_DECREF(html);
+		if (s == NULL) {
+			return NULL;
+		}
 		/* Convert to Markup object */
 		rv = PyObject_CallFunctionObjArgs(markup, (PyObject*)s, NULL);
 		Py_DECREF(s);
