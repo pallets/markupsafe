@@ -42,7 +42,7 @@ matrix:
       deploy: *wheel_deploy
   allow_failures:
     - python: nightly
-    - python: pypy3
+    - python: pypy3.5-6.0
   fast_finish: true
 
 stages:
