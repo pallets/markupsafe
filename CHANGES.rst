@@ -1,3 +1,14 @@
+Version 1.1.1
+-------------
+
+Unreleased
+
+-   Fix segfault when ``__html__`` method raises an exception when using
+    the C speedups. The exception is now propagated correctly. (`#109`_)
+
+.. _#109: https://github.com/pallets/markupsafe/pull/109
+
+
 Version 1.1.0
 -------------
 
