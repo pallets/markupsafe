@@ -1,7 +1,7 @@
 Version 1.1.1
 -------------
 
-Unreleased
+Released 2019-02-23
 
 -   Fix segfault when ``__html__`` method raises an exception when using
     the C speedups. The exception is now propagated correctly. (`#109`_)
