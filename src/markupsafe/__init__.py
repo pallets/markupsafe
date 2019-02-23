@@ -6,8 +6,8 @@ markupsafe
 Implements an escape function and a Markup string to replace HTML
 special characters with safe representations.
 
-:copyright: © 2010 by the Pallets team.
-:license: BSD, see LICENSE for more details.
+:copyright: 2010 Pallets
+:license: BSD-3-Clause
 """
 import re
 import string

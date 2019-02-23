@@ -5,8 +5,8 @@ markupsafe._native
 
 Native Python implementation used when the C module is not compiled.
 
-:copyright: © 2010 by the Pallets team.
-:license: BSD, see LICENSE for more details.
+:copyright: 2010 Pallets
+:license: BSD-3-Clause
 """
 from . import Markup
 from ._compat import text_type
