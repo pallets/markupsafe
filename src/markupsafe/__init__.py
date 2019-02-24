@@ -6,8 +6,8 @@ markupsafe
 Implements an escape function and a Markup string to replace HTML
 special characters with safe representations.
 
-:copyright: © 2010 by the Pallets team.
-:license: BSD, see LICENSE for more details.
+:copyright: 2010 Pallets
+:license: BSD-3-Clause
 """
 import re
 import string
@@ -20,7 +20,7 @@ from ._compat import string_types
 from ._compat import text_type
 from ._compat import unichr
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 __all__ = ["Markup", "soft_unicode", "escape", "escape_silent"]
 

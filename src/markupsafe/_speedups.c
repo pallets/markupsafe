@@ -5,8 +5,8 @@
  * C implementation of escaping for better performance. Used instead of
  * the native Python implementation when compiled.
  *
- * :copyright: © 2010 by the Pallets team.
- * :license: BSD, see LICENSE for more details.
+ * :copyright: 2010 Pallets
+ * :license: BSD-3-Clause
  */
 #include <Python.h>
 

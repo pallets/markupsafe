@@ -49,15 +49,15 @@ libraries that use it. In order to grow the community of contributors
 and users, and allow the maintainers to devote more time to the
 projects, `please donate today`_.
 
-.. _please donate today: https://psfmember.org/civicrm/contribute/transact?reset=1&id=20
+.. _please donate today: https://palletsprojects.com/donate
 
 
 Links
 -----
 
-*   Website: https://www.palletsprojects.com/p/markupsafe/
+*   Website: https://palletsprojects.com/p/markupsafe/
 *   Documentation: https://markupsafe.palletsprojects.com/
-*   License: `BSD <https://github.com/pallets/markupsafe/blob/master/LICENSE.rst>`_
+*   License: `BSD-3-Clause <https://github.com/pallets/markupsafe/blob/master/LICENSE.rst>`_
 *   Releases: https://pypi.org/project/MarkupSafe/
 *   Code: https://github.com/pallets/markupsafe
 *   Issue tracker: https://github.com/pallets/markupsafe/issues

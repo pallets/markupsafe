@@ -1,20 +1,18 @@
 os: linux
-sudo: false
+dist: xenial
 language: python
 python:
+  - "3.7"
   - "3.6"
   - "3.5"
   - "3.4"
   - "2.7"
   - "nightly"
-  - "pypy3"
+  - "pypy3.5-6.0"
 env: TOXENV=py,codecov
 
 matrix:
   include:
-    - dist: xenial
-      sudo: required
-      python: "3.7"
     - env: TOXENV=stylecheck,docs-html
     - stage: wheel
       sudo: required
@@ -25,6 +23,9 @@ matrix:
       script: &wheel_script
         - cibuildwheel --output-dir wheelhouse
       deploy: &wheel_deploy
+        on:
+          all_branches: true
+          condition: $TRAVIS_BRANCH =~ ^(master|[0-9]+(.[0-9]+)*(.x)?)$
         skip_cleanup: true
         provider: s3
         access_key_id:
@@ -44,7 +45,7 @@ matrix:
       deploy: *wheel_deploy
   allow_failures:
     - python: nightly
-    - python: pypy3
+    - python: pypy3.5-6.0
   fast_finish: true
 
 stages:
@@ -66,7 +67,7 @@ cache:
 branches:
   only:
     - master
-    - /^.*\.x$/
+    - /^\d+(\.\d+)*(\.x)?$/
 
 notifications:
   email: false
