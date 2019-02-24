@@ -30,7 +30,7 @@ deploy:
 branches:
   only:
     - master
-    - /^.*\.x$/
+    - /^\d+(\.\d+)*(\.x)?$/
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
