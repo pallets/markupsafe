@@ -1,0 +1,128 @@
+trigger:
+- master
+
+jobs:
+- job: TestMarkupSafe
+  variables:
+    vmImage: ubuntu-latest
+    python.version: '3.7'
+    TOXENV: 'py,codecov'
+    python.architecture: 'x64'
+
+  strategy:
+    matrix:
+      Python37Linux:
+        python.version: '3.7'
+      Python37Windows:
+        python.version: '3.7'
+        vmImage: 'windows-latest'
+      Python37Mac:
+        python.version: '3.7'
+        vmImage: 'macos-latest'
+      Pypy3Linux:
+        python.version: 'pypy3'
+      Python36Linux:
+        python.version: '3.6'
+      Python35Linux:
+        python.version: '3.5'
+      Python27Linux:
+        python.version: '2.7'
+      Python27Windows:
+        python.version: '2.7'
+        vmImage: 'windows-latest'
+      StylecheckAndDocs:
+        TOXENV: stylecheck,docs-html
+
+  pool:
+    vmImage: $[ variables.vmImage ]
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: $(python.version)
+      architecture: $(python.architecture)
+
+  - script: pip install -U tox
+    displayName: 'Install tox'
+
+  - script: tox
+    displayName: 'Run tox'
+
+- job: BuildWheels
+  dependsOn: TestMarkupSafe
+
+  variables:
+    vmImage: ubuntu-latest
+    python.version: '3.7'
+    TOXENV: 'py,codecov'
+    python.architecture: 'x64'
+
+  strategy:
+    matrix:
+      Python37Linux:
+        platform: 'linux'
+      Python37Mac:
+        vmImage: 'macos-latest'
+        platform: 'macos'
+      Python37Windows:
+        vmImage: 'windows-latest'
+        platform: 'windows'
+      Python37Windows32bit:
+        vmImage: 'windows-latest'
+        python.architecture: 'x86'
+        platform: 'windows'
+      Python36Windows:
+        vmImage: 'windows-latest'
+        python.version: '3.6'
+        platform: 'windows'
+      Python36Windows32bit:
+        vmImage: 'windows-latest'
+        python.version: '3.6'
+        python.architecture: 'x86'
+        platform: 'windows'
+      Python35Windows:
+        vmImage: 'windows-latest'
+        python.version: '3.5'
+        platform: 'windows'
+      Python35Windows32bit:
+        vmImage: 'windows-latest'
+        python.version: '3.5'
+        python.architecture: 'x86'
+        platform: 'windows'
+      Python27Windows:
+        vmImage: 'windows-latest'
+        platform: 'windows'
+        python.version: '2.7'
+      Python27Windows32bit:
+        vmImage: 'windows-latest'
+        platform: 'windows'
+        python.version: '2.7'
+        python.architecture: 'x86'
+
+  pool:
+    vmImage: $[ variables.vmImage ]
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: $(python.version)
+      architecture: $(python.architecture)
+
+  - script: choco install vcpython27 -f -y
+    displayName: Install Visual C++ for Python 2.7
+    condition: and(eq(variables['platform'], 'windows'), eq(variables['python.version'], '2.7'))
+
+  - bash: |
+      python -m pip install --upgrade pip
+      # TODO: change this back to `pip install cibuildwheel` when `azure-windows` PR is merged
+      pip install https://github.com/joerick/cibuildwheel/archive/azure-windows.zip
+      cibuildwheel --platform $(platform) --output-dir wheelhouse .
+    displayName: Run cibuildwheel
+
+  - bash: echo "##vso[task.setVariable variable=artifactName]$PLATFORM-$PYTHON_VERSION-$PYTHON_ARCHITECTURE"
+    displayName: 'Compute artifact name'
+
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: $(artifactName)
+      targetPath: 'wheelhouse/'
