@@ -67,3 +67,4 @@ Links
     *   Windows: https://ci.appveyor.com/project/pallets/markupsafe
 
 *   Test coverage: https://codecov.io/gh/pallets/markupsafe
+*   Official chat: https://discord.gg/t6rrQZH
