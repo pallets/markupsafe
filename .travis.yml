@@ -2,20 +2,19 @@ os: linux
 dist: xenial
 language: python
 python:
+  - "3.8"
   - "3.7"
   - "3.6"
   - "3.5"
-  - "3.4"
   - "2.7"
   - "nightly"
-  - "pypy3.5-6.0"
+  - "pypy3"
 env: TOXENV=py,codecov
 
 matrix:
   include:
     - env: TOXENV=stylecheck,docs-html
     - stage: wheel
-      sudo: required
       services:
         - docker
       install:
@@ -45,7 +44,7 @@ matrix:
       deploy: *wheel_deploy
   allow_failures:
     - python: nightly
-    - python: pypy3.5-6.0
+    - python: pypy3
   fast_finish: true
 
 stages:
