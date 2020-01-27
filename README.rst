@@ -57,14 +57,8 @@ Links
 
 *   Website: https://palletsprojects.com/p/markupsafe/
 *   Documentation: https://markupsafe.palletsprojects.com/
-*   License: `BSD-3-Clause <https://github.com/pallets/markupsafe/blob/master/LICENSE.rst>`_
 *   Releases: https://pypi.org/project/MarkupSafe/
 *   Code: https://github.com/pallets/markupsafe
 *   Issue tracker: https://github.com/pallets/markupsafe/issues
-*   Test status:
-
-    *   Linux, Mac: https://travis-ci.org/pallets/markupsafe
-    *   Windows: https://ci.appveyor.com/project/pallets/markupsafe
-
-*   Test coverage: https://codecov.io/gh/pallets/markupsafe
+*   Test status: https://dev.azure.com/pallets/markupsafe/_build
 *   Official chat: https://discord.gg/t6rrQZH

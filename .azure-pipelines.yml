@@ -62,6 +62,10 @@ jobs:
           vmImage: 'ubuntu-latest'
         Windows:
           vmImage: 'windows-latest'
+          CIBW_SKIP: 'cp35-*'
+        Windows Python 3.5:
+          vmImage: 'vs2017-win2016'
+          CIBW_BUILD: 'cp35-*'
         Mac:
           vmImage: 'macos-latest'
 
