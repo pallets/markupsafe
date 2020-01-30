@@ -21,12 +21,6 @@ Markup('&lt;em&gt;Hello&lt;/em&gt;')
 >>> hello + ' <strong>World</strong>'
 Markup('&lt;em&gt;Hello&lt;/em&gt; &lt;strong&gt;World&lt;/strong&gt;')
 
-.. note::
-
-    The docs assume you're using Python 3. The terms "text" and "string"
-    refer to the :class:`str` class. In Python 2, this would be the
-    ``unicode`` class instead.
-
 
 Installing
 ----------
