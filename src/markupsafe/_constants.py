@@ -1,12 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-markupsafe._constants
-~~~~~~~~~~~~~~~~~~~~~
-
-:copyright: 2010 Pallets
-:license: BSD-3-Clause
-"""
-
 HTML_ENTITIES = {
     "AElig": 198,
     "Aacute": 193,
