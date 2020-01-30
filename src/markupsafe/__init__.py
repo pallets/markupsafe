@@ -291,9 +291,6 @@ class _MarkupEscapeHelper:
 
 # circular import
 try:
-    from ._native import _make_soft_unicode
-    from ._speedups import escape, escape_silent, soft_unicode as soft_str
-
-    soft_unicode = _make_soft_unicode(soft_str)
+    from ._speedups import escape, escape_silent, soft_str, soft_unicode
 except ImportError:
     from ._native import escape, escape_silent, soft_str, soft_unicode

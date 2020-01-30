@@ -249,7 +249,7 @@ escape_silent(PyObject *self, PyObject *text)
 
 
 static PyObject*
-soft_unicode(PyObject *self, PyObject *s)
+soft_str(PyObject *self, PyObject *s)
 {
 	if (!PyUnicode_Check(s))
 		return PyObject_Str(s);
@@ -258,19 +258,66 @@ soft_unicode(PyObject *self, PyObject *s)
 }
 
 
+static PyObject*
+soft_unicode(PyObject *self, PyObject *s)
+{
+	PyErr_WarnEx(
+		PyExc_DeprecationWarning,
+		"'soft_unicode' has been renamed to 'soft_str'. The old name"
+		" will be removed in version 2.1.",
+		2
+	);
+	return soft_str(self, s);
+}
+
+
 static PyMethodDef module_methods[] = {
-	{"escape", (PyCFunction)escape, METH_O,
-		"escape(s) -> markup\n\n"
-		"Convert the characters &, <, >, ', and \" in string s to HTML-safe\n"
-		"sequences. Use this if you need to display text that might contain\n"
-		"such characters in HTML. Marks return value as markup string."},
-	{"escape_silent", (PyCFunction)escape_silent, METH_O,
-		"escape_silent(s) -> markup\n\n"
-		"Like escape but converts None to an empty string."},
-	{"soft_unicode", (PyCFunction)soft_unicode, METH_O,
-		"soft_unicode(object) -> string\n\n"
-		"Make a string unicode if it isn't already. That way a markup\n"
-		"string is not converted back to unicode."},
+	{
+		"escape",
+		(PyCFunction)escape,
+		METH_O,
+		"Replace the characters ``&``, ``<``, ``>``, ``'``, and ``\"`` in"
+		" the string with HTML-safe sequences. Use this if you need to display"
+		" text that might contain such characters in HTML.\n\n"
+		"If the object has an ``__html__`` method, it is called and the"
+		" return value is assumed to already be safe for HTML.\n\n"
+		":param s: An object to be converted to a string and escaped.\n"
+		":return: A :class:`Markup` string with the escaped text.\n"
+	},
+	{
+		"escape_silent",
+		(PyCFunction)escape_silent,
+		METH_O,
+		"Like :func:`escape` but treats ``None`` as the empty string."
+		" Useful with optional values, as otherwise you get the string"
+		" ``'None'`` when the value is ``None``.\n\n"
+		">>> escape(None)\n"
+		"Markup('None')\n"
+		">>> escape_silent(None)\n"
+		"Markup('')\n"
+	},
+	{
+		"soft_str",
+		(PyCFunction)soft_str,
+		METH_O,
+		"Convert an object to a string if it isn't already. This preserves"
+		" a :class:`Markup` string rather than converting it back to a basic"
+		" string, so it will still be marked as safe and won't be escaped"
+		" again.\n\n"
+		">>> value = escape(\"<User 1>\")\n"
+		">>> value\n"
+		"Markup('&lt;User 1&gt;')\n"
+		">>> escape(str(value))\n"
+		"Markup('&amp;lt;User 1&amp;gt;')\n"
+		">>> escape(soft_str(value))\n"
+		"Markup('&lt;User 1&gt;')\n"
+	},
+	{
+		"soft_unicode",
+		(PyCFunction)soft_unicode,
+		METH_O,
+		""
+	},
 	{NULL, NULL, 0, NULL}  /* Sentinel */
 };
 
