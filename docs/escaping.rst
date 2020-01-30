@@ -18,4 +18,4 @@ Optional Values
 Convert an Object to a String
 -----------------------------
 
-.. autofunction:: soft_unicode
+.. autofunction:: soft_str

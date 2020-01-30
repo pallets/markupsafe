@@ -26,7 +26,7 @@ to use an ``__html_format__`` method.
     is escaped.
 
 For example, to implement a ``User`` that wraps its ``name`` in a
-``span`` tag, and adds a link when using the ``'link'`` format
+``span`` tag, and adds a link when using the ``"link"`` format
 specifier:
 
 .. code-block:: python
@@ -37,12 +37,12 @@ specifier:
             self.name = name
 
         def __html_format__(self, format_spec):
-            if format_spec == 'link':
+            if format_spec == "link":
                 return Markup(
                     '<a href="/user/{}">{}</a>'
                 ).format(self.id, self.__html__())
             elif format_spec:
-                raise ValueError('Invalid format spec')
+                raise ValueError("Invalid format spec")
             return self.__html__()
 
         def __html__(self):
@@ -53,10 +53,10 @@ specifier:
 
 .. code-block:: pycon
 
-    >>> user = User(3, '<script>')
+    >>> user = User(3, "<script>")
     >>> escape(user)
     Markup('<span class="user">&lt;script&gt;</span>')
-    >>> Markup('<p>User: {user:link}').format(user=user)
+    >>> Markup("<p>User: {user:link}").format(user=user)
     Markup('<p>User: <a href="/user/3"><span class="user">&lt;script&gt;</span></a>
 
 See Python's docs on :ref:`format string syntax <python:formatstrings>`.
@@ -70,8 +70,8 @@ formatting.
 
 .. code-block:: pycon
 
-    >>> user = User(3, '<script>')
-    >>> Markup('<a href="/user/%d">"%s</a>') % (user.id, user.name)
+    >>> user = User(3, "<script>")
+    >>> Markup('<a href="/user/%d">%s</a>') % (user.id, user.name)
     Markup('<a href="/user/3">&lt;script&gt;</a>')
 
 See Python's docs on :ref:`printf-style formatting <python:old-string-formatting>`.

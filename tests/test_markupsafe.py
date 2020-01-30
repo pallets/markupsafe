@@ -1,17 +1,12 @@
-# -*- coding: utf-8 -*-
 import pytest
 
-from markupsafe import escape
-from markupsafe import escape_silent
 from markupsafe import Markup
-from markupsafe._compat import PY2
-from markupsafe._compat import text_type
 
 
-def test_adding():
+def test_adding(escape):
     unsafe = '<script type="application/x-some-script">alert("foo");</script>'
     safe = Markup("<em>username</em>")
-    assert unsafe + safe == text_type(escape(unsafe)) + text_type(safe)
+    assert unsafe + safe == str(escape(unsafe)) + str(safe)
 
 
 @pytest.mark.parametrize(
@@ -38,14 +33,12 @@ def test_type_behavior():
 
 
 def test_html_interop():
-    class Foo(object):
+    class Foo:
         def __html__(self):
             return "<em>awesome</em>"
 
-        def __unicode__(self):
+        def __str__(self):
             return "awesome"
-
-        __str__ = __unicode__
 
     assert Markup(Foo()) == "<em>awesome</em>"
     result = Markup("<strong>%s</strong>") % Foo()
@@ -54,21 +47,21 @@ def test_html_interop():
 
 def test_tuple_interpol():
     result = Markup("<em>%s:%s</em>") % ("<foo>", "<bar>")
-    expect = Markup(u"<em>&lt;foo&gt;:&lt;bar&gt;</em>")
+    expect = Markup("<em>&lt;foo&gt;:&lt;bar&gt;</em>")
     assert result == expect
 
 
 def test_dict_interpol():
     result = Markup("<em>%(foo)s</em>") % {"foo": "<foo>"}
-    expect = Markup(u"<em>&lt;foo&gt;</em>")
+    expect = Markup("<em>&lt;foo&gt;</em>")
     assert result == expect
 
     result = Markup("<em>%(foo)s:%(bar)s</em>") % {"foo": "<foo>", "bar": "<bar>"}
-    expect = Markup(u"<em>&lt;foo&gt;:&lt;bar&gt;</em>")
+    expect = Markup("<em>&lt;foo&gt;:&lt;bar&gt;</em>")
     assert result == expect
 
 
-def test_escaping():
+def test_escaping(escape):
     assert escape("\"<>&'") == "&#34;&lt;&gt;&amp;&#39;"
     assert Markup("<em>Foo &amp; Bar</em>").striptags() == "Foo & Bar"
 
@@ -105,11 +98,11 @@ def test_formatting_empty():
 
 
 def test_custom_formatting():
-    class HasHTMLOnly(object):
+    class HasHTMLOnly:
         def __html__(self):
             return Markup("<foo>")
 
-    class HasHTMLAndFormat(object):
+    class HasHTMLAndFormat:
         def __html__(self):
             return Markup("<foo>")
 
@@ -121,7 +114,7 @@ def test_custom_formatting():
 
 
 def test_complex_custom_formatting():
-    class User(object):
+    class User:
         def __init__(self, id, username):
             self.id = id
             self.username = username
@@ -146,19 +139,11 @@ def test_complex_custom_formatting():
 
 
 def test_formatting_with_objects():
-    class Stringable(object):
-        def __unicode__(self):
-            return u"строка"
+    class Stringable:
+        def __str__(self):
+            return "строка"
 
-        if PY2:
-
-            def __str__(self):
-                return "some other value"
-
-        else:
-            __str__ = __unicode__
-
-    assert Markup("{s}").format(s=Stringable()) == Markup(u"строка")
+    assert Markup("{s}").format(s=Stringable()) == Markup("строка")
 
 
 def test_all_set():
@@ -168,10 +153,10 @@ def test_all_set():
         getattr(markup, item)
 
 
-def test_escape_silent():
+def test_escape_silent(escape, escape_silent):
     assert escape_silent(None) == Markup()
     assert escape(None) == Markup(None)
-    assert escape_silent("<foo>") == Markup(u"&lt;foo&gt;")
+    assert escape_silent("<foo>") == Markup("&lt;foo&gt;")
 
 
 def test_splitting():
@@ -185,7 +170,7 @@ def test_mul():
     assert Markup("a") * 3 == Markup("aaa")
 
 
-def test_escape_return_type():
+def test_escape_return_type(escape):
     assert isinstance(escape("a"), Markup)
     assert isinstance(escape(Markup("a")), Markup)
 
@@ -194,3 +179,14 @@ def test_escape_return_type():
             return "<strong>Foo</strong>"
 
     assert isinstance(escape(Foo()), Markup)
+
+
+def test_soft_str(soft_str):
+    assert type(soft_str("")) is str
+    assert type(soft_str(Markup())) is Markup
+    assert type(soft_str(15)) is str
+
+
+def test_soft_unicode_deprecated(soft_unicode):
+    with pytest.warns(DeprecationWarning):
+        assert type(soft_unicode(Markup())) is Markup

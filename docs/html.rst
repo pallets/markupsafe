@@ -20,11 +20,11 @@ For example, an ``Image`` class might automatically generate an
             self.url = url
 
         def __html__(self):
-            return '<img src="%s">' % self.url
+            return f'<img src="{self.url}">'
 
 .. code-block:: pycon
 
-    >>> img = Image('/static/logo.png')
+    >>> img = Image("/static/logo.png")
     >>> Markup(img)
     Markup('<img src="/static/logo.png">')
 
@@ -40,12 +40,10 @@ should still be escaped:
             self.name = name
 
         def __html__(self):
-            return '<a href="/user/{}">{}</a>'.format(
-                self.id, escape(self.name)
-            )
+            return f'<a href="/user/{self.id}">{escape(self.name)}</a>'
 
 .. code-block:: pycon
 
-    >>> user = User(3, '<script>')
+    >>> user = User(3, "<script>")
     >>> escape(user)
     Markup('<a href="/users/3">&lt;script&gt;</a>')

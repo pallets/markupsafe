@@ -32,11 +32,11 @@ html_sidebars = {
     "**": ["localtoc.html", "relations.html", "searchbox.html"],
 }
 singlehtml_sidebars = {"index": ["project.html", "localtoc.html"]}
-html_title = "MarkupSafe Documentation ({})".format(version)
+html_title = f"MarkupSafe Documentation ({version})"
 html_show_sourcelink = False
 
 # LaTeX ----------------------------------------------------------------
 
 latex_documents = [
-    (master_doc, "MarkupSafe-{}.tex".format(version), html_title, author, "manual")
+    (master_doc, f"MarkupSafe-{version}.tex", html_title, author, "manual")
 ]

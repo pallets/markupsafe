@@ -1,6 +1,4 @@
-from __future__ import print_function
-
-import io
+import platform
 import re
 import sys
 from distutils.errors import CCompilerError
@@ -12,14 +10,8 @@ from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 
-with io.open("README.rst", "rt", encoding="utf8") as f:
-    readme = f.read()
-
-with io.open("src/markupsafe/__init__.py", "rt", encoding="utf8") as f:
+with open("src/markupsafe/__init__.py", encoding="utf8") as f:
     version = re.search(r'__version__ = "(.*?)"', f.read()).group(1)
-
-is_jython = "java" in sys.platform
-is_pypy = hasattr(sys, "pypy_version_info")
 
 ext_modules = [Extension("markupsafe._speedups", ["src/markupsafe/_speedups.c"])]
 
@@ -60,12 +52,9 @@ def run_setup(with_binary):
             "Issue tracker": "https://github.com/pallets/markupsafe/issues",
         },
         license="BSD-3-Clause",
-        author="Armin Ronacher",
-        author_email="armin.ronacher@active-4.com",
-        maintainer="The Pallets Team",
+        maintainer="Pallets",
         maintainer_email="contact@palletsprojects.com",
         description="Safely add untrusted strings to HTML/XML markup.",
-        long_description=readme,
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Environment :: Web Environment",
@@ -73,8 +62,6 @@ def run_setup(with_binary):
             "License :: OSI Approved :: BSD License",
             "Operating System :: OS Independent",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 2",
-            "Programming Language :: Python :: 3",
             "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
             "Topic :: Software Development :: Libraries :: Python Modules",
             "Topic :: Text Processing :: Markup :: HTML",
@@ -82,7 +69,7 @@ def run_setup(with_binary):
         packages=find_packages("src"),
         package_dir={"": "src"},
         include_package_data=True,
-        python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*",
+        python_requires=">=3.6",
         cmdclass={"build_ext": ve_build_ext},
         ext_modules=ext_modules if with_binary else [],
     )
@@ -95,7 +82,7 @@ def show_message(*lines):
     print("=" * 74)
 
 
-if not (is_pypy or is_jython):
+if platform.python_implementation() not in {"PyPy", "Jython"}:
     try:
         run_setup(True)
     except BuildFailed:

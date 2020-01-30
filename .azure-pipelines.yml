@@ -9,6 +9,7 @@ trigger:
 
 jobs:
   - job: Test
+
     variables:
       vmImage: 'ubuntu-latest'
       python.version: '3.8'
@@ -28,10 +29,6 @@ jobs:
           python.version: '3.7'
         Python 3.6 Linux:
           python.version: '3.6'
-        Python 3.5 Linux:
-          python.version: '3.5'
-        Python 2.7 Linux:
-          python.version: '2.7'
         Docs:
           TOXENV: 'docs'
         Style:
@@ -56,16 +53,15 @@ jobs:
     dependsOn: Test
     condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
 
+    variables:
+      CIBW_SKIP: 'cp27-* cp35-*'
+
     strategy:
       matrix:
         Linux:
           vmImage: 'ubuntu-latest'
         Windows:
           vmImage: 'windows-latest'
-          CIBW_SKIP: 'cp35-*'
-        Windows Python 3.5:
-          vmImage: 'vs2017-win2016'
-          CIBW_BUILD: 'cp35-*'
         Mac:
           vmImage: 'macos-latest'
 
@@ -75,10 +71,6 @@ jobs:
     steps:
       - task: UsePythonVersion@0
         displayName: Use Python
-
-      - script: choco install vcpython27 -f -y
-        displayName: Install Visual C++ for Python 2.7
-        condition: eq(variables['vmImage'], 'windows-latest')
 
       - script: pip install cibuildwheel
         displayName: Install cibuildwheel
