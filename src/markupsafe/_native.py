@@ -61,22 +61,13 @@ def soft_str(s):
     return s
 
 
-def _make_soft_unicode(f):
-    from functools import wraps
+def soft_unicode(s):
+    import warnings
 
-    @wraps(f)
-    def soft_unicode(s):
-        import warnings
-
-        warnings.warn(
-            "'soft_unicode' has been renamed to 'soft_str'. The old name"
-            " will be removed in version 2.1.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return f(s)
-
-    return soft_unicode
-
-
-soft_unicode = _make_soft_unicode(soft_str)
+    warnings.warn(
+        "'soft_unicode' has been renamed to 'soft_str'. The old name"
+        " will be removed in version 2.1.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return soft_str(s)
