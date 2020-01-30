@@ -1,11 +1,9 @@
 import pytest
 
-from markupsafe import escape
-from markupsafe import escape_silent
 from markupsafe import Markup
 
 
-def test_adding():
+def test_adding(escape):
     unsafe = '<script type="application/x-some-script">alert("foo");</script>'
     safe = Markup("<em>username</em>")
     assert unsafe + safe == str(escape(unsafe)) + str(safe)
@@ -63,7 +61,7 @@ def test_dict_interpol():
     assert result == expect
 
 
-def test_escaping():
+def test_escaping(escape):
     assert escape("\"<>&'") == "&#34;&lt;&gt;&amp;&#39;"
     assert Markup("<em>Foo &amp; Bar</em>").striptags() == "Foo & Bar"
 
@@ -155,7 +153,7 @@ def test_all_set():
         getattr(markup, item)
 
 
-def test_escape_silent():
+def test_escape_silent(escape, escape_silent):
     assert escape_silent(None) == Markup()
     assert escape(None) == Markup(None)
     assert escape_silent("<foo>") == Markup("&lt;foo&gt;")
@@ -172,7 +170,7 @@ def test_mul():
     assert Markup("a") * 3 == Markup("aaa")
 
 
-def test_escape_return_type():
+def test_escape_return_type(escape):
     assert isinstance(escape("a"), Markup)
     assert isinstance(escape(Markup("a")), Markup)
 
@@ -181,3 +179,14 @@ def test_escape_return_type():
             return "<strong>Foo</strong>"
 
     assert isinstance(escape(Foo()), Markup)
+
+
+def test_soft_str(soft_str):
+    assert type(soft_str("")) is str
+    assert type(soft_str(Markup())) is Markup
+    assert type(soft_str(15)) is str
+
+
+def test_soft_unicode_deprecated(soft_unicode):
+    with pytest.warns(DeprecationWarning):
+        assert type(soft_unicode(Markup())) is Markup

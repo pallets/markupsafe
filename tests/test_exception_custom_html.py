@@ -1,14 +1,12 @@
 import pytest
 
-from markupsafe import escape
-
 
 class CustomHtmlThatRaises:
     def __html__(self):
         raise ValueError(123)
 
 
-def test_exception_custom_html():
+def test_exception_custom_html(escape):
     """Checks whether exceptions in custom __html__ implementations are
     propagated correctly.
 
