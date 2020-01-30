@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Implements an escape function and a Markup string to replace HTML
 special characters with safe representations.
@@ -24,11 +23,11 @@ class Markup(str):
     it to mark it safe without escaping. To escape the text, use the
     :meth:`escape` class method instead.
 
-    >>> Markup('Hello, <em>World</em>!')
+    >>> Markup("Hello, <em>World</em>!")
     Markup('Hello, <em>World</em>!')
     >>> Markup(42)
     Markup('42')
-    >>> Markup.escape('Hello, <em>World</em>!')
+    >>> Markup.escape("Hello, <em>World</em>!")
     Markup('Hello &lt;em&gt;World&lt;/em&gt;!')
 
     This implements the ``__html__()`` interface that some frameworks
@@ -45,15 +44,15 @@ class Markup(str):
     This is a subclass of :class:`str`. It has the same methods, but
     escapes their arguments and returns a ``Markup`` instance.
 
-    >>> Markup('<em>%s</em>') % 'foo & bar'
+    >>> Markup("<em>%s</em>") % ("foo & bar",)
     Markup('<em>foo &amp; bar</em>')
-    >>> Markup('<em>Hello</em> ') + '<foo>'
+    >>> Markup("<em>Hello</em> ") + "<foo>"
     Markup('<em>Hello</em> &lt;foo&gt;')
     """
 
     __slots__ = ()
 
-    def __new__(cls, base=u"", encoding=None, errors="strict"):
+    def __new__(cls, base="", encoding=None, errors="strict"):
         if hasattr(base, "__html__"):
             base = base.__html__()
         if encoding is None:
@@ -88,7 +87,7 @@ class Markup(str):
         return self.__class__(super().__mod__(arg))
 
     def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, super().__repr__())
+        return f"{self.__class__.__name__}({super().__repr__()})"
 
     def join(self, seq):
         return self.__class__(super().join(map(self.escape, seq)))
@@ -114,7 +113,7 @@ class Markup(str):
         """Convert escaped markup back into a text string. This replaces
         HTML entities with the characters they represent.
 
-        >>> Markup('Main &raquo; <em>About</em>').unescape()
+        >>> Markup("Main &raquo; <em>About</em>").unescape()
         'Main » <em>About</em>'
         """
         from ._constants import HTML_ENTITIES
@@ -139,10 +138,10 @@ class Markup(str):
         """:meth:`unescape` the markup, remove tags, and normalize
         whitespace to single spaces.
 
-        >>> Markup('Main &raquo;\t<em>About</em>').striptags()
+        >>> Markup("Main &raquo;\t<em>About</em>").striptags()
         'Main » About'
         """
-        stripped = u" ".join(_striptags_re.sub("", self).split())
+        stripped = " ".join(_striptags_re.sub("", self).split())
         return Markup(stripped).unescape()
 
     @classmethod
@@ -247,10 +246,9 @@ class EscapeFormatter(string.Formatter):
         elif hasattr(value, "__html__"):
             if format_spec:
                 raise ValueError(
-                    "Format specifier {0} given, but {1} does not"
-                    " define __html_format__. A class that defines"
-                    " __html__ must define __html_format__ to work"
-                    " with format specifiers.".format(format_spec, type(value))
+                    f"Format specifier {format_spec} given, but {type(value)} does not"
+                    " define __html_format__. A class that defines __html__ must define"
+                    " __html_format__ to work with format specifiers."
                 )
             rv = value.__html__()
         else:
@@ -268,8 +266,8 @@ def _escape_argspec(obj, iterable, escape):
     return obj
 
 
-class _MarkupEscapeHelper(object):
-    """Helper for Markup.__mod__"""
+class _MarkupEscapeHelper:
+    """Helper for :meth:`Markup.__mod__`."""
 
     def __init__(self, obj, escape):
         self.obj = obj
@@ -291,8 +289,7 @@ class _MarkupEscapeHelper(object):
         return float(self.obj)
 
 
-# we have to import it down here as the speedups and native
-# modules imports the markup type which is define above.
+# circular import
 try:
     from ._native import _make_soft_unicode
     from ._speedups import escape, escape_silent, soft_unicode as soft_str

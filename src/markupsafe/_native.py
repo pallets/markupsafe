@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Native Python implementation used when the C module is not compiled.
 """
@@ -49,7 +48,7 @@ def soft_str(s):
     string, so it will still be marked as safe and won't be escaped
     again.
 
-    >>> value = escape('<User 1>')
+    >>> value = escape("<User 1>")
     >>> value
     Markup('&lt;User 1&gt;')
     >>> escape(str(value))

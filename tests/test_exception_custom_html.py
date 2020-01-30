@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 import pytest
 
 from markupsafe import escape
 
 
-class CustomHtmlThatRaises(object):
+class CustomHtmlThatRaises:
     def __html__(self):
         raise ValueError(123)
 

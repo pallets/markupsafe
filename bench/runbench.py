@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-"""
-    Runs the benchmarks
-"""
-from __future__ import print_function
-
 import os
 import re
 import sys
@@ -24,10 +18,9 @@ def list_benchmarks():
 
 
 def run_bench(name):
-    sys.stdout.write("%-32s" % name)
-    sys.stdout.flush()
+    print(name)
     Popen(
-        [sys.executable, "-mtimeit", "-s", "from bench_%s import run" % name, "run()"]
+        [sys.executable, "-m", "timeit", "-s", f"from bench_{name} import run", "run()"]
     ).wait()
 
 

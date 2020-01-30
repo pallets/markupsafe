@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 HTML_ENTITIES = {
     "AElig": 198,
     "Aacute": 193,
