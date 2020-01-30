@@ -20,7 +20,7 @@ from ._compat import string_types
 from ._compat import text_type
 from ._compat import unichr
 
-__version__ = "1.1.1"
+__version__ = "2.0.0a1"
 
 __all__ = ["Markup", "soft_unicode", "escape", "escape_silent"]
 
