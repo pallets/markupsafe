@@ -13,12 +13,12 @@ object. The object won't be escaped anymore, but any text that is used
 with it will be, ensuring that the result remains safe to use in HTML.
 
 >>> from markupsafe import escape
->>> hello = escape('<em>Hello</em>')
+>>> hello = escape("<em>Hello</em>")
 >>> hello
 Markup('&lt;em&gt;Hello&lt;/em&gt;')
 >>> escape(hello)
 Markup('&lt;em&gt;Hello&lt;/em&gt;')
->>> hello + ' <strong>World</strong>'
+>>> hello + " <strong>World</strong>"
 Markup('&lt;em&gt;Hello&lt;/em&gt; &lt;strong&gt;World&lt;/strong&gt;')
 
 

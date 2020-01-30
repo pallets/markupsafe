@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import gc
 import sys
 
@@ -18,8 +17,8 @@ def test_markup_leaks():
         for _j in range(1000):
             escape("foo")
             escape("<foo>")
-            escape(u"foo")
-            escape(u"<foo>")
+            escape("foo")
+            escape("<foo>")
 
         if hasattr(sys, "pypy_version_info"):
             gc.collect()

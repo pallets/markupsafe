@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 
 from markupsafe import escape
@@ -36,14 +35,12 @@ def test_type_behavior():
 
 
 def test_html_interop():
-    class Foo(object):
+    class Foo:
         def __html__(self):
             return "<em>awesome</em>"
 
-        def __unicode__(self):
+        def __str__(self):
             return "awesome"
-
-        __str__ = __unicode__
 
     assert Markup(Foo()) == "<em>awesome</em>"
     result = Markup("<strong>%s</strong>") % Foo()
@@ -52,17 +49,17 @@ def test_html_interop():
 
 def test_tuple_interpol():
     result = Markup("<em>%s:%s</em>") % ("<foo>", "<bar>")
-    expect = Markup(u"<em>&lt;foo&gt;:&lt;bar&gt;</em>")
+    expect = Markup("<em>&lt;foo&gt;:&lt;bar&gt;</em>")
     assert result == expect
 
 
 def test_dict_interpol():
     result = Markup("<em>%(foo)s</em>") % {"foo": "<foo>"}
-    expect = Markup(u"<em>&lt;foo&gt;</em>")
+    expect = Markup("<em>&lt;foo&gt;</em>")
     assert result == expect
 
     result = Markup("<em>%(foo)s:%(bar)s</em>") % {"foo": "<foo>", "bar": "<bar>"}
-    expect = Markup(u"<em>&lt;foo&gt;:&lt;bar&gt;</em>")
+    expect = Markup("<em>&lt;foo&gt;:&lt;bar&gt;</em>")
     assert result == expect
 
 
@@ -103,11 +100,11 @@ def test_formatting_empty():
 
 
 def test_custom_formatting():
-    class HasHTMLOnly(object):
+    class HasHTMLOnly:
         def __html__(self):
             return Markup("<foo>")
 
-    class HasHTMLAndFormat(object):
+    class HasHTMLAndFormat:
         def __html__(self):
             return Markup("<foo>")
 
@@ -119,7 +116,7 @@ def test_custom_formatting():
 
 
 def test_complex_custom_formatting():
-    class User(object):
+    class User:
         def __init__(self, id, username):
             self.id = id
             self.username = username
@@ -144,11 +141,11 @@ def test_complex_custom_formatting():
 
 
 def test_formatting_with_objects():
-    class Stringable(object):
+    class Stringable:
         def __str__(self):
-            return u"строка"
+            return "строка"
 
-    assert Markup("{s}").format(s=Stringable()) == Markup(u"строка")
+    assert Markup("{s}").format(s=Stringable()) == Markup("строка")
 
 
 def test_all_set():
@@ -161,7 +158,7 @@ def test_all_set():
 def test_escape_silent():
     assert escape_silent(None) == Markup()
     assert escape(None) == Markup(None)
-    assert escape_silent("<foo>") == Markup(u"&lt;foo&gt;")
+    assert escape_silent("<foo>") == Markup("&lt;foo&gt;")
 
 
 def test_splitting():

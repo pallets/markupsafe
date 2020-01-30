@@ -1,6 +1,4 @@
-from __future__ import print_function
-
-import io
+import platform
 import re
 import sys
 from distutils.errors import CCompilerError
@@ -12,11 +10,8 @@ from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 
-with io.open("src/markupsafe/__init__.py", "rt", encoding="utf8") as f:
+with open("src/markupsafe/__init__.py", encoding="utf8") as f:
     version = re.search(r'__version__ = "(.*?)"', f.read()).group(1)
-
-is_jython = "java" in sys.platform
-is_pypy = hasattr(sys, "pypy_version_info")
 
 ext_modules = [Extension("markupsafe._speedups", ["src/markupsafe/_speedups.c"])]
 
@@ -87,7 +82,7 @@ def show_message(*lines):
     print("=" * 74)
 
 
-if not (is_pypy or is_jython):
+if platform.python_implementation() not in {"PyPy", "Jython"}:
     try:
         run_setup(True)
     except BuildFailed:
