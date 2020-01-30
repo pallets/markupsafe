@@ -1,34 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-markupsafe
-~~~~~~~~~~
-
 Implements an escape function and a Markup string to replace HTML
 special characters with safe representations.
-
-:copyright: 2010 Pallets
-:license: BSD-3-Clause
 """
 import re
 import string
-
-from ._compat import int_types
-from ._compat import iteritems
-from ._compat import Mapping
-from ._compat import PY2
-from ._compat import string_types
-from ._compat import text_type
-from ._compat import unichr
+from collections import abc
 
 __version__ = "2.0.0a1"
 
-__all__ = ["Markup", "soft_unicode", "escape", "escape_silent"]
+__all__ = ["Markup", "escape", "escape_silent", "soft_str", "soft_unicode"]
 
 _striptags_re = re.compile(r"(<!--.*?-->|<[^>]*>)")
 _entity_re = re.compile(r"&([^& ;]+);")
 
 
-class Markup(text_type):
+class Markup(str):
     """A string that is ready to be safely inserted into an HTML or XML
     document, either because it was escaped or because it was marked
     safe.
@@ -55,9 +42,8 @@ class Markup(text_type):
     >>> Markup(Foo())
     Markup('<a href="/foo">foo</a>')
 
-    This is a subclass of the text type (``str`` in Python 3,
-    ``unicode`` in Python 2). It has the same methods as that type, but
-    all methods escape their arguments and return a ``Markup`` instance.
+    This is a subclass of :class:`str`. It has the same methods, but
+    escapes their arguments and returns a ``Markup`` instance.
 
     >>> Markup('<em>%s</em>') % 'foo & bar'
     Markup('<em>foo &amp; bar</em>')
@@ -71,25 +57,25 @@ class Markup(text_type):
         if hasattr(base, "__html__"):
             base = base.__html__()
         if encoding is None:
-            return text_type.__new__(cls, base)
-        return text_type.__new__(cls, base, encoding, errors)
+            return super().__new__(cls, base)
+        return super().__new__(cls, base, encoding, errors)
 
     def __html__(self):
         return self
 
     def __add__(self, other):
-        if isinstance(other, string_types) or hasattr(other, "__html__"):
-            return self.__class__(super(Markup, self).__add__(self.escape(other)))
+        if isinstance(other, str) or hasattr(other, "__html__"):
+            return self.__class__(super().__add__(self.escape(other)))
         return NotImplemented
 
     def __radd__(self, other):
-        if hasattr(other, "__html__") or isinstance(other, string_types):
+        if isinstance(other, str) or hasattr(other, "__html__"):
             return self.escape(other).__add__(self)
         return NotImplemented
 
     def __mul__(self, num):
-        if isinstance(num, int_types):
-            return self.__class__(text_type.__mul__(self, num))
+        if isinstance(num, int):
+            return self.__class__(super().__mul__(num))
         return NotImplemented
 
     __rmul__ = __mul__
@@ -99,30 +85,30 @@ class Markup(text_type):
             arg = tuple(_MarkupEscapeHelper(x, self.escape) for x in arg)
         else:
             arg = _MarkupEscapeHelper(arg, self.escape)
-        return self.__class__(text_type.__mod__(self, arg))
+        return self.__class__(super().__mod__(arg))
 
     def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, text_type.__repr__(self))
+        return "%s(%s)" % (self.__class__.__name__, super().__repr__())
 
     def join(self, seq):
-        return self.__class__(text_type.join(self, map(self.escape, seq)))
+        return self.__class__(super().join(map(self.escape, seq)))
 
-    join.__doc__ = text_type.join.__doc__
+    join.__doc__ = str.join.__doc__
 
     def split(self, *args, **kwargs):
-        return list(map(self.__class__, text_type.split(self, *args, **kwargs)))
+        return list(map(self.__class__, super().split(*args, **kwargs)))
 
-    split.__doc__ = text_type.split.__doc__
+    split.__doc__ = str.split.__doc__
 
     def rsplit(self, *args, **kwargs):
-        return list(map(self.__class__, text_type.rsplit(self, *args, **kwargs)))
+        return list(map(self.__class__, super().rsplit(*args, **kwargs)))
 
-    rsplit.__doc__ = text_type.rsplit.__doc__
+    rsplit.__doc__ = str.rsplit.__doc__
 
     def splitlines(self, *args, **kwargs):
-        return list(map(self.__class__, text_type.splitlines(self, *args, **kwargs)))
+        return list(map(self.__class__, super().splitlines(*args, **kwargs)))
 
-    splitlines.__doc__ = text_type.splitlines.__doc__
+    splitlines.__doc__ = str.splitlines.__doc__
 
     def unescape(self):
         """Convert escaped markup back into a text string. This replaces
@@ -136,18 +122,18 @@ class Markup(text_type):
         def handle_match(m):
             name = m.group(1)
             if name in HTML_ENTITIES:
-                return unichr(HTML_ENTITIES[name])
+                return chr(HTML_ENTITIES[name])
             try:
                 if name[:2] in ("#x", "#X"):
-                    return unichr(int(name[2:], 16))
+                    return chr(int(name[2:], 16))
                 elif name.startswith("#"):
-                    return unichr(int(name[1:]))
+                    return chr(int(name[1:]))
             except ValueError:
                 pass
             # Don't modify unexpected input.
             return m.group()
 
-        return _entity_re.sub(handle_match, text_type(self))
+        return _entity_re.sub(handle_match, str(self))
 
     def striptags(self):
         """:meth:`unescape` the markup, remove tags, and normalize
@@ -170,11 +156,11 @@ class Markup(text_type):
         return rv
 
     def make_simple_escaping_wrapper(name):  # noqa: B902
-        orig = getattr(text_type, name)
+        orig = getattr(str, name)
 
         def func(self, *args, **kwargs):
             args = _escape_argspec(list(args), enumerate(args), self.escape)
-            _escape_argspec(kwargs, iteritems(kwargs), self.escape)
+            _escape_argspec(kwargs, kwargs.items(), self.escape)
             return self.__class__(orig(self, *args, **kwargs))
 
         func.__name__ = orig.__name__
@@ -201,11 +187,13 @@ class Markup(text_type):
     ):
         locals()[method] = make_simple_escaping_wrapper(method)
 
+    del method, make_simple_escaping_wrapper
+
     def partition(self, sep):
-        return tuple(map(self.__class__, text_type.partition(self, self.escape(sep))))
+        return tuple(map(self.__class__, super().partition(self.escape(sep))))
 
     def rpartition(self, sep):
-        return tuple(map(self.__class__, text_type.rpartition(self, self.escape(sep))))
+        return tuple(map(self.__class__, super().rpartition(self.escape(sep))))
 
     def format(self, *args, **kwargs):
         formatter = EscapeFormatter(self.escape)
@@ -214,17 +202,11 @@ class Markup(text_type):
 
     def __html_format__(self, format_spec):
         if format_spec:
-            raise ValueError("Unsupported format specification " "for Markup.")
+            raise ValueError("Unsupported format specification for Markup.")
         return self
 
-    # not in python 3
-    if hasattr(text_type, "__getslice__"):
-        __getslice__ = make_simple_escaping_wrapper("__getslice__")
 
-    del method, make_simple_escaping_wrapper
-
-
-class _MagicFormatMapping(Mapping):
+class _MagicFormatMapping(abc.Mapping):
     """This class implements a dummy wrapper to fix a bug in the Python
     standard library for string formatting.
 
@@ -255,37 +237,33 @@ class _MagicFormatMapping(Mapping):
         return len(self._kwargs)
 
 
-if hasattr(text_type, "format"):
+class EscapeFormatter(string.Formatter):
+    def __init__(self, escape):
+        self.escape = escape
 
-    class EscapeFormatter(string.Formatter):
-        def __init__(self, escape):
-            self.escape = escape
-
-        def format_field(self, value, format_spec):
-            if hasattr(value, "__html_format__"):
-                rv = value.__html_format__(format_spec)
-            elif hasattr(value, "__html__"):
-                if format_spec:
-                    raise ValueError(
-                        "Format specifier {0} given, but {1} does not"
-                        " define __html_format__. A class that defines"
-                        " __html__ must define __html_format__ to work"
-                        " with format specifiers.".format(format_spec, type(value))
-                    )
-                rv = value.__html__()
-            else:
-                # We need to make sure the format spec is unicode here as
-                # otherwise the wrong callback methods are invoked.  For
-                # instance a byte string there would invoke __str__ and
-                # not __unicode__.
-                rv = string.Formatter.format_field(self, value, text_type(format_spec))
-            return text_type(self.escape(rv))
+    def format_field(self, value, format_spec):
+        if hasattr(value, "__html_format__"):
+            rv = value.__html_format__(format_spec)
+        elif hasattr(value, "__html__"):
+            if format_spec:
+                raise ValueError(
+                    "Format specifier {0} given, but {1} does not"
+                    " define __html_format__. A class that defines"
+                    " __html__ must define __html_format__ to work"
+                    " with format specifiers.".format(format_spec, type(value))
+                )
+            rv = value.__html__()
+        else:
+            # We need to make sure the format spec is str here as
+            # otherwise the wrong callback methods are invoked.
+            rv = string.Formatter.format_field(self, value, str(format_spec))
+        return str(self.escape(rv))
 
 
 def _escape_argspec(obj, iterable, escape):
     """Helper for various string-wrapped functions."""
     for key, value in iterable:
-        if hasattr(value, "__html__") or isinstance(value, string_types):
+        if isinstance(value, str) or hasattr(value, "__html__"):
             obj[key] = escape(value)
     return obj
 
@@ -301,9 +279,7 @@ class _MarkupEscapeHelper(object):
         return _MarkupEscapeHelper(self.obj[item], self.escape)
 
     def __str__(self):
-        return text_type(self.escape(self.obj))
-
-    __unicode__ = __str__
+        return str(self.escape(self.obj))
 
     def __repr__(self):
         return str(self.escape(repr(self.obj)))
@@ -318,10 +294,9 @@ class _MarkupEscapeHelper(object):
 # we have to import it down here as the speedups and native
 # modules imports the markup type which is define above.
 try:
-    from ._speedups import escape, escape_silent, soft_unicode
-except ImportError:
-    from ._native import escape, escape_silent, soft_unicode
+    from ._native import _make_soft_unicode
+    from ._speedups import escape, escape_silent, soft_unicode as soft_str
 
-if not PY2:
-    soft_str = soft_unicode
-    __all__.append("soft_str")
+    soft_unicode = _make_soft_unicode(soft_str)
+except ImportError:
+    from ._native import escape, escape_silent, soft_str, soft_unicode

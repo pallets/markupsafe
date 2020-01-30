@@ -1,15 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-markupsafe._native
-~~~~~~~~~~~~~~~~~~
-
 Native Python implementation used when the C module is not compiled.
-
-:copyright: 2010 Pallets
-:license: BSD-3-Clause
 """
 from . import Markup
-from ._compat import text_type
 
 
 def escape(s):
@@ -26,7 +19,7 @@ def escape(s):
     if hasattr(s, "__html__"):
         return Markup(s.__html__())
     return Markup(
-        text_type(s)
+        str(s)
         .replace("&", "&amp;")
         .replace(">", "&gt;")
         .replace("<", "&lt;")
@@ -50,7 +43,7 @@ def escape_silent(s):
     return escape(s)
 
 
-def soft_unicode(s):
+def soft_str(s):
     """Convert an object to a string if it isn't already. This preserves
     a :class:`Markup` string rather than converting it back to a basic
     string, so it will still be marked as safe and won't be escaped
@@ -61,9 +54,30 @@ def soft_unicode(s):
     Markup('&lt;User 1&gt;')
     >>> escape(str(value))
     Markup('&amp;lt;User 1&amp;gt;')
-    >>> escape(soft_unicode(value))
+    >>> escape(soft_str(value))
     Markup('&lt;User 1&gt;')
     """
-    if not isinstance(s, text_type):
-        s = text_type(s)
+    if not isinstance(s, str):
+        return str(s)
     return s
+
+
+def _make_soft_unicode(f):
+    from functools import wraps
+
+    @wraps(f)
+    def soft_unicode(s):
+        import warnings
+
+        warnings.warn(
+            "'soft_unicode' has been renamed to 'soft_str'. The old name"
+            " will be removed in version 2.1.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return f(s)
+
+    return soft_unicode
+
+
+soft_unicode = _make_soft_unicode(soft_str)

@@ -4,14 +4,12 @@ import pytest
 from markupsafe import escape
 from markupsafe import escape_silent
 from markupsafe import Markup
-from markupsafe._compat import PY2
-from markupsafe._compat import text_type
 
 
 def test_adding():
     unsafe = '<script type="application/x-some-script">alert("foo");</script>'
     safe = Markup("<em>username</em>")
-    assert unsafe + safe == text_type(escape(unsafe)) + text_type(safe)
+    assert unsafe + safe == str(escape(unsafe)) + str(safe)
 
 
 @pytest.mark.parametrize(
@@ -147,16 +145,8 @@ def test_complex_custom_formatting():
 
 def test_formatting_with_objects():
     class Stringable(object):
-        def __unicode__(self):
+        def __str__(self):
             return u"строка"
-
-        if PY2:
-
-            def __str__(self):
-                return "some other value"
-
-        else:
-            __str__ = __unicode__
 
     assert Markup("{s}").format(s=Stringable()) == Markup(u"строка")
 
