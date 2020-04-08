@@ -1,7 +1,3 @@
-"""
-Implements an escape function and a Markup string to replace HTML
-special characters with safe representations.
-"""
 import re
 import string
 from collections import abc

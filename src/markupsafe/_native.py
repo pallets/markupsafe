@@ -1,6 +1,3 @@
-"""
-Native Python implementation used when the C module is not compiled.
-"""
 from . import Markup
 
 

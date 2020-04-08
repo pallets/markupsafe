@@ -1,7 +1,3 @@
-/**
- * C implementation of escaping for better performance. Used instead of
- * the native Python implementation when compiled.
- */
 #include <Python.h>
 
 static PyObject* markup;
