@@ -4,6 +4,8 @@ Version 2.0.0
 Unreleased
 
 -   Drop Python 2.7, 3.4, and 3.5 support.
+-   ``Markup.unescape`` uses :func:`html.unescape` to support HTML5
+    character references. :pr:`117`
 
 
 Version 1.1.1
