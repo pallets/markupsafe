@@ -146,13 +146,6 @@ def test_formatting_with_objects():
     assert Markup("{s}").format(s=Stringable()) == Markup("строка")
 
 
-def test_all_set():
-    import markupsafe as markup
-
-    for item in markup.__all__:
-        getattr(markup, item)
-
-
 def test_escape_silent(escape, escape_silent):
     assert escape_silent(None) == Markup()
     assert escape(None) == Markup(None)
