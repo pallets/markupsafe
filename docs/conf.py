@@ -4,19 +4,26 @@ from pallets_sphinx_themes import ProjectLink
 # Project --------------------------------------------------------------
 
 project = "MarkupSafe"
-copyright = "2010 Pallets Team"
-author = "Pallets Team"
+copyright = "2010 Pallets"
+author = "Pallets"
 release, version = get_version("MarkupSafe")
 
 # General --------------------------------------------------------------
 
 master_doc = "index"
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.intersphinx", "pallets_sphinx_themes"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "pallets_sphinx_themes",
+    "sphinxcontrib.log_cabinet",
+    "sphinx_issues",
+]
 intersphinx_mapping = {"python": ("https://docs.python.org/3/", None)}
+issues_github_path = "pallets/markupsafe"
 
 # HTML -----------------------------------------------------------------
 
-html_theme = "flask"
+html_theme = "jinja"
 html_theme_options = {"index_sidebar_logo": False}
 html_context = {
     "project_links": [
