@@ -5,7 +5,6 @@ from collections import abc
 __version__ = "2.0.0a1"
 
 _striptags_re = re.compile(r"(<!--.*?-->|<[^>]*>)")
-_entity_re = re.compile(r"&([^& ;]+);")
 
 
 class Markup(str):
@@ -110,23 +109,9 @@ class Markup(str):
         >>> Markup("Main &raquo; <em>About</em>").unescape()
         'Main » <em>About</em>'
         """
-        from ._constants import HTML_ENTITIES
+        from html import unescape
 
-        def handle_match(m):
-            name = m.group(1)
-            if name in HTML_ENTITIES:
-                return chr(HTML_ENTITIES[name])
-            try:
-                if name[:2] in ("#x", "#X"):
-                    return chr(int(name[2:], 16))
-                elif name.startswith("#"):
-                    return chr(int(name[1:]))
-            except ValueError:
-                pass
-            # Don't modify unexpected input.
-            return m.group()
-
-        return _entity_re.sub(handle_match, str(self))
+        return unescape(str(self))
 
     def striptags(self):
         """:meth:`unescape` the markup, remove tags, and normalize
