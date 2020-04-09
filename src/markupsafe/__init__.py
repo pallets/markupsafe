@@ -4,8 +4,6 @@ from collections import abc
 
 __version__ = "2.0.0a1"
 
-__all__ = ["Markup", "escape", "escape_silent", "soft_str", "soft_unicode"]
-
 _striptags_re = re.compile(r"(<!--.*?-->|<[^>]*>)")
 _entity_re = re.compile(r"&([^& ;]+);")
 
@@ -287,6 +285,12 @@ class _MarkupEscapeHelper:
 
 # circular import
 try:
-    from ._speedups import escape, escape_silent, soft_str, soft_unicode
+    from ._speedups import escape
+    from ._speedups import escape_silent
+    from ._speedups import soft_str
+    from ._speedups import soft_unicode
 except ImportError:
-    from ._native import escape, escape_silent, soft_str, soft_unicode
+    from ._native import escape
+    from ._native import escape_silent  # noqa: F401
+    from ._native import soft_str  # noqa: F401
+    from ._native import soft_unicode  # noqa: F401
