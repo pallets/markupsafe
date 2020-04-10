@@ -1,17 +1,12 @@
 import platform
-import re
 import sys
 from distutils.errors import CCompilerError
 from distutils.errors import DistutilsExecError
 from distutils.errors import DistutilsPlatformError
 
 from setuptools import Extension
-from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
-
-with open("src/markupsafe/__init__.py", encoding="utf8") as f:
-    version = re.search(r'__version__ = "(.*?)"', f.read()).group(1)
 
 ext_modules = [Extension("markupsafe._speedups", ["src/markupsafe/_speedups.c"])]
 
@@ -44,32 +39,6 @@ class ve_build_ext(build_ext):
 def run_setup(with_binary):
     setup(
         name="MarkupSafe",
-        version=version,
-        url="https://palletsprojects.com/p/markupsafe/",
-        project_urls={
-            "Documentation": "https://markupsafe.palletsprojects.com/",
-            "Code": "https://github.com/pallets/markupsafe",
-            "Issue tracker": "https://github.com/pallets/markupsafe/issues",
-        },
-        license="BSD-3-Clause",
-        maintainer="Pallets",
-        maintainer_email="contact@palletsprojects.com",
-        description="Safely add untrusted strings to HTML/XML markup.",
-        classifiers=[
-            "Development Status :: 5 - Production/Stable",
-            "Environment :: Web Environment",
-            "Intended Audience :: Developers",
-            "License :: OSI Approved :: BSD License",
-            "Operating System :: OS Independent",
-            "Programming Language :: Python",
-            "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
-            "Topic :: Software Development :: Libraries :: Python Modules",
-            "Topic :: Text Processing :: Markup :: HTML",
-        ],
-        packages=find_packages("src"),
-        package_dir={"": "src"},
-        include_package_data=True,
-        python_requires=">=3.6",
         cmdclass={"build_ext": ve_build_ext},
         ext_modules=ext_modules if with_binary else [],
     )
