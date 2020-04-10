@@ -51,10 +51,10 @@ jobs:
 
   - job: Build
     dependsOn: Test
-    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+    condition: or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.Reason'], 'Manual'))
 
     variables:
-      CIBW_SKIP: 'cp27-* cp35-*'
+      CIBW_SKIP: 'cp27-* pp27-* cp35-*'
 
     strategy:
       matrix:
