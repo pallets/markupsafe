@@ -1,0 +1,28 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+      - '*.x'
+    tags:
+      - '*'
+jobs:
+  wheels:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      CIBW_SKIP: 'cp27-* pp27-* cp35-*'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - run: pip install cibuildwheel
+      - run: cibuildwheel
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse
