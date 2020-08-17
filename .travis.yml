@@ -1,0 +1,34 @@
+dist: bionic
+os: linux
+arch: arm64
+stages:
+- test
+- build
+jobs:
+  include:
+  - stage: test
+    python: 3.6
+    install: pip3 install tox
+    script: tox -e style
+  - python: 3.6
+    install: pip3 install tox
+    script: tox -e docs
+  - python: 3.6
+    install: pip3 install tox
+    script: tox -e py36
+  - python: 3.7
+    install: pip3 install tox
+    script: tox -e py37
+  - python: 3.8
+    install: pip3 install tox
+    script: tox -e py38
+  - python: pypy3
+    install: pip3 install tox
+    script: tox -e pypy3
+  - stage: build
+    services: docker
+    env: CIBW_SKIP="cp27-* pp27-* cp35-*"
+    install:
+    - pip3 install --upgrade cibuildwheel
+    script:
+    - cibuildwheel --output-dir wheelhouse
