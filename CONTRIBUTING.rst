@@ -20,8 +20,7 @@ with your own code:
 -   Ask on `Stack Overflow`_. Search with Google first using:
     ``site:stackoverflow.com markupsafe {search term, exception message, etc.}``
 
-.. _Stack Overflow: https://stackoverflow.com/questions/tagged/markupsafe?sort=linked
-
+.. _Stack Overflow: https://stackoverflow.com/search?tab=relevance&q=markupsafe
 
 Reporting issues
 ----------------
