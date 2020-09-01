@@ -1,6 +1,5 @@
 import re
 import string
-from collections import abc
 
 __version__ = "2.0.0a1"
 
@@ -175,44 +174,12 @@ class Markup(str):
 
     def format(self, *args, **kwargs):
         formatter = EscapeFormatter(self.escape)
-        kwargs = _MagicFormatMapping(args, kwargs)
         return self.__class__(formatter.vformat(self, args, kwargs))
 
     def __html_format__(self, format_spec):
         if format_spec:
             raise ValueError("Unsupported format specification for Markup.")
         return self
-
-
-class _MagicFormatMapping(abc.Mapping):
-    """This class implements a dummy wrapper to fix a bug in the Python
-    standard library for string formatting.
-
-    See http://bugs.python.org/issue13598 for information about why
-    this is necessary.
-    """
-
-    def __init__(self, args, kwargs):
-        self._args = args
-        self._kwargs = kwargs
-        self._last_index = 0
-
-    def __getitem__(self, key):
-        if key == "":
-            idx = self._last_index
-            self._last_index += 1
-            try:
-                return self._args[idx]
-            except LookupError:
-                pass
-            key = str(idx)
-        return self._kwargs[key]
-
-    def __iter__(self):
-        return iter(self._kwargs)
-
-    def __len__(self):
-        return len(self._kwargs)
 
 
 class EscapeFormatter(string.Formatter):
