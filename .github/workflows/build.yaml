@@ -26,3 +26,27 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse
+
+  wheels_aarch64:
+    name: ${{ matrix.os }}-aarch64
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker Buildx
+        id: Buildx
+        uses: crazy-max/ghaction-docker-buildx@v3.3.0
+        with:
+          buildx-version: latest
+          qemu-version: latest
+      - name: Use docker to install and emulate AArch64 tests
+        run: |
+          docker buildx build --platform linux/arm64 -t markupsafe_aarch64 --output tmpwheelhouse -f .github/workflows/Dockerfile_aarch64_build .
+          mkdir -p wheelhouse
+          mv tmpwheelhouse/wheelhouse/*.whl wheelhouse/
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse
