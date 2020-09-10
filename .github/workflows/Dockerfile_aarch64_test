@@ -1,0 +1,21 @@
+ARG VERSION
+FROM ubuntu:${VERSION}
+
+ARG PYTHON
+ENV PYTHON=${PYTHON}
+
+RUN apt-get -y update
+RUN apt-get install -y python3 python3-pip
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install --upgrade setuptools
+# Pypy only available on ubuntu:focal
+RUN if [ "$PYTHON" = "pypy3" ]; then apt-get install -y pypy3; fi
+# python3.7 only available on ubuntu:bionic
+RUN if [ "$PYTHON" = "py37" ]; then apt-get install -y python3.7; fi
+RUN python3 -m pip install tox
+
+RUN mkdir -p /io/
+COPY . /io/
+
+WORKDIR /io/
+RUN tox -e ${PYTHON}

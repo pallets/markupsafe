@@ -50,3 +50,28 @@ jobs:
         if: matrix.tox == 'style'
       - run: pip install tox
       - run: tox -e ${{ matrix.tox }}
+
+  tests_aarch64:
+    name: ${{ matrix.name }}-aarch64
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {name: 'Python3.8', os: focal, tox: py38}
+          - {name: 'PyPy', os: focal, tox: pypy3}
+          - {name: 'Python3.6', os: bionic, tox: py36}
+          - {name: 'Python3.7', os: bionic, tox: py37}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker Buildx
+        id: Buildx
+        uses: crazy-max/ghaction-docker-buildx@v3.3.0
+        with:
+          buildx-version: latest
+          qemu-version: latest
+      - name: Use docker to install and emulate AArch64 tests
+        run: >
+          docker buildx build --platform linux/arm64
+          -t markupsafe_unittest --build-arg PYTHON=${{ matrix.tox }} --build-arg VERSION=${{ matrix.os }}
+          -f .github/workflows/Dockerfile_aarch64_test .
