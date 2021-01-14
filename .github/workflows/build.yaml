@@ -16,7 +16,13 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     env:
       CIBW_SKIP: 'cp27-* pp27-* cp35-*'
+      CIBW_ARCHS_LINUX: auto aarch64
     steps:
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
