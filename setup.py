@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import io
+import os
 import re
 import sys
 from distutils.errors import CCompilerError
@@ -95,7 +96,9 @@ def show_message(*lines):
     print("=" * 74)
 
 
-if not (is_pypy or is_jython):
+if os.environ.get("CIBUILDWHEEL", "0") == "1":
+    run_setup(True)
+elif not (is_pypy or is_jython):
     try:
         run_setup(True)
     except BuildFailed:
