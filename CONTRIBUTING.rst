@@ -106,11 +106,12 @@ First time setup
 
         > env\Scripts\activate
 
--   Install MarkupSafe in editable mode with development dependencies.
+-   Install the development dependencies, then install MarkupSafe in
+    editable mode.
 
     .. code-block:: text
 
-        $ pip install -e . -r requirements/dev.txt
+        $ pip install -r requirements/dev.txt && pip install -e .
 
 -   Install the pre-commit hooks.
 

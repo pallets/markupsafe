@@ -5,7 +5,7 @@ from markupsafe import _native
 try:
     from markupsafe import _speedups
 except ImportError:
-    _speedups = None
+    _speedups = None  # type: ignore
 
 
 @pytest.fixture(
