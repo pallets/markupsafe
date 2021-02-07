@@ -52,9 +52,11 @@ def show_message(*lines):
     print("=" * 74)
 
 
-if os.environ.get("CIBUILDWHEEL", "0") == "1":
+supports_speedups = platform.python_implementation() not in {"PyPy", "Jython"}
+
+if os.environ.get("CIBUILDWHEEL", "0") == "1" and supports_speedups:
     run_setup(True)
-elif platform.python_implementation() not in {"PyPy", "Jython"}:
+elif supports_speedups:
     try:
         run_setup(True)
     except BuildFailed:
