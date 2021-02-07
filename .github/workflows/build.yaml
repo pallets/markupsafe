@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     env:
-      CIBW_SKIP: 'cp27-* pp27-* cp35-*'
+      CIBW_SKIP: 'cp27-* cp35-* pp*'
       CIBW_ARCHS_LINUX: auto aarch64
     steps:
       - name: Set up QEMU
