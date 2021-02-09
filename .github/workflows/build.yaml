@@ -14,21 +14,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-    env:
-      CIBW_SKIP: 'cp27-* cp35-* pp*'
-      CIBW_ARCHS_LINUX: auto aarch64
     steps:
+      - uses: actions/checkout@v2
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v1
         with:
           platforms: arm64
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-      - run: pip install cibuildwheel
-      - run: cibuildwheel
+      - uses: joerick/cibuildwheel@v1.9.0
+        env:
+          CIBW_BUILD: cp36-* cp39-macosx_universal2
+          CIBW_ARCHS_LINUX: auto aarch64
+          CIBW_ARCHS_MACOS: auto universal2
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse
