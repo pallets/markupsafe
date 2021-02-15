@@ -10,7 +10,7 @@ if t.TYPE_CHECKING:
             pass
 
 
-__version__ = "2.0.0a1"
+__version__ = "2.0.0rc1"
 
 _striptags_re = re.compile(r"(<!--.*?-->|<[^>]*>)")
 
