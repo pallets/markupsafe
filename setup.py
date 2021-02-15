@@ -9,11 +9,7 @@ from setuptools import Extension
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 
-ext_modules = [
-    Extension(
-        "markupsafe._speedups", ["src/markupsafe/_speedups.c"], py_limited_api=True
-    )
-]
+ext_modules = [Extension("markupsafe._speedups", ["src/markupsafe/_speedups.c"])]
 
 
 class BuildFailed(Exception):

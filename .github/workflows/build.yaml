@@ -23,7 +23,7 @@ jobs:
           platforms: arm64
       - uses: joerick/cibuildwheel@v1.9.0
         env:
-          CIBW_BUILD: cp36-* cp39-macosx_universal2
+          CIBW_SKIP: 'cp27-* cp35-* pp*'
           CIBW_ARCHS_LINUX: auto aarch64
           CIBW_ARCHS_MACOS: auto universal2
       - uses: actions/upload-artifact@v2
