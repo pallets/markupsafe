@@ -49,9 +49,9 @@ Donate
 ------
 
 The Pallets organization develops and supports MarkupSafe and other
-libraries that use it. In order to grow the community of contributors
-and users, and allow the maintainers to devote more time to the
-projects, `please donate today`_.
+popular packages. In order to grow the community of contributors and
+users, and allow the maintainers to devote more time to the projects,
+`please donate today`_.
 
 .. _please donate today: https://palletsprojects.com/donate
 
@@ -59,10 +59,11 @@ projects, `please donate today`_.
 Links
 -----
 
-*   Website: https://palletsprojects.com/p/markupsafe/
-*   Documentation: https://markupsafe.palletsprojects.com/
-*   Releases: https://pypi.org/project/MarkupSafe/
-*   Code: https://github.com/pallets/markupsafe
-*   Issue tracker: https://github.com/pallets/markupsafe/issues
-*   Test status: https://dev.azure.com/pallets/markupsafe/_build
-*   Official chat: https://discord.gg/t6rrQZH
+-   Documentation: https://markupsafe.palletsprojects.com/
+-   Changes: https://markupsafe.palletsprojects.com/changes/
+-   PyPI Releases: https://pypi.org/project/MarkupSafe/
+-   Source Code: https://github.com/pallets/markupsafe/
+-   Issue Tracker: https://github.com/pallets/markupsafe/issues/
+-   Website: https://palletsprojects.com/p/markupsafe/
+-   Twitter: https://twitter.com/PalletsTeam
+-   Chat: https://discord.gg/pallets
