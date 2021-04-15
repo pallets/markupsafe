@@ -68,7 +68,7 @@ def soft_unicode(s: t.Any) -> str:
 
     warnings.warn(
         "'soft_unicode' has been renamed to 'soft_str'. The old name"
-        " will be removed in version 2.1.",
+        " will be removed in MarkupSafe 2.1.",
         DeprecationWarning,
         stacklevel=2,
     )

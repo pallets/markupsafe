@@ -260,7 +260,7 @@ soft_unicode(PyObject *self, PyObject *s)
 	PyErr_WarnEx(
 		PyExc_DeprecationWarning,
 		"'soft_unicode' has been renamed to 'soft_str'. The old name"
-		" will be removed in version 2.1.",
+		" will be removed in MarkupSafe 2.1.",
 		2
 	);
 	return soft_str(self, s);
