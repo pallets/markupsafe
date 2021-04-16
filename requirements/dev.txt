@@ -43,7 +43,7 @@ markupsafe==1.1.1
 mypy-extensions==0.4.3
     # via mypy
 mypy==0.812
-    # via -r typing.in
+    # via -r requirements/typing.in
 nodeenv==1.5.0
     # via pre-commit
 packaging==20.9
@@ -52,16 +52,16 @@ packaging==20.9
     #   pytest
     #   sphinx
     #   tox
-pallets-sphinx-themes==1.2.3
-    # via -r docs.in
+pallets-sphinx-themes==2.0.0rc1
+    # via -r requirements/docs.in
 pip-tools==5.5.0
-    # via -r dev.in
+    # via -r requirements/dev.in
 pluggy==0.13.1
     # via
     #   pytest
     #   tox
 pre-commit==2.10.1
-    # via -r dev.in
+    # via -r requirements/dev.in
 py==1.10.0
     # via
     #   pytest
@@ -71,7 +71,7 @@ pygments==2.7.4
 pyparsing==2.4.7
     # via packaging
 pytest==6.2.2
-    # via -r tests.in
+    # via -r requirements/tests.in
 pytz==2021.1
     # via babel
 pyyaml==5.4.1
@@ -85,10 +85,10 @@ six==1.15.0
 snowballstemmer==2.1.0
     # via sphinx
 sphinx-issues==1.2.0
-    # via -r docs.in
+    # via -r requirements/docs.in
 sphinx==3.5.1
     # via
-    #   -r docs.in
+    #   -r requirements/docs.in
     #   pallets-sphinx-themes
     #   sphinx-issues
     #   sphinxcontrib-log-cabinet
@@ -101,7 +101,7 @@ sphinxcontrib-htmlhelp==1.0.3
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
 sphinxcontrib-log-cabinet==1.0.1
-    # via -r docs.in
+    # via -r requirements/docs.in
 sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.4
@@ -112,7 +112,7 @@ toml==0.10.2
     #   pytest
     #   tox
 tox==3.22.0
-    # via -r dev.in
+    # via -r requirements/dev.in
 typed-ast==1.4.2
     # via mypy
 typing-extensions==3.7.4.3
