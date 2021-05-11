@@ -1,7 +1,7 @@
 Version 2.0.0
 -------------
 
-Unreleased
+Released 2021-05-11
 
 -   Drop Python 2.7, 3.4, and 3.5 support.
 -   ``Markup.unescape`` uses :func:`html.unescape` to support HTML5
