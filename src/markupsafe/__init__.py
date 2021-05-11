@@ -213,6 +213,7 @@ class Markup(str):
 class EscapeFormatter(string.Formatter):
     def __init__(self, escape: t.Callable[[t.Any], Markup]) -> None:
         self.escape = escape
+        super().__init__()
 
     def format_field(self, value: t.Any, format_spec: str) -> str:
         if hasattr(value, "__html_format__"):
