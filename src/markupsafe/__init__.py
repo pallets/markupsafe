@@ -211,6 +211,8 @@ class Markup(str):
 
 
 class EscapeFormatter(string.Formatter):
+    __slots__ = ("escape",)
+
     def __init__(self, escape: t.Callable[[t.Any], Markup]) -> None:
         self.escape = escape
         super().__init__()
@@ -249,6 +251,8 @@ def _escape_argspec(
 
 class _MarkupEscapeHelper:
     """Helper for :meth:`Markup.__mod__`."""
+
+    __slots__ = ("obj", "escape")
 
     def __init__(self, obj: t.Any, escape: t.Callable[[t.Any], Markup]) -> None:
         self.obj = obj
