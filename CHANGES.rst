@@ -3,6 +3,10 @@ Version 2.0.1
 
 Unreleased
 
+-   Mark top-level names as exported so type checking understands
+    imports in user projects. :pr:`215`
+-   Fix some types that weren't available in Python 3.6.0. :pr:`215`
+
 
 Version 2.0.0
 -------------
