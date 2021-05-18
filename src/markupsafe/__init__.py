@@ -4,8 +4,9 @@ import string
 import typing as t
 
 if t.TYPE_CHECKING:
+    import typing_extensions as te
 
-    class HasHTML(t.Protocol):
+    class HasHTML(te.Protocol):
         def __html__(self) -> str:
             pass
 
