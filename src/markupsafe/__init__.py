@@ -4,8 +4,9 @@ import string
 import typing as t
 
 if t.TYPE_CHECKING:
+    import typing_extensions as te
 
-    class HasHTML(t.Protocol):
+    class HasHTML(te.Protocol):
         def __html__(self) -> str:
             pass
 
@@ -276,12 +277,12 @@ class _MarkupEscapeHelper:
 
 # circular import
 try:
-    from ._speedups import escape
-    from ._speedups import escape_silent
-    from ._speedups import soft_str
+    from ._speedups import escape as escape
+    from ._speedups import escape_silent as escape_silent
+    from ._speedups import soft_str as soft_str
     from ._speedups import soft_unicode
 except ImportError:
-    from ._native import escape
-    from ._native import escape_silent  # noqa: F401
-    from ._native import soft_str  # noqa: F401
+    from ._native import escape as escape
+    from ._native import escape_silent as escape_silent  # noqa: F401
+    from ._native import soft_str as soft_str  # noqa: F401
     from ._native import soft_unicode  # noqa: F401
