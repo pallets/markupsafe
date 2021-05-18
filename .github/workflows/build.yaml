@@ -6,9 +6,6 @@ on:
       - '*.x'
     tags:
       - '*'
-  pull_request:
-    branches:
-      - '*'
 jobs:
   wheels:
     name: ${{ matrix.os }}
