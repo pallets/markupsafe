@@ -276,12 +276,12 @@ class _MarkupEscapeHelper:
 
 # circular import
 try:
-    from ._speedups import escape
-    from ._speedups import escape_silent
-    from ._speedups import soft_str
+    from ._speedups import escape as escape
+    from ._speedups import escape_silent as escape_silent
+    from ._speedups import soft_str as soft_str
     from ._speedups import soft_unicode
 except ImportError:
-    from ._native import escape
-    from ._native import escape_silent  # noqa: F401
-    from ._native import soft_str  # noqa: F401
+    from ._native import escape as escape
+    from ._native import escape_silent as escape_silent  # noqa: F401
+    from ._native import soft_str as soft_str  # noqa: F401
     from ._native import soft_unicode  # noqa: F401
