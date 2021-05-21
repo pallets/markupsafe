@@ -38,10 +38,10 @@ html_context = {
     ]
 }
 html_sidebars = {
-    "index": ["project.html", "localtoc.html", "searchbox.html"],
-    "**": ["localtoc.html", "relations.html", "searchbox.html"],
+    "index": ["project.html", "localtoc.html", "searchbox.html", "ethicalads.html"],
+    "**": ["localtoc.html", "relations.html", "searchbox.html", "ethicalads.html"],
 }
-singlehtml_sidebars = {"index": ["project.html", "localtoc.html"]}
+singlehtml_sidebars = {"index": ["project.html", "localtoc.html", "ethicalads.html"]}
 html_title = f"MarkupSafe Documentation ({version})"
 html_show_sourcelink = False
 
