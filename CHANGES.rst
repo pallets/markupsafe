@@ -3,6 +3,9 @@ Version 2.1.0
 
 Unreleased
 
+-   Raise error on missing single placeholder during string
+    interpolation. :issue:`225`
+
 
 Version 2.0.2
 -------------

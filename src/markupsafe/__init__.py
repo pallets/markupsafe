@@ -102,9 +102,14 @@ class Markup(str):
 
     def __mod__(self, arg: t.Any) -> "Markup":
         if isinstance(arg, tuple):
+            # a tuple of arguments, each wrapped
             arg = tuple(_MarkupEscapeHelper(x, self.escape) for x in arg)
-        else:
+        elif hasattr(type(arg), "__getitem__") and not isinstance(arg, str):
+            # a mapping of arguments, wrapped
             arg = _MarkupEscapeHelper(arg, self.escape)
+        else:
+            # a single argument, wrapped with the helper and a tuple
+            arg = (_MarkupEscapeHelper(arg, self.escape),)
 
         return self.__class__(super().__mod__(arg))
 

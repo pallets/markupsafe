@@ -45,6 +45,12 @@ def test_html_interop():
     assert result == "<strong><em>awesome</em></strong>"
 
 
+@pytest.mark.parametrize("args", ["foo", 42, ("foo", 42)])
+def test_missing_interpol(args):
+    with pytest.raises(TypeError):
+        Markup("<em></em>") % args
+
+
 def test_tuple_interpol():
     result = Markup("<em>%s:%s</em>") % ("<foo>", "<bar>")
     expect = Markup("<em>&lt;foo&gt;:&lt;bar&gt;</em>")
