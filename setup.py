@@ -22,18 +22,18 @@ class ve_build_ext(build_ext):
     def run(self):
         try:
             build_ext.run(self)
-        except DistutilsPlatformError:
-            raise BuildFailed()
+        except DistutilsPlatformError as e:
+            raise BuildFailed() from e
 
     def build_extension(self, ext):
         try:
             build_ext.build_extension(self, ext)
-        except (CCompilerError, DistutilsExecError, DistutilsPlatformError):
-            raise BuildFailed()
-        except ValueError:
+        except (CCompilerError, DistutilsExecError, DistutilsPlatformError) as e:
+            raise BuildFailed() from e
+        except ValueError as e:
             # this can happen on Windows 64 bit, see Python issue 7511
             if "'path'" in str(sys.exc_info()[1]):  # works with Python 2 and 3
-                raise BuildFailed()
+                raise BuildFailed() from e
             raise
 
 
