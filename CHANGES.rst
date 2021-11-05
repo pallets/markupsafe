@@ -3,6 +3,7 @@ Version 2.1.0
 
 Unreleased
 
+-   Drop support for Python 3.6. :pr:`262`
 -   Remove ``soft_unicode``, which was previously deprecated. Use
     ``soft_str`` instead. :pr:`261`
 -   Raise error on missing single placeholder during string
