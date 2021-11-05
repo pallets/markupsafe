@@ -3,6 +3,8 @@ Version 2.1.0
 
 Unreleased
 
+-   Remove ``soft_unicode``, which was previously deprecated. Use
+    ``soft_str`` instead. :pr:`261`
 -   Raise error on missing single placeholder during string
     interpolation. :issue:`225`
 
