@@ -92,11 +92,11 @@ class Markup(str):
 
         return NotImplemented
 
-    def __mul__(self, num: int) -> "Markup":
+    def __mul__(self, num: "te.SupportsIndex") -> "Markup":
         if isinstance(num, int):
             return self.__class__(super().__mul__(num))
 
-        return NotImplemented  # type: ignore
+        return NotImplemented
 
     __rmul__ = __mul__
 
