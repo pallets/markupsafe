@@ -1,10 +1,10 @@
 import os
 import platform
 import sys
-
 from distutils.errors import CCompilerError
 from distutils.errors import DistutilsExecError
 from distutils.errors import DistutilsPlatformError
+
 from setuptools import Extension
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
