@@ -52,7 +52,11 @@ def show_message(*lines):
     print("=" * 74)
 
 
-supports_speedups = platform.python_implementation() not in {"PyPy", "Jython"}
+supports_speedups = platform.python_implementation() not in {
+    "PyPy",
+    "Jython",
+    "GraalVM",
+}
 
 if os.environ.get("CIBUILDWHEEL", "0") == "1" and supports_speedups:
     run_setup(True)
