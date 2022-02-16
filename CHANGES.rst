@@ -10,12 +10,6 @@ Unreleased
     interpolation. :issue:`225`
 
 
-Version 2.0.2
--------------
-
-Unreleased
-
-
 Version 2.0.1
 -------------
 
