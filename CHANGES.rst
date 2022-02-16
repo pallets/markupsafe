@@ -8,6 +8,7 @@ Unreleased
     ``soft_str`` instead. :pr:`261`
 -   Raise error on missing single placeholder during string
     interpolation. :issue:`225`
+-   Disable speedups module for GraalPython. :issue:`277`
 
 
 Version 2.0.1
