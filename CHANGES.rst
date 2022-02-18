@@ -1,7 +1,7 @@
 Version 2.1.0
 -------------
 
-Unreleased
+Released 2022-02-17
 
 -   Drop support for Python 3.6. :pr:`262`
 -   Remove ``soft_unicode``, which was previously deprecated. Use
