@@ -1,3 +1,11 @@
+Version 2.1.1
+-------------
+
+Unreleased
+
+-   Avoid ambiguous regex matches in ``striptags``. :pr:`293`
+
+
 Version 2.1.0
 -------------
 
