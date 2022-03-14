@@ -1,7 +1,7 @@
 Version 2.1.1
 -------------
 
-Unreleased
+Released 2022-03-14
 
 -   Avoid ambiguous regex matches in ``striptags``. :pr:`293`
 
