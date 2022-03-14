@@ -11,7 +11,7 @@ if t.TYPE_CHECKING:
             pass
 
 
-__version__ = "2.1.1.dev0"
+__version__ = "2.1.1"
 
 _strip_comments_re = re.compile(r"<!--.*?-->")
 _strip_tags_re = re.compile(r"<.*?>")
