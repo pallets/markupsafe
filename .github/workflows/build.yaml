@@ -21,7 +21,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
         with:
           platforms: arm64
-      - uses: joerick/cibuildwheel@v2.3.1
+      - uses: joerick/cibuildwheel@2.5.0
         env:
           CIBW_SKIP: 'pp*'
           CIBW_ARCHS_LINUX: auto aarch64
