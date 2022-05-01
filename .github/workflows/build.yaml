@@ -26,6 +26,6 @@ jobs:
           CIBW_SKIP: 'pp*'
           CIBW_ARCHS_LINUX: auto aarch64
           CIBW_ARCHS_MACOS: auto universal2
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse
