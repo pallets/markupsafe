@@ -13,8 +13,8 @@ if t.TYPE_CHECKING:
 
 __version__ = "2.1.2.dev0"
 
-_strip_comments_re = re.compile(r"<!--.*?-->")
-_strip_tags_re = re.compile(r"<.*?>")
+_strip_comments_re = re.compile(r"<!--.*?-->", re.DOTALL)
+_strip_tags_re = re.compile(r"<.*?>", re.DOTALL)
 
 
 def _simple_escaping_wrapper(name: str) -> t.Callable[..., "Markup"]:
