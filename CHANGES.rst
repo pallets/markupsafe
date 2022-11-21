@@ -5,6 +5,7 @@ Unreleased
 
 -   Fix ``striptags`` not stripping tags containing newlines.
     :issue:`310`
+-   Add support for Python 3.11. :issue:`327`
 
 
 Version 2.1.1
