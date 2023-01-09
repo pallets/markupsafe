@@ -15,13 +15,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up QEMU
         if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64
-      - uses: joerick/cibuildwheel@v2.3.1
+      - uses: joerick/cibuildwheel@v2.11.4
         env:
           CIBW_SKIP: 'pp*'
           CIBW_ARCHS_LINUX: auto aarch64
