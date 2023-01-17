@@ -1,0 +1,134 @@
+name: Publish
+on:
+  push:
+    tags:
+      - '*'
+  # When a new version of Python is released, the workflow can be run manually to
+  # publish new wheels for the existing tag.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'git tag to check out and upload to'
+        required: true
+      python:
+        description: 'Python version, like "cp311"'
+        required: true
+jobs:
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+          cache-dependency-path: 'requirements/*.txt'
+      - run: pip install -r requirements/build.txt
+      # Use the commit date instead of the current date during the build.
+      - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
+      - run: python -m build --sdist
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
+        with:
+          path: ./dist
+        # The sdist is not needed on new Python version builds. However, this job must
+        # present in the run for the hash job, so only the upload is skipped.
+        if: github.event_name == 'push'
+  wheels:
+    name: wheels / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
+        with:
+          platforms: arm64
+      - uses: joerick/cibuildwheel@27fc88e6385a995e61a87ee4b903bed263e6a6e2
+        env:
+          # For workflow_dispatch, only build the new Python version.
+          CIBW_BUILD: "${{ inputs.python && format('{0}-*', inputs.python) || null }}"
+          CIBW_SKIP: 'pp*'
+          CIBW_ARCHS_LINUX: auto aarch64
+          CIBW_ARCHS_MACOS: auto universal2
+          CIBW_BUILD_FRONTEND: build
+          CIBW_ENVIRONMENT_PASS_LINUX: SOURCE_DATE_EPOCH
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
+        with:
+          path: ./wheelhouse
+  hash:
+    # Generate hashes for the sdist and wheels, used later for provenance.
+    needs: ['sdist', 'wheels']
+    runs-on: ubuntu-latest
+    outputs:
+      hash: ${{ steps.hash.outputs.hash }}
+    steps:
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
+      - name: generate hash
+        id: hash
+        run: cd artifact && echo "hash=$(sha256sum * | base64 -w0)" >> $GITHUB_OUTPUT
+  provenance:
+    needs: ['hash']
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    # Can't pin with hash due to how this workflow works.
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+    with:
+      base64-subjects: ${{ needs.hash.outputs.hash }}
+      # When building more wheels, use the Python version as the provenance file name.
+      provenance-name: ${{ inputs.python && format('{0}.intoto.jsonl', inputs.python) || null }}
+  create-release:
+    # Upload the sdist, wheels, and provenance to a GitHub release. They remain
+    # available as build artifacts for a while as well.
+    needs: ['provenance']
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
+      # When building a new tag, create a new draft release.
+      - if: github.event_name == 'push'
+        name: create release
+        run: >
+          gh release create --draft --repo ${{ github.repository }}
+          ${{ inputs.tag || github.ref_name }}
+          *.intoto.jsonl/* artifact/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+      # When running manually, update the existing release with more files.
+      - if: github.event_name == 'workflow_dispatch'
+        name: update release
+        run: >
+          gh release upload --repo ${{ github.repository }}
+          ${{ inputs.tag || github.ref_name }}
+          *.intoto.jsonl/* artifact/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+  publish-pypi:
+    needs: ['provenance']
+    # Wait for approval before attempting to upload to PyPI. This allows reviewing the
+    # files in the draft release.
+    environment: 'publish'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
+      # Try uploading to Test PyPI first, in case something fails.
+      - uses: pypa/gh-action-pypi-publish@c7f29f7adef1a245bd91520e94867e5c6eedddcc
+        with:
+          password: ${{ secrets.TEST_PYPI_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          packages_dir: artifact/
+          skip_existing: true
+      - uses: pypa/gh-action-pypi-publish@c7f29f7adef1a245bd91520e94867e5c6eedddcc
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
+          packages_dir: artifact/
+          skip_existing: true
