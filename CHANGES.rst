@@ -1,7 +1,7 @@
 Version 2.1.2
 -------------
 
-Unreleased
+Released 2023-01-17
 
 -   Fix ``striptags`` not stripping tags containing newlines.
     :issue:`310`
