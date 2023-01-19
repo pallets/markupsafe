@@ -245,7 +245,7 @@ class EscapeFormatter(string.Formatter):
         return str(self.escape(rv))
 
 
-_ListOrDict = t.TypeVar("_ListOrDict", list, dict)
+_ListOrDict = t.TypeVar("_ListOrDict", t.List[t.Any], t.Dict[t.Any, t.Any])
 
 
 def _escape_argspec(

@@ -1,3 +1,12 @@
+Version 2.2.0
+-------------
+
+Unreleased
+
+-   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
+    :pr:`348`
+
+
 Version 2.1.2
 -------------
 
