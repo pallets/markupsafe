@@ -39,7 +39,6 @@ class ve_build_ext(build_ext):
 
 def run_setup(with_binary):
     setup(
-        name="MarkupSafe",
         cmdclass={"build_ext": ve_build_ext},
         ext_modules=ext_modules if with_binary else [],
     )
