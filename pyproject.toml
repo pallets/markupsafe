@@ -28,7 +28,7 @@ Twitter = "https://twitter.com/PalletsTeam"
 Chat = "https://discord.gg/pallets"
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "setuptools-rust"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]

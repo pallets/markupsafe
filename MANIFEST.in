@@ -6,4 +6,6 @@ prune docs/_build
 graft tests
 include src/markupsafe/py.typed
 include src/markupsafe/*.pyi
+graft src/rust
+prune src/rust/target
 global-exclude *.pyc

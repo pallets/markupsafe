@@ -3,7 +3,7 @@ import pytest
 from markupsafe import _native
 
 try:
-    from markupsafe import _speedups
+    from markupsafe import _rust_speedups as _speedups
 except ImportError:
     _speedups = None  # type: ignore
 
