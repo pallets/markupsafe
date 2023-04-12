@@ -19,7 +19,7 @@ _strip_comments_re = re.compile(r"<!--.*?-->", re.DOTALL)
 _strip_tags_re = re.compile(r"<.*?>", re.DOTALL)
 
 
-def _simple_escaping_wrapper(func: t.Callable["_P", str]) -> t.Callable["_P", "Markup"]:
+def _simple_escaping_wrapper(func: "t.Callable[_P, str]") -> "t.Callable[_P, Markup]":
     @functools.wraps(func)
     def wrapped(self: "Markup", *args: "t.Any", **kwargs: "t.Any") -> "Markup":
         arg_list = _escape_argspec(list(args), enumerate(args), self.escape)
