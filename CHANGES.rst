@@ -5,7 +5,8 @@ Unreleased
 
 -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
     :pr:`348`
-
+-   Fix return type for methods ``__getitem__``, ``capitalize``, ``title``, ``lower``, ``upper``, ``replace``, ``ljust``, ``rjust``, ``lstrip``, ``rstrip``, ``center``, ``strip``, ``translate``, ``expandtabs``, ``swapcase`` and ``zfill``.
+    :issue:`358`
 
 Version 2.1.2
 -------------
