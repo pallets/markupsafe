@@ -17,10 +17,10 @@ jobs:
   sdist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
         with:
           ref: ${{ inputs.tag }}
-      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912
+      - uses: actions/setup-python@bd6b4b6205c4dbad673328db7b31b7fab9e241c0
         with:
           python-version: '3.x'
           cache: 'pip'
@@ -43,14 +43,14 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
         with:
           platforms: arm64
-      - uses: joerick/cibuildwheel@27fc88e6385a995e61a87ee4b903bed263e6a6e2
+      - uses: joerick/cibuildwheel@51f5c7fe68ff24694d5a6ac0eb3ad476ddd062a8
         env:
           # For workflow_dispatch, only build the new Python version.
           CIBW_BUILD: "${{ inputs.python && format('{0}-*', inputs.python) || null }}"
@@ -80,7 +80,7 @@ jobs:
       id-token: write
       contents: write
     # Can't pin with hash due to how this workflow works.
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.6.0
     with:
       base64-subjects: ${{ needs.hash.outputs.hash }}
       # When building more wheels, use the Python version as the provenance file name.
@@ -116,19 +116,21 @@ jobs:
     needs: ['provenance']
     # Wait for approval before attempting to upload to PyPI. This allows reviewing the
     # files in the draft release.
-    environment: 'publish'
+    environment:
+      name: publish
+      url: https://pypi.org/project/MarkupSafe
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
       # Try uploading to Test PyPI first, in case something fails.
-      - uses: pypa/gh-action-pypi-publish@c7f29f7adef1a245bd91520e94867e5c6eedddcc
+      - uses: pypa/gh-action-pypi-publish@a56da0b891b3dc519c7ee3284aff1fad93cc8598
         with:
-          password: ${{ secrets.TEST_PYPI_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
-          packages_dir: artifact/
-          skip_existing: true
-      - uses: pypa/gh-action-pypi-publish@c7f29f7adef1a245bd91520e94867e5c6eedddcc
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: artifact/
+          skip-existing: true
+      - uses: pypa/gh-action-pypi-publish@a56da0b891b3dc519c7ee3284aff1fad93cc8598
         with:
-          password: ${{ secrets.PYPI_TOKEN }}
-          packages_dir: artifact/
-          skip_existing: true
+          packages-dir: artifact/
+          skip-existing: true
