@@ -1,7 +1,7 @@
 Version 2.1.3
 -------------
 
-Unreleased
+Released 2023-06-02
 
 -   Implement ``format_map``, ``casefold``, ``removeprefix``, and ``removesuffix``
     methods. :issue:`370`
