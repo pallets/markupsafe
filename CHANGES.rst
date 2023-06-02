@@ -6,6 +6,7 @@ Unreleased
 -   Implement ``format_map``, ``casefold``, ``removeprefix``, and ``removesuffix``
     methods. :issue:`370`
 -   Fix static typing for basic ``str`` methods on ``Markup``. :issue:`358`
+-   Use ``Self`` for annotating return types. :pr:`379`
 
 
 Version 2.1.2
