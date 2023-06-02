@@ -1,6 +1,7 @@
 import functools
 import re
 import string
+import sys
 import typing as t
 
 if t.TYPE_CHECKING:
@@ -193,6 +194,11 @@ class Markup(str):
     expandtabs = _simple_escaping_wrapper(str.expandtabs)
     swapcase = _simple_escaping_wrapper(str.swapcase)
     zfill = _simple_escaping_wrapper(str.zfill)
+    casefold = _simple_escaping_wrapper(str.casefold)
+
+    if sys.version_info >= (3, 9):
+        removeprefix = _simple_escaping_wrapper(str.removeprefix)
+        removesuffix = _simple_escaping_wrapper(str.removesuffix)
 
     def partition(self, sep: str) -> t.Tuple["Markup", "Markup", "Markup"]:
         l, s, r = super().partition(self.escape(sep))
@@ -207,6 +213,10 @@ class Markup(str):
     def format(self, *args: t.Any, **kwargs: t.Any) -> "Markup":
         formatter = EscapeFormatter(self.escape)
         return self.__class__(formatter.vformat(self, args, kwargs))
+
+    def format_map(self, map: t.Mapping[str, t.Any]) -> str:  # type: ignore[override]
+        formatter = EscapeFormatter(self.escape)
+        return self.__class__(formatter.vformat(self, (), map))
 
     def __html_format__(self, format_spec: str) -> "Markup":
         if format_spec:
