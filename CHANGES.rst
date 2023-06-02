@@ -3,6 +3,8 @@ Version 2.1.3
 
 Unreleased
 
+-   Fix static typing for basic ``str`` methods on ``Markup``. :issue:`358`
+
 
 Version 2.1.2
 -------------
