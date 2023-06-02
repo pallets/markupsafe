@@ -1,6 +1,7 @@
 import functools
 import re
 import string
+import sys
 import typing as t
 
 if t.TYPE_CHECKING:
@@ -10,23 +11,23 @@ if t.TYPE_CHECKING:
         def __html__(self) -> str:
             pass
 
+    _P = te.ParamSpec("_P")
 
-__version__ = "2.1.2"
+
+__version__ = "2.1.3.dev"
 
 _strip_comments_re = re.compile(r"<!--.*?-->", re.DOTALL)
 _strip_tags_re = re.compile(r"<.*?>", re.DOTALL)
 
 
-def _simple_escaping_wrapper(name: str) -> t.Callable[..., "Markup"]:
-    orig = getattr(str, name)
-
-    @functools.wraps(orig)
-    def wrapped(self: "Markup", *args: t.Any, **kwargs: t.Any) -> "Markup":
-        args = _escape_argspec(list(args), enumerate(args), self.escape)  # type: ignore
+def _simple_escaping_wrapper(func: "t.Callable[_P, str]") -> "t.Callable[_P, Markup]":
+    @functools.wraps(func)
+    def wrapped(self: "Markup", *args: "_P.args", **kwargs: "_P.kwargs") -> "Markup":
+        arg_list = _escape_argspec(list(args), enumerate(args), self.escape)
         _escape_argspec(kwargs, kwargs.items(), self.escape)
-        return self.__class__(orig(self, *args, **kwargs))
+        return self.__class__(func(self, *arg_list, **kwargs))  # type: ignore[arg-type]
 
-    return wrapped
+    return wrapped  # type: ignore[return-value]
 
 
 class Markup(str):
@@ -177,27 +178,27 @@ class Markup(str):
 
         return rv
 
-    for method in (
-        "__getitem__",
-        "capitalize",
-        "title",
-        "lower",
-        "upper",
-        "replace",
-        "ljust",
-        "rjust",
-        "lstrip",
-        "rstrip",
-        "center",
-        "strip",
-        "translate",
-        "expandtabs",
-        "swapcase",
-        "zfill",
-    ):
-        locals()[method] = _simple_escaping_wrapper(method)
+    __getitem__ = _simple_escaping_wrapper(str.__getitem__)
+    capitalize = _simple_escaping_wrapper(str.capitalize)
+    title = _simple_escaping_wrapper(str.title)
+    lower = _simple_escaping_wrapper(str.lower)
+    upper = _simple_escaping_wrapper(str.upper)
+    replace = _simple_escaping_wrapper(str.replace)
+    ljust = _simple_escaping_wrapper(str.ljust)
+    rjust = _simple_escaping_wrapper(str.rjust)
+    lstrip = _simple_escaping_wrapper(str.lstrip)
+    rstrip = _simple_escaping_wrapper(str.rstrip)
+    center = _simple_escaping_wrapper(str.center)
+    strip = _simple_escaping_wrapper(str.strip)
+    translate = _simple_escaping_wrapper(str.translate)
+    expandtabs = _simple_escaping_wrapper(str.expandtabs)
+    swapcase = _simple_escaping_wrapper(str.swapcase)
+    zfill = _simple_escaping_wrapper(str.zfill)
+    casefold = _simple_escaping_wrapper(str.casefold)
 
-    del method
+    if sys.version_info >= (3, 9):
+        removeprefix = _simple_escaping_wrapper(str.removeprefix)
+        removesuffix = _simple_escaping_wrapper(str.removesuffix)
 
     def partition(self, sep: str) -> t.Tuple["Markup", "Markup", "Markup"]:
         l, s, r = super().partition(self.escape(sep))
@@ -212,6 +213,10 @@ class Markup(str):
     def format(self, *args: t.Any, **kwargs: t.Any) -> "Markup":
         formatter = EscapeFormatter(self.escape)
         return self.__class__(formatter.vformat(self, args, kwargs))
+
+    def format_map(self, map: t.Mapping[str, t.Any]) -> str:  # type: ignore[override]
+        formatter = EscapeFormatter(self.escape)
+        return self.__class__(formatter.vformat(self, (), map))
 
     def __html_format__(self, format_spec: str) -> "Markup":
         if format_spec:

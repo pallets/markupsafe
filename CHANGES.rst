@@ -7,6 +7,16 @@ Unreleased
     :pr:`348`
 
 
+Version 2.1.3
+-------------
+
+Unreleased
+
+-   Implement ``format_map``, ``casefold``, ``removeprefix``, and ``removesuffix``
+    methods. :issue:`370`
+-   Fix static typing for basic ``str`` methods on ``Markup``. :issue:`358`
+
+
 Version 2.1.2
 -------------
 
