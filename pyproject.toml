@@ -36,8 +36,6 @@ version = {attr = "markupsafe.__version__"}
 testpaths = ["tests"]
 filterwarnings = [
     "error",
-    # change in Python 3.12 beta causes warning from inside pytest
-    "ignore:ast:DeprecationWarning",
 ]
 
 [tool.coverage.run]
