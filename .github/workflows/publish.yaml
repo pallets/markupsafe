@@ -47,7 +47,7 @@ jobs:
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
       - name: Set up QEMU
         if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
+        uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7
         with:
           platforms: arm64
       - uses: joerick/cibuildwheel@51f5c7fe68ff24694d5a6ac0eb3ad476ddd062a8
