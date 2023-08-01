@@ -50,7 +50,7 @@ jobs:
         uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7
         with:
           platforms: arm64
-      - uses: joerick/cibuildwheel@0ecddd92b62987d7a2ae8911f4bb8ec9e2e4496a
+      - uses: joerick/cibuildwheel@f21bb8376a051ffb6cb5604b28ccaef7b90e8ab7
         env:
           # For workflow_dispatch, only build the new Python version.
           CIBW_BUILD: "${{ inputs.python && format('{0}-*', inputs.python) || null }}"
