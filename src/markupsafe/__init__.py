@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import collections.abc as cabc
 import functools
 import re
 import string
@@ -20,9 +23,9 @@ _strip_comments_re = re.compile(r"<!--.*?-->", re.DOTALL)
 _strip_tags_re = re.compile(r"<.*?>", re.DOTALL)
 
 
-def _simple_escaping_wrapper(func: "t.Callable[_P, str]") -> "t.Callable[_P, Markup]":
+def _simple_escaping_wrapper(func: t.Callable[_P, str]) -> t.Callable[_P, Markup]:
     @functools.wraps(func)
-    def wrapped(self: "Markup", *args: "_P.args", **kwargs: "_P.kwargs") -> "Markup":
+    def wrapped(self: Markup, *args: _P.args, **kwargs: _P.kwargs) -> Markup:
         arg_list = _escape_argspec(list(args), enumerate(args), self.escape)
         _escape_argspec(kwargs, kwargs.items(), self.escape)
         return self.__class__(func(self, *arg_list, **kwargs))  # type: ignore[arg-type]
@@ -69,8 +72,8 @@ class Markup(str):
     __slots__ = ()
 
     def __new__(
-        cls, base: t.Any = "", encoding: t.Optional[str] = None, errors: str = "strict"
-    ) -> "te.Self":
+        cls, base: t.Any = "", encoding: str | None = None, errors: str = "strict"
+    ) -> te.Self:
         if hasattr(base, "__html__"):
             base = base.__html__()
 
@@ -79,22 +82,22 @@ class Markup(str):
 
         return super().__new__(cls, base, encoding, errors)
 
-    def __html__(self) -> "te.Self":
+    def __html__(self) -> te.Self:
         return self
 
-    def __add__(self, other: t.Union[str, "HasHTML"]) -> "te.Self":
+    def __add__(self, other: str | HasHTML) -> te.Self:
         if isinstance(other, str) or hasattr(other, "__html__"):
             return self.__class__(super().__add__(self.escape(other)))
 
         return NotImplemented
 
-    def __radd__(self, other: t.Union[str, "HasHTML"]) -> "te.Self":
+    def __radd__(self, other: str | HasHTML) -> te.Self:
         if isinstance(other, str) or hasattr(other, "__html__"):
             return self.escape(other).__add__(self)
 
         return NotImplemented
 
-    def __mul__(self, num: "te.SupportsIndex") -> "te.Self":
+    def __mul__(self, num: t.SupportsIndex) -> te.Self:
         if isinstance(num, int):
             return self.__class__(super().__mul__(num))
 
@@ -102,7 +105,7 @@ class Markup(str):
 
     __rmul__ = __mul__
 
-    def __mod__(self, arg: t.Any) -> "te.Self":
+    def __mod__(self, arg: t.Any) -> te.Self:
         if isinstance(arg, tuple):
             # a tuple of arguments, each wrapped
             arg = tuple(_MarkupEscapeHelper(x, self.escape) for x in arg)
@@ -118,28 +121,28 @@ class Markup(str):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({super().__repr__()})"
 
-    def join(self, seq: t.Iterable[t.Union[str, "HasHTML"]]) -> "te.Self":
+    def join(self, seq: cabc.Iterable[str | HasHTML]) -> te.Self:
         return self.__class__(super().join(map(self.escape, seq)))
 
     join.__doc__ = str.join.__doc__
 
     def split(  # type: ignore[override]
-        self, sep: t.Optional[str] = None, maxsplit: int = -1
-    ) -> t.List["te.Self"]:
+        self, sep: str | None = None, maxsplit: int = -1
+    ) -> list[te.Self]:
         return [self.__class__(v) for v in super().split(sep, maxsplit)]
 
     split.__doc__ = str.split.__doc__
 
     def rsplit(  # type: ignore[override]
-        self, sep: t.Optional[str] = None, maxsplit: int = -1
-    ) -> t.List["te.Self"]:
+        self, sep: str | None = None, maxsplit: int = -1
+    ) -> list[te.Self]:
         return [self.__class__(v) for v in super().rsplit(sep, maxsplit)]
 
     rsplit.__doc__ = str.rsplit.__doc__
 
     def splitlines(  # type: ignore[override]
         self, keepends: bool = False
-    ) -> t.List["te.Self"]:
+    ) -> list[te.Self]:
         return [self.__class__(v) for v in super().splitlines(keepends)]
 
     splitlines.__doc__ = str.splitlines.__doc__
@@ -169,7 +172,7 @@ class Markup(str):
         return self.__class__(value).unescape()
 
     @classmethod
-    def escape(cls, s: t.Any) -> "te.Self":
+    def escape(cls, s: t.Any) -> te.Self:
         """Escape a string. Calls :func:`escape` and ensures that for
         subclasses the correct type is returned.
         """
@@ -202,27 +205,27 @@ class Markup(str):
         removeprefix = _simple_escaping_wrapper(str.removeprefix)
         removesuffix = _simple_escaping_wrapper(str.removesuffix)
 
-    def partition(self, sep: str) -> t.Tuple["te.Self", "te.Self", "te.Self"]:
+    def partition(self, sep: str) -> tuple[te.Self, te.Self, te.Self]:
         l, s, r = super().partition(self.escape(sep))
         cls = self.__class__
         return cls(l), cls(s), cls(r)
 
-    def rpartition(self, sep: str) -> t.Tuple["te.Self", "te.Self", "te.Self"]:
+    def rpartition(self, sep: str) -> tuple[te.Self, te.Self, te.Self]:
         l, s, r = super().rpartition(self.escape(sep))
         cls = self.__class__
         return cls(l), cls(s), cls(r)
 
-    def format(self, *args: t.Any, **kwargs: t.Any) -> "te.Self":
+    def format(self, *args: t.Any, **kwargs: t.Any) -> te.Self:
         formatter = EscapeFormatter(self.escape)
         return self.__class__(formatter.vformat(self, args, kwargs))
 
     def format_map(  # type: ignore[override]
-        self, map: t.Mapping[str, t.Any]
-    ) -> "te.Self":
+        self, map: cabc.Mapping[str, t.Any]
+    ) -> te.Self:
         formatter = EscapeFormatter(self.escape)
         return self.__class__(formatter.vformat(self, (), map))
 
-    def __html_format__(self, format_spec: str) -> "te.Self":
+    def __html_format__(self, format_spec: str) -> te.Self:
         if format_spec:
             raise ValueError("Unsupported format specification for Markup.")
 
@@ -254,11 +257,13 @@ class EscapeFormatter(string.Formatter):
         return str(self.escape(rv))
 
 
-_ListOrDict = t.TypeVar("_ListOrDict", t.List[t.Any], t.Dict[t.Any, t.Any])
+_ListOrDict = t.TypeVar("_ListOrDict", "list[t.Any]", "dict[t.Any, t.Any]")
 
 
 def _escape_argspec(
-    obj: _ListOrDict, iterable: t.Iterable[t.Any], escape: t.Callable[[t.Any], Markup]
+    obj: _ListOrDict,
+    iterable: cabc.Iterable[t.Any],
+    escape: t.Callable[[t.Any], Markup],
 ) -> _ListOrDict:
     """Helper for various string-wrapped functions."""
     for key, value in iterable:
@@ -277,7 +282,7 @@ class _MarkupEscapeHelper:
         self.obj = obj
         self.escape = escape
 
-    def __getitem__(self, item: t.Any) -> "te.Self":
+    def __getitem__(self, item: t.Any) -> te.Self:
         return self.__class__(self.obj[item], self.escape)
 
     def __str__(self) -> str:

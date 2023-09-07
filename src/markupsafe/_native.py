@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing as t
 
 from . import Markup
@@ -27,7 +29,7 @@ def escape(s: t.Any) -> Markup:
     )
 
 
-def escape_silent(s: t.Optional[t.Any]) -> Markup:
+def escape_silent(s: t.Any | None) -> Markup:
     """Like :func:`escape` but treats ``None`` as the empty string.
     Useful with optional values, as otherwise you get the string
     ``'None'`` when the value is ``None``.

@@ -51,5 +51,3 @@ files = ["src/markupsafe"]
 show_error_codes = true
 pretty = true
 strict = true
-local_partial_types = true
-warn_unreachable = true
