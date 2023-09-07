@@ -6,6 +6,7 @@ Unreleased
 -   Drop support for Python 3.7.
 -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
     :pr:`348`
+-   Change ``distutils`` imports to ``setuptools``. :pr:`399`
 
 
 Version 2.1.3
