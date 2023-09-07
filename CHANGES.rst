@@ -3,6 +3,7 @@ Version 2.2.0
 
 Unreleased
 
+-   Drop support for Python 3.7.
 -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
     :pr:`348`
 
