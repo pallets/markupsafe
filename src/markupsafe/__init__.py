@@ -14,7 +14,7 @@ if t.TYPE_CHECKING:
     _P = te.ParamSpec("_P")
 
 
-__version__ = "2.1.3"
+__version__ = "2.2.0.dev"
 
 _strip_comments_re = re.compile(r"<!--.*?-->", re.DOTALL)
 _strip_tags_re = re.compile(r"<.*?>", re.DOTALL)
