@@ -1,6 +1,13 @@
+from __future__ import annotations
+
+import typing as t
+
 import pytest
 
 from markupsafe import Markup
+
+if t.TYPE_CHECKING:
+    from .conftest import TPEscape
 
 
 @pytest.mark.parametrize(
@@ -25,5 +32,5 @@ from markupsafe import Markup
         ("\U0001F363\U0001F362&><'\"", "\U0001F363\U0001F362&amp;&gt;&lt;&#39;&#34;"),
     ),
 )
-def test_escape(escape, value, expect):
+def test_escape(escape: TPEscape, value: str, expect: str) -> None:
     assert escape(value) == Markup(expect)

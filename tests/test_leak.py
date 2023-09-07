@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import gc
 import platform
 
@@ -10,7 +12,7 @@ from markupsafe import escape
     escape.__module__ == "markupsafe._native",
     reason="only test memory leak with speedups",
 )
-def test_markup_leaks():
+def test_markup_leaks() -> None:
     counts = set()
 
     for _i in range(20):
