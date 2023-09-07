@@ -14,7 +14,7 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Text Processing :: Markup :: HTML",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dynamic = ["version"]
 
 [project.urls]
@@ -46,7 +46,7 @@ source = ["markupsafe", "tests"]
 source = ["src", "*/site-packages"]
 
 [tool.mypy]
-python_version = "3.7"
+python_version = "3.8"
 files = ["src/markupsafe"]
 show_error_codes = true
 pretty = true
