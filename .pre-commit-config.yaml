@@ -1,5 +1,4 @@
 ci:
-  autoupdate_branch: "2.1.x"
   autoupdate_schedule: monthly
 repos:
   - repo: https://github.com/asottile/pyupgrade
@@ -12,7 +11,6 @@ repos:
     hooks:
       - id: reorder-python-imports
         args: ["--application-directories", "src"]
-        additional_dependencies: ["setuptools>60.9"]
   - repo: https://github.com/psf/black
     rev: 23.7.0
     hooks:
@@ -21,7 +19,9 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
-        additional_dependencies: [flake8-bugbear]
+        additional_dependencies:
+          - flake8-bugbear
+          - flake8-implicit-str-concat
   - repo: https://github.com/peterdemin/pip-compile-multi
     rev: v2.6.3
     hooks:

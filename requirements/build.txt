@@ -5,7 +5,7 @@
 #
 #    pip-compile-multi
 #
-build==0.10.0
+build==1.0.3
     # via -r requirements/build.in
 packaging==23.1
     # via build
