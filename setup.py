@@ -2,12 +2,12 @@ import os
 import platform
 import sys
 
-from distutils.errors import CCompilerError
-from distutils.errors import DistutilsExecError
-from distutils.errors import DistutilsPlatformError
 from setuptools import Extension
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
+from setuptools.errors import CCompilerError
+from setuptools.errors import ExecError
+from setuptools.errors import PlatformError
 
 ext_modules = [Extension("markupsafe._speedups", ["src/markupsafe/_speedups.c"])]
 
@@ -21,14 +21,14 @@ class ve_build_ext(build_ext):
 
     def run(self):
         try:
-            build_ext.run(self)
-        except DistutilsPlatformError as e:
+            super().run()
+        except PlatformError as e:
             raise BuildFailed() from e
 
     def build_extension(self, ext):
         try:
-            build_ext.build_extension(self, ext)
-        except (CCompilerError, DistutilsExecError, DistutilsPlatformError) as e:
+            super().build_extension(ext)
+        except (CCompilerError, ExecError, PlatformError) as e:
             raise BuildFailed() from e
         except ValueError as e:
             # this can happen on Windows 64 bit, see Python issue 7511
