@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import collections.abc as cabc
-import functools
 import re
 import string
 import sys
@@ -21,16 +20,6 @@ __version__ = "2.2.0.dev"
 
 _strip_comments_re = re.compile(r"<!--.*?-->", re.DOTALL)
 _strip_tags_re = re.compile(r"<.*?>", re.DOTALL)
-
-
-def _simple_escaping_wrapper(func: t.Callable[_P, str]) -> t.Callable[_P, Markup]:
-    @functools.wraps(func)
-    def wrapped(self: Markup, *args: _P.args, **kwargs: _P.kwargs) -> Markup:
-        arg_list = _escape_argspec(list(args), enumerate(args), self.escape)
-        _escape_argspec(kwargs, kwargs.items(), self.escape)
-        return self.__class__(func(self, *arg_list, **kwargs))  # type: ignore[arg-type]
-
-    return wrapped  # type: ignore[return-value]
 
 
 class Markup(str):
@@ -183,29 +172,72 @@ class Markup(str):
 
         return rv  # type: ignore[return-value]
 
-    __getitem__ = _simple_escaping_wrapper(str.__getitem__)
-    capitalize = _simple_escaping_wrapper(str.capitalize)
-    title = _simple_escaping_wrapper(str.title)
-    lower = _simple_escaping_wrapper(str.lower)
-    upper = _simple_escaping_wrapper(str.upper)
-    replace = _simple_escaping_wrapper(str.replace)
-    ljust = _simple_escaping_wrapper(str.ljust)
-    rjust = _simple_escaping_wrapper(str.rjust)
-    lstrip = _simple_escaping_wrapper(str.lstrip)
-    rstrip = _simple_escaping_wrapper(str.rstrip)
-    center = _simple_escaping_wrapper(str.center)
-    strip = _simple_escaping_wrapper(str.strip)
-    translate = _simple_escaping_wrapper(str.translate)
-    expandtabs = _simple_escaping_wrapper(str.expandtabs)
-    swapcase = _simple_escaping_wrapper(str.swapcase)
-    zfill = _simple_escaping_wrapper(str.zfill)
-    casefold = _simple_escaping_wrapper(str.casefold)
+    def __getitem__(self, key: t.SupportsIndex | slice, /) -> te.Self:
+        return self.__class__(super().__getitem__(key))
+
+    def capitalize(self, /) -> te.Self:
+        return self.__class__(super().capitalize())
+
+    def title(self, /) -> te.Self:
+        return self.__class__(super().title())
+
+    def lower(self, /) -> te.Self:
+        return self.__class__(super().lower())
+
+    def upper(self, /) -> te.Self:
+        return self.__class__(super().upper())
+
+    def replace(self, old: str, new: str, count: t.SupportsIndex = -1, /) -> te.Self:
+        return self.__class__(
+            super().replace(self.escape(old), self.escape(new), count)
+        )
+
+    def ljust(self, width: t.SupportsIndex, fillchar: str = " ", /) -> te.Self:
+        return self.__class__(super().ljust(width, self.escape(fillchar)))
+
+    def rjust(self, width: t.SupportsIndex, fillchar: str = " ", /) -> te.Self:
+        return self.__class__(super().rjust(width, self.escape(fillchar)))
+
+    def lstrip(self, chars: str | None = None, /) -> te.Self:
+        return self.__class__(super().lstrip(self.escape(chars)))
+
+    def rstrip(self, chars: str | None = None, /) -> te.Self:
+        return self.__class__(super().rstrip(self.escape(chars)))
+
+    def center(self, width: t.SupportsIndex, fillchar: str = " ", /) -> te.Self:
+        return self.__class__(super().center(width, self.escape(fillchar)))
+
+    def strip(self, chars: str | None = None, /) -> te.Self:
+        return self.__class__(super().strip(self.escape(chars)))
+
+    def translate(
+        self,
+        table: cabc.Mapping[int, str | int | None],  # type: ignore[override]
+        /,
+    ) -> str:
+        return self.__class__(super().translate(table))
+
+    def expandtabs(self, /, tabsize: t.SupportsIndex = 8) -> te.Self:
+        return self.__class__(super().expandtabs(tabsize))
+
+    def swapcase(self, /) -> te.Self:
+        return self.__class__(super().swapcase())
+
+    def zfill(self, width: t.SupportsIndex, /) -> te.Self:
+        return self.__class__(super().zfill(width))
+
+    def casefold(self, /) -> te.Self:
+        return self.__class__(super().casefold())
 
     if sys.version_info >= (3, 9):
-        removeprefix = _simple_escaping_wrapper(str.removeprefix)
-        removesuffix = _simple_escaping_wrapper(str.removesuffix)
 
-    def partition(self, sep: str) -> tuple[te.Self, te.Self, te.Self]:
+        def removeprefix(self, prefix: str, /) -> te.Self:
+            return self.__class__(super().removeprefix(self.escape(prefix)))
+
+        def removesuffix(self, suffix: str) -> te.Self:
+            return self.__class__(super().removesuffix(self.escape(suffix)))
+
+    def partition(self, sep: str, /) -> tuple[te.Self, te.Self, te.Self]:
         l, s, r = super().partition(self.escape(sep))
         cls = self.__class__
         return cls(l), cls(s), cls(r)
@@ -255,22 +287,6 @@ class EscapeFormatter(string.Formatter):
             # otherwise the wrong callback methods are invoked.
             rv = string.Formatter.format_field(self, value, str(format_spec))
         return str(self.escape(rv))
-
-
-_ListOrDict = t.TypeVar("_ListOrDict", "list[t.Any]", "dict[t.Any, t.Any]")
-
-
-def _escape_argspec(
-    obj: _ListOrDict,
-    iterable: cabc.Iterable[t.Any],
-    escape: t.Callable[[t.Any], Markup],
-) -> _ListOrDict:
-    """Helper for various string-wrapped functions."""
-    for key, value in iterable:
-        if isinstance(value, str) or hasattr(value, "__html__"):
-            obj[key] = escape(value)
-
-    return obj
 
 
 class _MarkupEscapeHelper:
