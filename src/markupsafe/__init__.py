@@ -10,8 +10,8 @@ if t.TYPE_CHECKING:
     import typing_extensions as te
 
     class HasHTML(te.Protocol):
-        def __html__(self) -> str:
-            pass
+        def __html__(self, /) -> str:
+            ...
 
     _P = te.ParamSpec("_P")
 
@@ -61,82 +61,72 @@ class Markup(str):
     __slots__ = ()
 
     def __new__(
-        cls, base: t.Any = "", encoding: str | None = None, errors: str = "strict"
+        cls, object: t.Any = "", encoding: str | None = None, errors: str = "strict"
     ) -> te.Self:
-        if hasattr(base, "__html__"):
-            base = base.__html__()
+        if hasattr(object, "__html__"):
+            object = object.__html__()
 
         if encoding is None:
-            return super().__new__(cls, base)
+            return super().__new__(cls, object)
 
-        return super().__new__(cls, base, encoding, errors)
+        return super().__new__(cls, object, encoding, errors)
 
-    def __html__(self) -> te.Self:
+    def __html__(self, /) -> te.Self:
         return self
 
-    def __add__(self, other: str | HasHTML) -> te.Self:
-        if isinstance(other, str) or hasattr(other, "__html__"):
-            return self.__class__(super().__add__(self.escape(other)))
+    def __add__(self, value: str | HasHTML, /) -> te.Self:
+        if isinstance(value, str) or hasattr(value, "__html__"):
+            return self.__class__(super().__add__(self.escape(value)))
 
         return NotImplemented
 
-    def __radd__(self, other: str | HasHTML) -> te.Self:
-        if isinstance(other, str) or hasattr(other, "__html__"):
-            return self.escape(other).__add__(self)
+    def __radd__(self, value: str | HasHTML, /) -> te.Self:
+        if isinstance(value, str) or hasattr(value, "__html__"):
+            return self.escape(value).__add__(self)
 
         return NotImplemented
 
-    def __mul__(self, num: t.SupportsIndex) -> te.Self:
-        if isinstance(num, int):
-            return self.__class__(super().__mul__(num))
+    def __mul__(self, value: t.SupportsIndex, /) -> te.Self:
+        return self.__class__(super().__mul__(value))
 
-        return NotImplemented
+    def __rmul__(self, value: t.SupportsIndex, /) -> te.Self:
+        return self.__class__(super().__mul__(value))
 
-    __rmul__ = __mul__
-
-    def __mod__(self, arg: t.Any) -> te.Self:
-        if isinstance(arg, tuple):
+    def __mod__(self, value: t.Any, /) -> te.Self:
+        if isinstance(value, tuple):
             # a tuple of arguments, each wrapped
-            arg = tuple(_MarkupEscapeHelper(x, self.escape) for x in arg)
-        elif hasattr(type(arg), "__getitem__") and not isinstance(arg, str):
+            value = tuple(_MarkupEscapeHelper(x, self.escape) for x in value)
+        elif hasattr(type(value), "__getitem__") and not isinstance(value, str):
             # a mapping of arguments, wrapped
-            arg = _MarkupEscapeHelper(arg, self.escape)
+            value = _MarkupEscapeHelper(value, self.escape)
         else:
             # a single argument, wrapped with the helper and a tuple
-            arg = (_MarkupEscapeHelper(arg, self.escape),)
+            value = (_MarkupEscapeHelper(value, self.escape),)
 
-        return self.__class__(super().__mod__(arg))
+        return self.__class__(super().__mod__(value))
 
-    def __repr__(self) -> str:
+    def __repr__(self, /) -> str:
         return f"{self.__class__.__name__}({super().__repr__()})"
 
-    def join(self, seq: cabc.Iterable[str | HasHTML]) -> te.Self:
-        return self.__class__(super().join(map(self.escape, seq)))
-
-    join.__doc__ = str.join.__doc__
+    def join(self, iterable: cabc.Iterable[str | HasHTML], /) -> te.Self:
+        return self.__class__(super().join(map(self.escape, iterable)))
 
     def split(  # type: ignore[override]
-        self, sep: str | None = None, maxsplit: int = -1
+        self, /, sep: str | None = None, maxsplit: t.SupportsIndex = -1
     ) -> list[te.Self]:
         return [self.__class__(v) for v in super().split(sep, maxsplit)]
 
-    split.__doc__ = str.split.__doc__
-
     def rsplit(  # type: ignore[override]
-        self, sep: str | None = None, maxsplit: int = -1
+        self, /, sep: str | None = None, maxsplit: t.SupportsIndex = -1
     ) -> list[te.Self]:
         return [self.__class__(v) for v in super().rsplit(sep, maxsplit)]
 
-    rsplit.__doc__ = str.rsplit.__doc__
-
     def splitlines(  # type: ignore[override]
-        self, keepends: bool = False
+        self, /, keepends: bool = False
     ) -> list[te.Self]:
         return [self.__class__(v) for v in super().splitlines(keepends)]
 
-    splitlines.__doc__ = str.splitlines.__doc__
-
-    def unescape(self) -> str:
+    def unescape(self, /) -> str:
         """Convert escaped markup back into a text string. This replaces
         HTML entities with the characters they represent.
 
@@ -147,7 +137,7 @@ class Markup(str):
 
         return unescape(str(self))
 
-    def striptags(self) -> str:
+    def striptags(self, /) -> str:
         """:meth:`unescape` the markup, remove tags, and normalize
         whitespace to single spaces.
 
@@ -161,7 +151,7 @@ class Markup(str):
         return self.__class__(value).unescape()
 
     @classmethod
-    def escape(cls, s: t.Any) -> te.Self:
+    def escape(cls, s: t.Any, /) -> te.Self:
         """Escape a string. Calls :func:`escape` and ensures that for
         subclasses the correct type is returned.
         """
@@ -242,7 +232,7 @@ class Markup(str):
         cls = self.__class__
         return cls(l), cls(s), cls(r)
 
-    def rpartition(self, sep: str) -> tuple[te.Self, te.Self, te.Self]:
+    def rpartition(self, sep: str, /) -> tuple[te.Self, te.Self, te.Self]:
         l, s, r = super().rpartition(self.escape(sep))
         cls = self.__class__
         return cls(l), cls(s), cls(r)
@@ -251,13 +241,15 @@ class Markup(str):
         formatter = EscapeFormatter(self.escape)
         return self.__class__(formatter.vformat(self, args, kwargs))
 
-    def format_map(  # type: ignore[override]
-        self, map: cabc.Mapping[str, t.Any]
+    def format_map(
+        self,
+        mapping: cabc.Mapping[str, t.Any],  # type: ignore[override]
+        /,
     ) -> te.Self:
         formatter = EscapeFormatter(self.escape)
-        return self.__class__(formatter.vformat(self, (), map))
+        return self.__class__(formatter.vformat(self, (), mapping))
 
-    def __html_format__(self, format_spec: str) -> te.Self:
+    def __html_format__(self, format_spec: str, /) -> te.Self:
         if format_spec:
             raise ValueError("Unsupported format specification for Markup.")
 
@@ -298,19 +290,19 @@ class _MarkupEscapeHelper:
         self.obj = obj
         self.escape = escape
 
-    def __getitem__(self, item: t.Any) -> te.Self:
-        return self.__class__(self.obj[item], self.escape)
+    def __getitem__(self, key: t.Any, /) -> te.Self:
+        return self.__class__(self.obj[key], self.escape)
 
-    def __str__(self) -> str:
+    def __str__(self, /) -> str:
         return str(self.escape(self.obj))
 
-    def __repr__(self) -> str:
+    def __repr__(self, /) -> str:
         return str(self.escape(repr(self.obj)))
 
-    def __int__(self) -> int:
+    def __int__(self, /) -> int:
         return int(self.obj)
 
-    def __float__(self) -> float:
+    def __float__(self, /) -> float:
         return float(self.obj)
 
 
