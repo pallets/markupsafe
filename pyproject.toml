@@ -51,3 +51,8 @@ files = ["src/markupsafe", "tests"]
 show_error_codes = true
 pretty = true
 strict = true
+
+[tool.pyright]
+pythonVersion = "3.8"
+include = ["src/markupsafe", "tests"]
+typeCheckingMode = "basic"

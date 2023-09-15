@@ -57,7 +57,7 @@ def test_html_interop() -> None:
 @pytest.mark.parametrize("args", ["foo", 42, ("foo", 42)])
 def test_missing_interpol(args: t.Any) -> None:
     with pytest.raises(TypeError):
-        Markup("<em></em>") % args
+        assert Markup("<em></em>") % args
 
 
 def test_tuple_interpol() -> None:

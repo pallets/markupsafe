@@ -13,7 +13,9 @@ if t.TYPE_CHECKING:
         def __html__(self, /) -> str:
             ...
 
-    _P = te.ParamSpec("_P")
+    class TPEscape(te.Protocol):
+        def __call__(self, s: t.Any, /) -> Markup:
+            ...
 
 
 __version__ = "2.2.0.dev"
@@ -259,8 +261,8 @@ class Markup(str):
 class EscapeFormatter(string.Formatter):
     __slots__ = ("escape",)
 
-    def __init__(self, escape: t.Callable[[t.Any], Markup]) -> None:
-        self.escape = escape
+    def __init__(self, escape: TPEscape) -> None:
+        self.escape: TPEscape = escape
         super().__init__()
 
     def format_field(self, value: t.Any, format_spec: str) -> str:
@@ -286,9 +288,9 @@ class _MarkupEscapeHelper:
 
     __slots__ = ("obj", "escape")
 
-    def __init__(self, obj: t.Any, escape: t.Callable[[t.Any], Markup]) -> None:
-        self.obj = obj
-        self.escape = escape
+    def __init__(self, obj: t.Any, escape: TPEscape) -> None:
+        self.obj: t.Any = obj
+        self.escape: TPEscape = escape
 
     def __getitem__(self, key: t.Any, /) -> te.Self:
         return self.__class__(self.obj[key], self.escape)
