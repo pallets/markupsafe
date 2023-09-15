@@ -277,7 +277,7 @@ class EscapeFormatter(string.Formatter):
         else:
             # We need to make sure the format spec is str here as
             # otherwise the wrong callback methods are invoked.
-            rv = string.Formatter.format_field(self, value, str(format_spec))
+            rv = super().format_field(value, str(format_spec))
         return str(self.escape(rv))
 
 
