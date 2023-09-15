@@ -1,4 +1,4 @@
-Version 2.2.0
+Version 3.0.0
 -------------
 
 Unreleased
@@ -16,6 +16,8 @@ Unreleased
     argument. These methods are conceptually linked to search methods such as
     ``in``, ``find``, and ``index``, which already do not escape their argument.
     :issue:`401`
+-   The ``__version__`` attribute is deprecated. Use feature detection, or
+    ``importlib.metadata.version("markupsafe")``, instead. :pr:`402`
 
 
 Version 2.1.3

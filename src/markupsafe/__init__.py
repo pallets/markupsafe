@@ -18,8 +18,6 @@ if t.TYPE_CHECKING:
             ...
 
 
-__version__ = "2.2.0.dev"
-
 _strip_comments_re = re.compile(r"<!--.*?-->", re.DOTALL)
 _strip_tags_re = re.compile(r"<.*?>", re.DOTALL)
 
@@ -315,3 +313,19 @@ except ImportError:
     from ._native import escape as escape
     from ._native import escape_silent as escape_silent  # noqa: F401
     from ._native import soft_str as soft_str  # noqa: F401
+
+
+def __getattr__(name: str) -> t.Any:
+    if name == "__version__":
+        import importlib.metadata
+        import warnings
+
+        warnings.warn(
+            "The '__version__' attribute is deprecated and will be removed in"
+            " MarkupSafe 3.1. Use feature detection, or"
+            ' `importlib.metadata.version("markupsafe")`, instead.',
+            stacklevel=2,
+        )
+        return importlib.metadata.version("flask-classful")
+
+    raise AttributeError(name)
