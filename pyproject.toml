@@ -47,9 +47,12 @@ source = ["src", "*/site-packages"]
 
 [tool.mypy]
 python_version = "3.8"
-files = ["src/markupsafe"]
+files = ["src/markupsafe", "tests"]
 show_error_codes = true
 pretty = true
 strict = true
-local_partial_types = true
-warn_unreachable = true
+
+[tool.pyright]
+pythonVersion = "3.8"
+include = ["src/markupsafe", "tests"]
+typeCheckingMode = "basic"

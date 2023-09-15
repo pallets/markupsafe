@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import typing as t
 
 from . import Markup
 
 
-def escape(s: t.Any) -> Markup:
+def escape(s: t.Any, /) -> Markup:
     """Replace the characters ``&``, ``<``, ``>``, ``'``, and ``"`` in
     the string with HTML-safe sequences. Use this if you need to display
     text that might contain such characters in HTML.
@@ -27,7 +29,7 @@ def escape(s: t.Any) -> Markup:
     )
 
 
-def escape_silent(s: t.Optional[t.Any]) -> Markup:
+def escape_silent(s: t.Any | None, /) -> Markup:
     """Like :func:`escape` but treats ``None`` as the empty string.
     Useful with optional values, as otherwise you get the string
     ``'None'`` when the value is ``None``.
@@ -43,7 +45,7 @@ def escape_silent(s: t.Optional[t.Any]) -> Markup:
     return escape(s)
 
 
-def soft_str(s: t.Any) -> str:
+def soft_str(s: t.Any, /) -> str:
     """Convert an object to a string if it isn't already. This preserves
     a :class:`Markup` string rather than converting it back to a basic
     string, so it will still be marked as safe and won't be escaped

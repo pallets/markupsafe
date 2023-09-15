@@ -7,6 +7,9 @@ Unreleased
 -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
     :pr:`348`
 -   Change ``distutils`` imports to ``setuptools``. :pr:`399`
+-   Use deferred evaluation of annotations. :pr:`400`
+-   Update signatures for ``Markup`` methods to match ``str`` signatures. Use
+    positional-only arguments. :pr:`400`
 
 
 Version 2.1.3
