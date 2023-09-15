@@ -1,6 +1,6 @@
 [project]
 name = "MarkupSafe"
-version = "2.2.0.dev"
+version = "3.0.0.dev"
 description = "Safely add untrusted strings to HTML/XML markup."
 readme = "README.rst"
 license = {text = "BSD-3-Clause"}
