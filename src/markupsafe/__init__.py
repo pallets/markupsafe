@@ -180,9 +180,7 @@ class Markup(str):
         return self.__class__(super().upper())
 
     def replace(self, old: str, new: str, count: t.SupportsIndex = -1, /) -> te.Self:
-        return self.__class__(
-            super().replace(self.escape(old), self.escape(new), count)
-        )
+        return self.__class__(super().replace(old, self.escape(new), count))
 
     def ljust(self, width: t.SupportsIndex, fillchar: str = " ", /) -> te.Self:
         return self.__class__(super().ljust(width, self.escape(fillchar)))
@@ -191,16 +189,16 @@ class Markup(str):
         return self.__class__(super().rjust(width, self.escape(fillchar)))
 
     def lstrip(self, chars: str | None = None, /) -> te.Self:
-        return self.__class__(super().lstrip(self.escape(chars)))
+        return self.__class__(super().lstrip(chars))
 
     def rstrip(self, chars: str | None = None, /) -> te.Self:
-        return self.__class__(super().rstrip(self.escape(chars)))
+        return self.__class__(super().rstrip(chars))
 
     def center(self, width: t.SupportsIndex, fillchar: str = " ", /) -> te.Self:
         return self.__class__(super().center(width, self.escape(fillchar)))
 
     def strip(self, chars: str | None = None, /) -> te.Self:
-        return self.__class__(super().strip(self.escape(chars)))
+        return self.__class__(super().strip(chars))
 
     def translate(
         self,
@@ -224,18 +222,18 @@ class Markup(str):
     if sys.version_info >= (3, 9):
 
         def removeprefix(self, prefix: str, /) -> te.Self:
-            return self.__class__(super().removeprefix(self.escape(prefix)))
+            return self.__class__(super().removeprefix(prefix))
 
         def removesuffix(self, suffix: str) -> te.Self:
-            return self.__class__(super().removesuffix(self.escape(suffix)))
+            return self.__class__(super().removesuffix(suffix))
 
     def partition(self, sep: str, /) -> tuple[te.Self, te.Self, te.Self]:
-        l, s, r = super().partition(self.escape(sep))
+        l, s, r = super().partition(sep)
         cls = self.__class__
         return cls(l), cls(s), cls(r)
 
     def rpartition(self, sep: str, /) -> tuple[te.Self, te.Self, te.Self]:
-        l, s, r = super().rpartition(self.escape(sep))
+        l, s, r = super().rpartition(sep)
         cls = self.__class__
         return cls(l), cls(s), cls(r)
 

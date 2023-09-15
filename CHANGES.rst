@@ -10,6 +10,12 @@ Unreleased
 -   Use deferred evaluation of annotations. :pr:`400`
 -   Update signatures for ``Markup`` methods to match ``str`` signatures. Use
     positional-only arguments. :pr:`400`
+-   Some ``str`` methods on ``Markup`` no longer escape their argument:
+    ``strip``, ``lstrip``, ``rstrip``, ``removeprefix``, ``removesuffix``,
+    ``partition``, and ``rpartition``; ``replace`` only escapes its ``new``
+    argument. These methods are conceptually linked to search methods such as
+    ``in``, ``find``, and ``index``, which already do not escape their argument.
+    :issue:`401`
 
 
 Version 2.1.3
