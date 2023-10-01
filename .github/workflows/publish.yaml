@@ -29,7 +29,7 @@ jobs:
       # Use the commit date instead of the current date during the build.
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
       - run: python -m build --sdist
-      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
+      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32
         with:
           path: ./dist
         # The sdist is not needed on new Python version builds. However, this job must
@@ -59,7 +59,7 @@ jobs:
           CIBW_ARCHS_MACOS: auto universal2
           CIBW_BUILD_FRONTEND: build
           CIBW_ENVIRONMENT_PASS_LINUX: SOURCE_DATE_EPOCH
-      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
+      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32
         with:
           path: ./wheelhouse
   hash:
