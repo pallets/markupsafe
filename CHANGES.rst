@@ -1,7 +1,7 @@
 Version 2.1.4
 -------------
 
-Unreleased
+Released 2024-01-19
 
 -   Don't use regular expressions for ``striptags``, avoiding a performance
     issue. :pr:`413`
