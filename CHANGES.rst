@@ -20,6 +20,15 @@ Unreleased
     ``importlib.metadata.version("markupsafe")``, instead. :pr:`402`
 
 
+Version 2.1.4
+-------------
+
+Released 2024-01-19
+
+-   Don't use regular expressions for ``striptags``, avoiding a performance
+    issue. :pr:`413`
+
+
 Version 2.1.3
 -------------
 
