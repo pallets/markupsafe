@@ -29,9 +29,6 @@ Chat = "https://discord.gg/pallets"
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.dynamic]
-version = {attr = "markupsafe.__version__"}
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 filterwarnings = [
