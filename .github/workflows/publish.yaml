@@ -50,7 +50,7 @@ jobs:
         uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
         with:
           platforms: arm64
-      - uses: joerick/cibuildwheel@51f5c7fe68ff24694d5a6ac0eb3ad476ddd062a8
+      - uses: joerick/cibuildwheel@fff9ec32ed25a9c576750c91e06b410ed0c15db7
         env:
           # For workflow_dispatch, only build the new Python version.
           CIBW_BUILD: "${{ inputs.python && format('{0}-*', inputs.python) || null }}"
@@ -58,7 +58,6 @@ jobs:
           CIBW_ARCHS_LINUX: auto aarch64
           CIBW_ARCHS_MACOS: auto universal2
           CIBW_BUILD_FRONTEND: build
-          CIBW_ENVIRONMENT_PASS_LINUX: SOURCE_DATE_EPOCH
       - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
         with:
           path: ./wheelhouse
