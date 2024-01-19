@@ -3,6 +3,9 @@ Version 2.1.4
 
 Unreleased
 
+-   Don't use regular expressions for ``striptags``, avoiding a performance
+    issue. :pr:`413`
+
 
 Version 2.1.3
 -------------
