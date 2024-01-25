@@ -158,8 +158,7 @@ class Markup(str):
         >>> Markup("Main &raquo;\t<em>About</em>").striptags()
         'Main » About'
         """
-        # collapse spaces
-        value = " ".join(self.split())
+        value = str(self)
 
         # Look for comments then tags separately. Otherwise, a comment that
         # contains a tag would end early, leaving some of the comment behind.
@@ -193,6 +192,8 @@ class Markup(str):
 
             value = f"{value[:start]}{value[end + 1:]}"
 
+        # collapse spaces
+        value = " ".join(value.split())
         return self.__class__(value).unescape()
 
     @classmethod
