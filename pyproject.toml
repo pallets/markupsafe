@@ -3,7 +3,7 @@ name = "MarkupSafe"
 version = "3.0.0.dev"
 description = "Safely add untrusted strings to HTML/XML markup."
 readme = "README.rst"
-license = {text = "BSD-3-Clause"}
+license = {file = "LICENSE.rst"}
 maintainers = [{name = "Pallets", email = "contact@palletsprojects.com"}]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
