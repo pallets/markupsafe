@@ -50,7 +50,7 @@ jobs:
         uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
         with:
           platforms: arm64
-      - uses: joerick/cibuildwheel@fff9ec32ed25a9c576750c91e06b410ed0c15db7
+      - uses: joerick/cibuildwheel@f8f1f387e90b5bfb57c85effaf314552ff2eaab2 # v2.16.5
         env:
           # For workflow_dispatch, only build the new Python version.
           CIBW_BUILD: "${{ inputs.python && format('{0}-*', inputs.python) || null }}"
@@ -79,7 +79,7 @@ jobs:
       id-token: write
       contents: write
     # Can't pin with hash due to how this workflow works.
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.6.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
     with:
       base64-subjects: ${{ needs.hash.outputs.hash }}
       # When building more wheels, use the Python version as the provenance file name.
