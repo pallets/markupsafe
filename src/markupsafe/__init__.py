@@ -9,12 +9,10 @@ if t.TYPE_CHECKING:
     import typing_extensions as te
 
     class HasHTML(te.Protocol):
-        def __html__(self, /) -> str:
-            ...
+        def __html__(self, /) -> str: ...
 
     class TPEscape(te.Protocol):
-        def __call__(self, s: t.Any, /) -> Markup:
-            ...
+        def __call__(self, s: t.Any, /) -> Markup: ...
 
 
 class Markup(str):
