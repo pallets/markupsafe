@@ -1,7 +1,7 @@
 Version 2.1.5
 -------------
 
-Unreleased
+Released 2024-02-02
 
 -   Fix ``striptags`` not collapsing spaces. :issue:`417`
 
