@@ -3,6 +3,8 @@ Version 2.1.5
 
 Unreleased
 
+-   Fix ``striptags`` not collapsing spaces. :issue:`417`
+
 
 Version 2.1.4
 -------------
