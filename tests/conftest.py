@@ -17,13 +17,16 @@ if t.TYPE_CHECKING:
     import typing_extensions as te
 
     class TPEscape(te.Protocol):
-        def __call__(self, s: t.Any) -> Markup: ...
+        def __call__(self, s: t.Any) -> Markup:
+            ...
 
     class TPEscapeSilent(te.Protocol):
-        def __call__(self, s: t.Any | None) -> Markup: ...
+        def __call__(self, s: t.Any | None) -> Markup:
+            ...
 
     class TPSoftStr(te.Protocol):
-        def __call__(self, s: t.Any) -> str: ...
+        def __call__(self, s: t.Any) -> str:
+            ...
 
 
 @pytest.fixture(

@@ -9,10 +9,12 @@ if t.TYPE_CHECKING:
     import typing_extensions as te
 
     class HasHTML(te.Protocol):
-        def __html__(self, /) -> str: ...
+        def __html__(self, /) -> str:
+            ...
 
     class TPEscape(te.Protocol):
-        def __call__(self, s: t.Any, /) -> Markup: ...
+        def __call__(self, s: t.Any, /) -> Markup:
+            ...
 
 
 class Markup(str):
@@ -237,14 +239,14 @@ class Markup(str):
             return self.__class__(super().removesuffix(suffix))
 
     def partition(self, sep: str, /) -> tuple[te.Self, te.Self, te.Self]:
-        l, s, r = super().partition(sep)
+        left, sep, right = super().partition(sep)
         cls = self.__class__
-        return cls(l), cls(s), cls(r)
+        return cls(left), cls(sep), cls(right)
 
     def rpartition(self, sep: str, /) -> tuple[te.Self, te.Self, te.Self]:
-        l, s, r = super().rpartition(sep)
+        left, sep, right = super().rpartition(sep)
         cls = self.__class__
-        return cls(l), cls(s), cls(r)
+        return cls(left), cls(sep), cls(right)
 
     def format(self, *args: t.Any, **kwargs: t.Any) -> te.Self:
         formatter = EscapeFormatter(self.escape)
