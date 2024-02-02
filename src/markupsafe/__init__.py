@@ -13,7 +13,7 @@ if t.TYPE_CHECKING:
     _P = te.ParamSpec("_P")
 
 
-__version__ = "2.1.4"
+__version__ = "2.1.5.dev"
 
 
 def _simple_escaping_wrapper(func: "t.Callable[_P, str]") -> "t.Callable[_P, Markup]":
