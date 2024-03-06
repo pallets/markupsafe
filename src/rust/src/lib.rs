@@ -334,7 +334,13 @@ mod tests {
     #[test]
     fn empty() {
         let res = check_utf8("".as_bytes());
-        assert!(res.is_none())
+        assert!(res.is_none());
+    }
+
+    #[test]
+    fn no_change_test() {
+        let res = check_utf8("abcdefgh".as_bytes());
+        assert!(res.is_none());
     }
 
     #[test]
@@ -356,6 +362,11 @@ mod tests {
     }
 
     #[test]
+    fn no_change_large() {
+        assert!(check_utf8("abcdefgh".repeat(1024).as_bytes()).is_none());
+    }
+
+    #[test]
     fn middle_large() {
         let res = build_replaced(check_utf8("abcd&><'\"efgh".repeat(1024).as_bytes()).unwrap());
         assert_eq!("abcd&amp;&gt;&lt;&#39;&#34;efgh".repeat(1024).as_str(), res);
@@ -371,6 +382,12 @@ mod tests {
     fn end_large() {
         let res = build_replaced(check_utf8("abcd&><'\"".repeat(1024).as_bytes()).unwrap());
         assert_eq!("abcd&amp;&gt;&lt;&#39;&#34;".repeat(1024).as_str(), res);
+    }
+
+    #[test]
+    fn no_change_16() {
+        let input = "こんにちはこんばんは".encode_utf16().collect::<Vec<_>>();
+        assert!(no_change::<8, u16>(input.as_slice()));
     }
 
     #[test]
@@ -400,6 +417,15 @@ mod tests {
         let utf8 = String::from_utf16(input.as_slice()).unwrap();
         let res = build_replaced(check_utf8(utf8.as_bytes()).unwrap());
         assert_eq!("こんにちは&amp;&gt;&lt;&#39;&#34;", res);
+    }
+
+    #[test]
+    fn no_change_16_large() {
+        let input = "こんにちはこんばんは"
+            .repeat(1024)
+            .encode_utf16()
+            .collect::<Vec<_>>();
+        assert!(no_change::<8, u16>(input.as_slice()));
     }
 
     #[test]
