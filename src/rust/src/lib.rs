@@ -25,7 +25,8 @@ use pyo3::{
 // RUST_INTRO where they're relevant, but they include:
 //
 // - const generics - similar to generics, but for compile-time constants. This means that
-//                    different calls to functions can work with different numbers in their types.
+//                    different calls to the same function can work with different numbers in their
+//                    types.
 // - traits         - like an interface in java. Defines the behavior we might want out of a
 //                    generic type that can be implemented by many different concrete types.
 // - macro_rules    - used to create syntax sugar for some repetative code.
@@ -311,9 +312,10 @@ pub fn escape_inner<'a>(py: Python<'a>, s: &'a PyString) -> PyResult<&'a PyStrin
     // as x86_64, where the bitfield has a common representation (even if it is
     // not part of the C spec). The PyO3 CI tests this API on x86_64 platforms.
     //
-    // The C implementation already does this. And Rust can't compete on performance unless it can
-    // access the raw bytes. Converting it to a rust string (validating utf-8 and probably copying
-    // the full string) is probably already slower than C.
+    // The C implementation already does this. Python strings can be represented
+    // as u8, u16, or u32, and this avoids converting to utf-8 if it's not
+    // necessary, meaning if a u16 or u32 string doesn't need any characters
+    // replaced, we can short-circuit without doing any converting
     let data_res = unsafe { s.data() };
     match data_res {
         Ok(data) => match data {
