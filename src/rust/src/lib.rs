@@ -31,11 +31,6 @@ use pyo3::{
 // - macro_rules    - used to create syntax sugar for some repetative code.
 // - iterators      - a lazy data stream used mostly to make for-in loops look nice. They have a
 //                    similar interface to java's stream api, but compile to optimized loops.
-// - lifetimes      - less of a language feature than a constraint. It's a hint to the compiler
-//                    that the reference it annotates (&_) lives (is not destroyed/freed) for at
-//                    least as long as anything else with the same lifetime. If function arguments
-//                    have the same lifetime as the return type, those arguments must live for at
-//                    least the duration of the function.
 
 // A trait that describes anything we might want to do with bits so we can generically work with
 // u8, u16, or u32
