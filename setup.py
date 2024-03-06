@@ -3,6 +3,7 @@ import platform
 import sys
 
 from setuptools import Extension
+from setuptools_rust import RustExtension
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 from setuptools.errors import CCompilerError
