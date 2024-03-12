@@ -339,6 +339,6 @@ def __getattr__(name: str) -> t.Any:
             ' `importlib.metadata.version("markupsafe")`, instead.',
             stacklevel=2,
         )
-        return importlib.metadata.version("flask-classful")
+        return importlib.metadata.version("markupsafe")
 
     raise AttributeError(name)
