@@ -65,15 +65,15 @@ pluggy==1.4.0
     # via
     #   pytest
     #   tox
-pre-commit==3.6.0
+pre-commit==3.6.2
     # via -r dev.in
 pygments==2.17.2
     # via sphinx
 pyproject-api==1.6.1
     # via tox
-pyright==1.1.349
+pyright==1.1.352
     # via -r typing.in
-pytest==8.0.0
+pytest==8.0.2
     # via
     #   -r tests.in
     #   -r typing.in
@@ -105,7 +105,7 @@ sphinxcontrib-qthelp==1.0.7
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.10
     # via sphinx
-tox==4.12.1
+tox==4.13.0
     # via -r dev.in
 typing-extensions==4.9.0
     # via mypy

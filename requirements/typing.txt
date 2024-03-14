@@ -16,9 +16,9 @@ packaging==23.2
     # via pytest
 pluggy==1.4.0
     # via pytest
-pyright==1.1.349
+pyright==1.1.352
     # via -r typing.in
-pytest==8.0.0
+pytest==8.0.2
     # via -r typing.in
 typing-extensions==4.9.0
     # via mypy
