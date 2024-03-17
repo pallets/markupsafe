@@ -320,8 +320,10 @@ class _MarkupEscapeHelper:
 # circular import
 try:
     from ._rust_speedups import escape_inner as escape_inner
+    from ._rust_speedups import escape_inner_naive as escape_inner_naive
 except ImportError:
     from ._native import escape_inner as escape_inner
+
 
 def escape(s: t.Any, /) -> Markup:
     """Replace the characters ``&``, ``<``, ``>``, ``'``, and ``"`` in
@@ -338,6 +340,7 @@ def escape(s: t.Any, /) -> Markup:
         return Markup(s.__html__())
 
     return Markup(escape_inner(str(s)))
+
 
 def escape_silent(s: t.Any | None, /) -> Markup:
     """Like :func:`escape` but treats ``None`` as the empty string.

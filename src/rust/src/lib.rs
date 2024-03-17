@@ -7,6 +7,15 @@ use pyo3::{
     PyResult, Python,
 };
 
+// #[cfg(target_arch = "x86")]
+// use std::arch::x86 as arch;
+
+// #[cfg(target_arch = "x86_64")]
+// use std::arch::x86_64 as arch;
+
+// #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+// use arch::_mm_movemask_epi8;
+
 /// A Rust implemented find and replace for the characters `<`, `>`, `&`, `"`, and `'`
 /// into the sanitized strings `&lt;`, `&gt;`, `&amp;`, `#34;`, and `#39;` respectively
 
@@ -40,6 +49,7 @@ use pyo3::{
 trait Bits: Copy + Eq + BitAnd<Output = Self> + BitOr<Output = Self> + Into<u64> + From<u8> {
     fn ones() -> Self;
     fn zeroes() -> Self;
+    fn as_u8(self) -> u8;
 }
 
 // RUST_INTRO: We can implement our trait on types that already exist in the standard library
@@ -51,6 +61,10 @@ impl Bits for u8 {
     fn zeroes() -> Self {
         0
     }
+
+    fn as_u8(self) -> u8 {
+        self
+    }
 }
 
 impl Bits for u16 {
@@ -61,6 +75,10 @@ impl Bits for u16 {
     fn zeroes() -> Self {
         0
     }
+
+    fn as_u8(self) -> u8 {
+        self as u8
+    }
 }
 
 impl Bits for u32 {
@@ -70,6 +88,10 @@ impl Bits for u32 {
 
     fn zeroes() -> Self {
         0
+    }
+
+    fn as_u8(self) -> u8 {
+        self as u8
     }
 }
 
@@ -82,7 +104,7 @@ impl Bits for u32 {
 // merges 2 streams into one with a tuple (a, b) for each item. We can do this twice to get a
 // tuple containing a tuple ((a, b), r).
 #[inline(always)]
-fn v_or<const N: usize, T: Bits>(ax: &[T; N], bx: &[T; N]) -> [T; N] {
+fn v_or<const N: usize, T: Bits>(ax: [T; N], bx: [T; N]) -> [T; N] {
     let mut result = [T::zeroes(); N];
     for ((&a, &b), r) in ax.iter().zip(bx.iter()).zip(result.iter_mut()) {
         *r = a | b;
@@ -90,7 +112,24 @@ fn v_or<const N: usize, T: Bits>(ax: &[T; N], bx: &[T; N]) -> [T; N] {
     result
 }
 
-const MASK_BITS: [u64; 8] = [1, 1 << 1, 1 << 2, 1 << 3, 1 << 4, 1 << 5, 1 << 6, 1 << 7];
+const MASK_BITS: [u8; 16] = [
+    1,
+    1 << 1,
+    1 << 2,
+    1 << 3,
+    1 << 4,
+    1 << 5,
+    1 << 6,
+    1 << 7,
+    1,
+    1 << 1,
+    1 << 2,
+    1 << 3,
+    1 << 4,
+    1 << 5,
+    1 << 6,
+    1 << 7,
+];
 
 // I attempted to autovectorize to pmovmskb, but since I can't get it to
 // recognize it, I'll just take advantage of v_eq setting all bits to 1.
@@ -103,17 +142,21 @@ const MASK_BITS: [u64; 8] = [1, 1 << 1, 1 << 2, 1 << 3, 1 << 4, 1 << 5, 1 << 6, 
 // technically the last line has the bits reversed. I wrote it this way to
 // show the relationship between the matched character and the bits.
 #[inline(always)]
-fn v_bitmask<const N: usize, T: Bits>(ax: &[T; N]) -> u64 {
+fn v_bitmask<const N: usize, T: Bits>(ax: [T; N]) -> u64 {
+    let mut masked = [0u8; N];
+    for ((a, m), r) in ax.iter().zip(MASK_BITS.iter()).zip(masked.iter_mut()) {
+        *r = a.as_u8() & m
+    }
     let mut result = 0u64;
-    for (i, &a) in ax.iter().enumerate() {
-        result |= (a.into() & MASK_BITS[i % 8]) << ((i / 8) * 8);
+    for (i, &m) in masked.iter().enumerate() {
+        result |= (m as u64) << ((i / 8) * 8);
     }
     result
 }
 
 // auto-vectorized equal. designed to compile into the instruction pcmpeqb
 #[inline(always)]
-fn v_eq<const N: usize, T: Bits>(ax: &[T], bx: &[T; N]) -> [T; N] {
+fn v_eq<const N: usize, T: Bits>(ax: &[T], bx: [T; N]) -> [T; N] {
     let mut result = [T::zeroes(); N];
     for ((&a, &b), r) in ax.iter().zip(bx.iter()).zip(result.iter_mut()) {
         *r = if a == b { T::ones() } else { T::zeroes() };
@@ -121,16 +164,15 @@ fn v_eq<const N: usize, T: Bits>(ax: &[T], bx: &[T; N]) -> [T; N] {
     result
 }
 
+#[inline(always)]
 fn mask<const N: usize, const M: usize, T: Bits>(input: &[T], splats: [[T; N]; M]) -> u64 {
     let mut result = 0u64;
     // split into 128-bit chunks to vectorize inside the loop
     for (i, lane) in input.chunks_exact(N).enumerate() {
         result |= v_bitmask(
-            &splats
+            splats
                 .iter()
-                .map(|splat| v_eq(lane, splat))
-                .reduce(|a, b| v_or(&a, &b))
-                .unwrap(),
+                .fold([T::zeroes(); N], |acc, &splat| v_or(acc, v_eq(lane, splat))),
         ) << (i * N);
     }
     result
@@ -325,6 +367,46 @@ pub fn escape_inner<'a>(py: Python<'a>, s: &'a PyString) -> PyResult<&'a PyStrin
         },
         Err(e) => Err(e),
     }
+}
+
+fn delta_naive(input: &str, replacement_indices: &mut Vec<u32>) -> usize {
+    let mut delta = 0;
+    for (i, item) in input.chars().enumerate() {
+        if is_equal_any!(item, b'<' | b'>') {
+            delta += 3;
+            replacement_indices.push(i as u32);
+        } else if is_equal_any!(item, b'"' | b'\'' | b'&') {
+            delta += 4;
+            replacement_indices.push(i as u32);
+        }
+    }
+    delta
+}
+
+fn check_utf8_naive(input: &str) -> Option<RebuildArgs> {
+    let mut replacement_indices = Vec::with_capacity(8);
+    let delta = delta_naive(input, &mut replacement_indices);
+    if delta == 0 {
+        None
+    } else {
+        Some(RebuildArgs::new(delta, replacement_indices, input))
+    }
+}
+
+#[pyfunction]
+pub fn escape_inner_naive<'a>(py: Python<'a>, s: &'a PyString) -> PyResult<&'a PyString> {
+    let input = s.to_str()?;
+    Ok(check_utf8_naive(input)
+        .map(|rb| PyString::new(py, build_replaced(rb).as_str()))
+        .unwrap_or(s))
+}
+
+#[pymodule]
+#[pyo3(name = "_rust_speedups")]
+fn speedups(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(escape_inner, m)?)?;
+    m.add_function(wrap_pyfunction!(escape_inner_naive, m)?)?;
+    Ok(())
 }
 
 #[cfg(test)]
