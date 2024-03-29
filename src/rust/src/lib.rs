@@ -7,15 +7,6 @@ use pyo3::{
     PyResult, Python,
 };
 
-// #[cfg(target_arch = "x86")]
-// use std::arch::x86 as arch;
-
-// #[cfg(target_arch = "x86_64")]
-// use std::arch::x86_64 as arch;
-
-// #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-// use arch::_mm_movemask_epi8;
-
 /// A Rust implemented find and replace for the characters `<`, `>`, `&`, `"`, and `'`
 /// into the sanitized strings `&lt;`, `&gt;`, `&amp;`, `#34;`, and `#39;` respectively
 
