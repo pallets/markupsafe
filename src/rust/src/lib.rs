@@ -159,12 +159,30 @@ fn v_eq<const N: usize, T: Bits>(ax: &[T], bx: [T; N]) -> [T; N] {
 fn mask<const N: usize, const M: usize, T: Bits>(input: &[T], splats: [[T; N]; M]) -> u64 {
     let mut result = 0u64;
     // split into 128-bit chunks to vectorize inside the loop
-    for (i, lane) in input.chunks_exact(N).enumerate() {
-        result |= v_bitmask(
-            splats
-                .iter()
-                .fold([T::zeroes(); N], |acc, &splat| v_or(acc, v_eq(lane, splat))),
-        ) << (i * N);
+    let mut i = 0;
+    let mut iter = input.chunks_exact(N);
+    while let Some(v0) = iter.next() {
+        // operate on 4 counts of 128-bit chunks at a time to unlock instruction-level parallelism.
+        // meaning these v_or and v_eq can execute at the same time on the cpu
+        // the number of items in iter are always a multiple of 4:
+        // [u8; 16] * 4 = 64 items
+        // [u16; 8] * 8 = 64 items
+        // [u32; 4] * 16 = 64 items
+        let v1 = iter.next().unwrap();
+        let v2 = iter.next().unwrap();
+        let v3 = iter.next().unwrap();
+        let v_masks = splats.iter().fold([[T::zeroes(); N]; 4], |acc, &splat| {
+            [
+                v_or(acc[0], v_eq(v0, splat)),
+                v_or(acc[1], v_eq(v1, splat)),
+                v_or(acc[2], v_eq(v2, splat)),
+                v_or(acc[3], v_eq(v3, splat)),
+            ]
+        });
+        for (j, &v_mask) in v_masks.iter().enumerate() {
+            result |= v_bitmask(v_mask) << ((i + j) * N)
+        }
+        i += 1;
     }
     result
 }
