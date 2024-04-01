@@ -10,5 +10,5 @@ packaging==23.2
     # via pytest
 pluggy==1.4.0
     # via pytest
-pytest==8.0.0
+pytest==8.1.1
     # via -r tests.in
