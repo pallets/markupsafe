@@ -18,6 +18,7 @@ Unreleased
     :issue:`401`
 -   The ``__version__`` attribute is deprecated. Use feature detection, or
     ``importlib.metadata.version("markupsafe")``, instead. :pr:`402`
+-   Improve speedups for plain strings by 30-40%. :pr:`434`
 
 
 Version 2.1.5
