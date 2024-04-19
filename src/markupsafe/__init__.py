@@ -33,7 +33,7 @@ def escape(s: t.Any, /) -> Markup:
     """
     # If the object is already a plain string, skip __html__ check and string
     # conversion. This is the most common use case.
-    if type(s) is str:  # noqa E721
+    if s.__class__ is str:
         return Markup(_escape_inner(s))
 
     if hasattr(s, "__html__"):
