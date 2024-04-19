@@ -189,12 +189,13 @@ escape(PyObject *self, PyObject *text)
 	static PyObject *id_html;
 	PyObject *s = NULL, *rv = NULL, *html;
 
-	if (id_html == NULL) {
-		id_html = PyUnicode_InternFromString("__html__");
-		if (id_html == NULL) {
-			return NULL;
-		}
-	}
+    /* plain str instances can be escaped without further inspection */
+    if (PyUnicode_CheckExact(text)) {
+        s = escape_unicode((PyUnicodeObject*)text);
+        rv = PyObject_CallFunctionObjArgs(markup, (PyObject*)s, NULL);
+        Py_DECREF(s);
+        return rv;
+    }
 
 	/* we don't have to escape integers, bools or floats */
 	if (PyLong_CheckExact(text) ||
@@ -203,7 +204,13 @@ escape(PyObject *self, PyObject *text)
 		return PyObject_CallFunctionObjArgs(markup, text, NULL);
 
 	/* if the object has an __html__ method that performs the escaping */
-	html = PyObject_GetAttr(text ,id_html);
+	if (id_html == NULL) {
+		id_html = PyUnicode_InternFromString("__html__");
+		if (id_html == NULL) {
+			return NULL;
+		}
+	}
+	html = PyObject_GetAttr(text, id_html);
 	if (html) {
 		s = PyObject_CallObject(html, NULL);
 		Py_DECREF(html);
