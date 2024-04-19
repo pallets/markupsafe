@@ -5,11 +5,12 @@ import platform
 
 import pytest
 
+from markupsafe import _escape_inner  # type: ignore[attr-defined]
 from markupsafe import escape
 
 
 @pytest.mark.skipif(
-    escape.__module__ == "markupsafe._native",
+    _escape_inner.__module__ == "markupsafe._native",
     reason="only test memory leak with speedups",
 )
 def test_markup_leaks() -> None:

@@ -4,15 +4,13 @@ import typing as t
 
 import pytest
 
+from markupsafe import escape
+from markupsafe import escape_silent
 from markupsafe import Markup
-
-if t.TYPE_CHECKING:
-    from .conftest import TPEscape
-    from .conftest import TPEscapeSilent
-    from .conftest import TPSoftStr
+from markupsafe import soft_str
 
 
-def test_adding(escape: TPEscape) -> None:
+def test_adding() -> None:
     unsafe = '<script type="application/x-some-script">alert("foo");</script>'
     safe = Markup("<em>username</em>")
     assert unsafe + safe == str(escape(unsafe)) + str(safe)
@@ -76,7 +74,7 @@ def test_dict_interpol() -> None:
     assert result == expect
 
 
-def test_escaping(escape: TPEscape) -> None:
+def test_escaping() -> None:
     assert escape("\"<>&'") == "&#34;&lt;&gt;&amp;&#39;"
     assert (
         Markup(
@@ -176,7 +174,7 @@ def test_formatting_with_objects() -> None:
     assert Markup("{s}").format(s=Stringable()) == Markup("строка")
 
 
-def test_escape_silent(escape: TPEscape, escape_silent: TPEscapeSilent) -> None:
+def test_escape_silent() -> None:
     assert escape_silent(None) == Markup()
     assert escape(None) == Markup(None)
     assert escape_silent("<foo>") == Markup("&lt;foo&gt;")
@@ -193,7 +191,7 @@ def test_mul() -> None:
     assert Markup("a") * 3 == Markup("aaa")
 
 
-def test_escape_return_type(escape: TPEscape) -> None:
+def test_escape_return_type() -> None:
     assert isinstance(escape("a"), Markup)
     assert isinstance(escape(Markup("a")), Markup)
 
@@ -204,7 +202,7 @@ def test_escape_return_type(escape: TPEscape) -> None:
     assert isinstance(escape(Foo()), Markup)
 
 
-def test_soft_str(soft_str: TPSoftStr) -> None:
+def test_soft_str() -> None:
     assert type(soft_str("")) is str  # noqa: E721
     assert type(soft_str(Markup())) is Markup  # noqa: E721
     assert type(soft_str(15)) is str  # noqa: E721

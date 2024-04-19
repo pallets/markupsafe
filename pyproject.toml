@@ -49,6 +49,12 @@ show_error_codes = true
 pretty = true
 strict = true
 
+[[tool.mypy.overrides]]
+module = [
+    "argcomplete.*",
+]
+ignore_missing_imports = true
+
 [tool.pyright]
 pythonVersion = "3.8"
 include = ["src/markupsafe", "tests"]

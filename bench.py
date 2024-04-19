@@ -15,12 +15,16 @@ for name, s in (
                 "-m",
                 "pyperf",
                 "timeit",
-                "--append",
-                "bench-results.json",
                 "--name",
                 f"{name} {mod}",
                 "-s",
-                f"from markupsafe._{mod} import escape\ns = {s}",
+                (
+                    "import markupsafe\n"
+                    f"from markupsafe._{mod} import _escape_inner\n"
+                    "markupsafe._escape_inner = _escape_inner\n"
+                    "from markupsafe import escape\n"
+                    f"s = {s}"
+                ),
                 "escape(s)",
             ]
         )
