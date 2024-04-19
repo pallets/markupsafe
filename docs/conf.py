@@ -10,17 +10,24 @@ release, version = get_version("MarkupSafe")
 
 # General --------------------------------------------------------------
 
-master_doc = "index"
+default_role = "code"
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
-    "pallets_sphinx_themes",
     "sphinxcontrib.log_cabinet",
-    "sphinx_issues",
+    "pallets_sphinx_themes",
 ]
+autodoc_member_order = "bysource"
 autodoc_typehints = "description"
-intersphinx_mapping = {"python": ("https://docs.python.org/3/", None)}
-issues_github_path = "pallets/markupsafe"
+autodoc_preserve_defaults = True
+extlinks = {
+    "issue": ("https://github.com/pallets/markupsafe/issues/%s", "#%s"),
+    "pr": ("https://github.com/pallets/markupsafe/pull/%s", "#%s"),
+}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+}
 
 # HTML -----------------------------------------------------------------
 
@@ -42,9 +49,3 @@ html_sidebars = {
 singlehtml_sidebars = {"index": ["project.html", "localtoc.html", "ethicalads.html"]}
 html_title = f"MarkupSafe Documentation ({version})"
 html_show_sourcelink = False
-
-# LaTeX ----------------------------------------------------------------
-
-latex_documents = [
-    (master_doc, f"MarkupSafe-{version}.tex", html_title, author, "manual")
-]

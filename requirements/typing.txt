@@ -6,21 +6,21 @@
 #
 iniconfig==2.0.0
     # via pytest
-mypy==1.8.0
+mypy==1.9.0
     # via -r typing.in
 mypy-extensions==1.0.0
     # via mypy
 nodeenv==1.8.0
     # via pyright
-packaging==23.2
+packaging==24.0
     # via pytest
 pluggy==1.4.0
     # via pytest
-pyright==1.1.349
+pyright==1.1.359
     # via -r typing.in
-pytest==8.0.0
+pytest==8.1.1
     # via -r typing.in
-typing-extensions==4.9.0
+typing-extensions==4.11.0
     # via mypy
 
 # The following packages are considered to be unsafe in a requirements file:
