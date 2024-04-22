@@ -356,7 +356,7 @@ fn escape_other_format<'a, const N: usize, T: Bits>(
 }
 
 #[pyfunction]
-pub fn escape_inner<'a>(py: Python<'a>, s: &'a PyString) -> PyResult<&'a PyString> {
+pub fn _escape_inner<'a>(py: Python<'a>, s: &'a PyString) -> PyResult<&'a PyString> {
     // SAFETY: from the py03 docs:
     // This function implementation relies on manually decoding a C bitfield.
     // In practice, this works well on common little-endian architectures such
@@ -378,43 +378,10 @@ pub fn escape_inner<'a>(py: Python<'a>, s: &'a PyString) -> PyResult<&'a PyStrin
     }
 }
 
-fn delta_naive(input: &str, replacement_indices: &mut Vec<u32>) -> usize {
-    let mut delta = 0;
-    for (i, item) in input.chars().enumerate() {
-        if is_equal_any!(item, b'<' | b'>') {
-            delta += 3;
-            replacement_indices.push(i as u32);
-        } else if is_equal_any!(item, b'"' | b'\'' | b'&') {
-            delta += 4;
-            replacement_indices.push(i as u32);
-        }
-    }
-    delta
-}
-
-fn check_utf8_naive(input: &str) -> Option<RebuildArgs> {
-    let mut replacement_indices = Vec::with_capacity(8);
-    let delta = delta_naive(input, &mut replacement_indices);
-    if delta == 0 {
-        None
-    } else {
-        Some(RebuildArgs::new(delta, replacement_indices, input))
-    }
-}
-
-#[pyfunction]
-pub fn escape_inner_naive<'a>(py: Python<'a>, s: &'a PyString) -> PyResult<&'a PyString> {
-    let input = s.to_str()?;
-    Ok(check_utf8_naive(input)
-        .map(|rb| PyString::new(py, build_replaced(rb).as_str()))
-        .unwrap_or(s))
-}
-
 #[pymodule]
 #[pyo3(name = "_rust_speedups")]
 fn speedups(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(escape_inner, m)?)?;
-    m.add_function(wrap_pyfunction!(escape_inner_naive, m)?)?;
+    m.add_function(wrap_pyfunction!(_escape_inner, m)?)?;
     Ok(())
 }
 
