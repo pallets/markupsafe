@@ -1,21 +1,30 @@
-import pyperf
+import subprocess
+import sys
 
-runner = pyperf.Runner()
-
-name = "native"
-runner.timeit(
-    f"escape_inner {name}",
-    setup=f"from markupsafe._{name} import escape_inner",
-    stmt='escape_inner("<strong>Hello, World!</strong>" * 1024)',
-)
-name = "rust_speedups"
-runner.timeit(
-    f"escape_inner_naive {name}",
-    setup=f"from markupsafe._{name} import escape_inner_naive",
-    stmt='escape_inner_naive("<strong>Hello, World!</strong>" * 1024)',
-)
-runner.timeit(
-    f"escape_inner {name}",
-    setup=f"from markupsafe._{name} import escape_inner",
-    stmt='escape_inner("<strong>Hello, World!</strong>" * 1024)',
-)
+for name, s in (
+    ("short escape", '"<strong>Hello, World!</strong>"'),
+    ("long escape", '"Hello, World!" * 1000'),
+    ("short plain", '"Hello, World!"'),
+    ("long plain", '"Hello, World!" * 1000'),
+    ("long suffix", '"<strong>Hello, World!</strong>" + "x" * 100_000'),
+):
+    for mod in "native", "speedups":
+        subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pyperf",
+                "timeit",
+                "--name",
+                f"{name} {mod}",
+                "-s",
+                (
+                    "import markupsafe\n"
+                    f"from markupsafe._{mod} import _escape_inner\n"
+                    "markupsafe._escape_inner = _escape_inner\n"
+                    "from markupsafe import escape\n"
+                    f"s = {s}"
+                ),
+                "escape(s)",
+            ]
+        )

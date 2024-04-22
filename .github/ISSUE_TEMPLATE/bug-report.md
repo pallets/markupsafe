@@ -4,9 +4,8 @@ about: Report a bug in MarkupSafe (not other projects which depend on MarkupSafe
 ---
 
 <!--
-This issue tracker is a tool to address bugs in Markupsafe itself.
-Please use Pallets Discord or Stack Overflow for questions about your
-own code.
+This issue tracker is a tool to address bugs in MarkupSafe itself. Please use
+GitHub Discussions or the Pallets Discord for questions about your own code.
 
 Replace this comment with a clear outline of what the bug is.
 -->

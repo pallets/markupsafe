@@ -2,9 +2,9 @@
 name = "MarkupSafe"
 version = "3.0.0.dev"
 description = "Safely add untrusted strings to HTML/XML markup."
-readme = "README.rst"
-license = {file = "LICENSE.rst"}
-maintainers = [{name = "Pallets", email = "contact@palletsprojects.com"}]
+readme = "README.md"
+license = { file = "LICENSE.txt" }
+maintainers = [{ name = "Pallets", email = "contact@palletsprojects.com" }]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
@@ -14,6 +14,7 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Text Processing :: Markup :: HTML",
+    "Typing :: Typed",
 ]
 requires-python = ">=3.8"
 
@@ -21,8 +22,7 @@ requires-python = ">=3.8"
 Donate = "https://palletsprojects.com/donate"
 Documentation = "https://markupsafe.palletsprojects.com/"
 Changes = "https://markupsafe.palletsprojects.com/changes/"
-"Source Code" = "https://github.com/pallets/markupsafe/"
-"Issue Tracker" = "https://github.com/pallets/markupsafe/issues/"
+Source = "https://github.com/pallets/markupsafe/"
 Chat = "https://discord.gg/pallets"
 
 [build-system]
@@ -49,6 +49,12 @@ show_error_codes = true
 pretty = true
 strict = true
 
+[[tool.mypy.overrides]]
+module = [
+    "argcomplete.*",
+]
+ignore_missing_imports = true
+
 [tool.pyright]
 pythonVersion = "3.8"
 include = ["src/markupsafe", "tests"]
@@ -57,7 +63,6 @@ typeCheckingMode = "basic"
 [tool.ruff]
 src = ["src"]
 fix = true
-unsafe-fixes = true
 show-fixes = true
 output-format = "full"
 

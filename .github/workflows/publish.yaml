@@ -8,23 +8,23 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'git tag to check out and upload to'
+        description: git tag to check out and upload to
         required: true
       python:
-        description: 'Python version, like "cp311"'
+        description: Python version, like "cp311"
         required: true
 jobs:
   sdist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
         with:
           ref: ${{ inputs.tag }}
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: '3.x'
-          cache: 'pip'
-          cache-dependency-path: 'requirements/*.txt'
+          cache: pip
+          cache-dependency-path: requirements/*.txt
       - run: pip install -r requirements/build.txt
       # Use the commit date instead of the current date during the build.
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
@@ -33,7 +33,7 @@ jobs:
         with:
           path: ./dist
         # The sdist is not needed on new Python version builds. However, this job must
-        # present in the run for the hash job, so only the upload is skipped.
+        # be present in the run for the hash job, so only the upload is skipped.
         if: github.event_name == 'push'
   wheels:
     name: wheels / ${{ matrix.os }}
@@ -43,18 +43,18 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
         with:
           platforms: arm64
-      - uses: joerick/cibuildwheel@ce3fb7832089eb3e723a0a99cab7f3eaccf074fd # v2.16.5
+      - uses: joerick/cibuildwheel@8d945475ac4b1aac4ae08b2fd27db9917158b6ce # v2.17.0
         env:
           # For workflow_dispatch, only build the new Python version.
-          CIBW_BUILD: "${{ inputs.python && format('{0}-*', inputs.python) || null }}"
-          CIBW_SKIP: 'pp*'
+          CIBW_BUILD: ${{ inputs.python && format('{0}-*', inputs.python) || null }}
+          CIBW_SKIP: pp*
           CIBW_ARCHS_LINUX: auto aarch64
           CIBW_ARCHS_MACOS: auto universal2
           CIBW_BUILD_FRONTEND: build
@@ -63,7 +63,7 @@ jobs:
           path: ./wheelhouse
   hash:
     # Generate hashes for the sdist and wheels, used later for provenance.
-    needs: ['sdist', 'wheels']
+    needs: [sdist, wheels]
     runs-on: ubuntu-latest
     outputs:
       hash: ${{ steps.hash.outputs.hash }}
@@ -73,13 +73,13 @@ jobs:
         id: hash
         run: cd artifact && echo "hash=$(sha256sum * | base64 -w0)" >> $GITHUB_OUTPUT
   provenance:
-    needs: ['hash']
+    needs: [hash]
     permissions:
       actions: read
       id-token: write
       contents: write
     # Can't pin with hash due to how this workflow works.
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
     with:
       base64-subjects: ${{ needs.hash.outputs.hash }}
       # When building more wheels, use the Python version as the provenance file name.
@@ -87,7 +87,7 @@ jobs:
   create-release:
     # Upload the sdist, wheels, and provenance to a GitHub release. They remain
     # available as build artifacts for a while as well.
-    needs: ['provenance']
+    needs: [provenance]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -112,24 +112,23 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
   publish-pypi:
-    needs: ['provenance']
+    needs: [provenance]
     # Wait for approval before attempting to upload to PyPI. This allows reviewing the
     # files in the draft release.
     environment:
       name: publish
-      url: https://pypi.org/project/MarkupSafe
+      url: https://pypi.org/project/MarkupSafe/${{ github.ref_name }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
     steps:
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
-      # Try uploading to Test PyPI first, in case something fails.
-      - uses: pypa/gh-action-pypi-publish@2f6f737ca5f74c637829c0f5c3acd0e29ea5e8bf # v1.8.11
+      - uses: pypa/gh-action-pypi-publish@81e9d935c883d0b210363ab89cf05f3894778450 # v1.8.14
         with:
           repository-url: https://test.pypi.org/legacy/
           packages-dir: artifact/
           skip-existing: true
-      - uses: pypa/gh-action-pypi-publish@2f6f737ca5f74c637829c0f5c3acd0e29ea5e8bf # v1.8.11
+      - uses: pypa/gh-action-pypi-publish@81e9d935c883d0b210363ab89cf05f3894778450 # v1.8.14
         with:
           packages-dir: artifact/
           skip-existing: true

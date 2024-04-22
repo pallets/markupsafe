@@ -1,7 +1,4 @@
-from __future__ import annotations
-
-
-def escape_inner(s: str, /) -> str:
+def _escape_inner(s: str, /) -> str:
     return (
         s.replace("&", "&amp;")
         .replace(">", "&gt;")
