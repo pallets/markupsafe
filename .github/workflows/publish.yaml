@@ -31,6 +31,7 @@ jobs:
       - run: python -m build --sdist
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
+          name: build-sdist
           path: ./dist
         # The sdist is not needed on new Python version builds. However, this job must
         # be present in the run for the hash job, so only the upload is skipped.
@@ -60,6 +61,7 @@ jobs:
           CIBW_BUILD_FRONTEND: build
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
+          name: build-wheels-${{ matrix.os }}
           path: ./wheelhouse
   hash:
     # Generate hashes for the sdist and wheels, used later for provenance.
@@ -69,9 +71,13 @@ jobs:
       hash: ${{ steps.hash.outputs.hash }}
     steps:
       - uses: actions/download-artifact@9c19ed7fe5d278cd354c7dfd5d3b88589c7e2395 # v4.1.6
+        with:
+          path: dist
+          pattern: build-*
+          merge-multiple: true
       - name: generate hash
         id: hash
-        run: cd artifact && echo "hash=$(sha256sum * | base64 -w0)" >> $GITHUB_OUTPUT
+        run: cd dist && echo "hash=$(sha256sum * | base64 -w0)" >> $GITHUB_OUTPUT
   provenance:
     needs: [hash]
     permissions:
@@ -93,13 +99,20 @@ jobs:
       contents: write
     steps:
       - uses: actions/download-artifact@9c19ed7fe5d278cd354c7dfd5d3b88589c7e2395 # v4.1.6
+        with:
+          path: dist
+          pattern: build-*
+          merge-multiple: true
+      - uses: actions/download-artifact@9c19ed7fe5d278cd354c7dfd5d3b88589c7e2395 # v4.1.6
+        with:
+          pattern: '*.intoto.jsonl'
       # When building a new tag, create a new draft release.
       - if: github.event_name == 'push'
         name: create release
         run: >
           gh release create --draft --repo ${{ github.repository }}
           ${{ inputs.tag || github.ref_name }}
-          *.intoto.jsonl/* artifact/*
+          *.intoto.jsonl/* dist/*
         env:
           GH_TOKEN: ${{ github.token }}
       # When running manually, update the existing release with more files.
@@ -108,7 +121,7 @@ jobs:
         run: >
           gh release upload --repo ${{ github.repository }}
           ${{ inputs.tag || github.ref_name }}
-          *.intoto.jsonl/* artifact/*
+          *.intoto.jsonl/* dist/*
         env:
           GH_TOKEN: ${{ github.token }}
   publish-pypi:
@@ -123,12 +136,14 @@ jobs:
       id-token: write
     steps:
       - uses: actions/download-artifact@9c19ed7fe5d278cd354c7dfd5d3b88589c7e2395 # v4.1.6
+        with:
+          path: dist
+          pattern: build-*
+          merge-multiple: true
       - uses: pypa/gh-action-pypi-publish@81e9d935c883d0b210363ab89cf05f3894778450 # v1.8.14
         with:
           repository-url: https://test.pypi.org/legacy/
-          packages-dir: artifact/
           skip-existing: true
       - uses: pypa/gh-action-pypi-publish@81e9d935c883d0b210363ab89cf05f3894778450 # v1.8.14
         with:
-          packages-dir: artifact/
           skip-existing: true
