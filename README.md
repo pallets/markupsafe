@@ -1,5 +1,5 @@
 # MarkupSafe
-
+[![markupsafe Downloads Last Month](https://assets.piptrends.com/get-last-month-downloads-badge/markupsafe.svg 'markupsafe Downloads Last Month by pip Trends')](https://piptrends.com/package/markupsafe)
 MarkupSafe implements a text object that escapes characters so it is
 safe to use in HTML and XML. Characters that have special meanings are
 replaced so that they display as the actual characters. This mitigates
