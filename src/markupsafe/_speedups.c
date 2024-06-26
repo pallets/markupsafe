@@ -72,102 +72,122 @@
 	}
 
 static PyObject*
-escape_unicode_kind1(PyUnicodeObject *in)
+escape_unicode_kind1(PyObject *in, const void *data, Py_ssize_t size)
 {
-	Py_UCS1 *inp = PyUnicode_1BYTE_DATA(in);
-	Py_UCS1 *inp_end = inp + PyUnicode_GET_LENGTH(in);
-	Py_UCS1 *outp;
+	Py_UCS1 *inp = (Py_UCS1*)data;
+	Py_UCS1 *inp_end = inp + size;
+	Py_UCS1 *outbuf, *outp;
 	PyObject *out;
 	Py_ssize_t delta = 0;
 
 	GET_DELTA(inp, inp_end, delta);
 	if (!delta) {
-		Py_INCREF(in);
-		return (PyObject*)in;
+		return Py_NewRef(in);
 	}
 
-	out = PyUnicode_New(PyUnicode_GET_LENGTH(in) + delta,
-						PyUnicode_IS_ASCII(in) ? 127 : 255);
-	if (!out)
+	outbuf = PyMem_Malloc((size + delta) * sizeof(Py_UCS1));
+	if (outbuf == NULL) {
 		return NULL;
-
-	inp = PyUnicode_1BYTE_DATA(in);
-	outp = PyUnicode_1BYTE_DATA(out);
+	}
+	inp = (Py_UCS1*)data;
+	outp = outbuf;
 	DO_ESCAPE(inp, inp_end, outp);
+
+	out = PyUnicode_Import(outbuf, (size + delta) * sizeof(Py_UCS1),
+	                       PyUnicode_FORMAT_UCS1);
+	PyMem_Free(outbuf);
 	return out;
 }
 
 static PyObject*
-escape_unicode_kind2(PyUnicodeObject *in)
+escape_unicode_kind2(PyObject *in, const void *data, Py_ssize_t size)
 {
-	Py_UCS2 *inp = PyUnicode_2BYTE_DATA(in);
-	Py_UCS2 *inp_end = inp + PyUnicode_GET_LENGTH(in);
-	Py_UCS2 *outp;
+	Py_UCS2 *inp = (Py_UCS2*)data;
+	Py_UCS2 *inp_end = inp + size;
+	Py_UCS2 *outbuf, *outp;
 	PyObject *out;
 	Py_ssize_t delta = 0;
 
 	GET_DELTA(inp, inp_end, delta);
 	if (!delta) {
-		Py_INCREF(in);
-		return (PyObject*)in;
+		return Py_NewRef(in);
 	}
 
-	out = PyUnicode_New(PyUnicode_GET_LENGTH(in) + delta, 65535);
-	if (!out)
+	outbuf = PyMem_Malloc((size + delta) * sizeof(Py_UCS2));
+	if (outbuf == NULL) {
 		return NULL;
-
-	inp = PyUnicode_2BYTE_DATA(in);
-	outp = PyUnicode_2BYTE_DATA(out);
+	}
+	inp = (Py_UCS2*)data;
+	outp = outbuf;
 	DO_ESCAPE(inp, inp_end, outp);
+
+	out = PyUnicode_Import(outbuf, (size + delta) * sizeof(Py_UCS2),
+	                       PyUnicode_FORMAT_UCS2);
+	PyMem_Free(outbuf);
 	return out;
 }
 
 
 static PyObject*
-escape_unicode_kind4(PyUnicodeObject *in)
+escape_unicode_kind4(PyObject *in, const void *data, Py_ssize_t size)
 {
-	Py_UCS4 *inp = PyUnicode_4BYTE_DATA(in);
-	Py_UCS4 *inp_end = inp + PyUnicode_GET_LENGTH(in);
-	Py_UCS4 *outp;
+	Py_UCS4 *inp = (Py_UCS4*)data;
+	Py_UCS4 *inp_end = inp + size;
+	Py_UCS4 *outbuf, *outp;
 	PyObject *out;
 	Py_ssize_t delta = 0;
 
 	GET_DELTA(inp, inp_end, delta);
 	if (!delta) {
-		Py_INCREF(in);
-		return (PyObject*)in;
+		return Py_NewRef(in);
 	}
 
-	out = PyUnicode_New(PyUnicode_GET_LENGTH(in) + delta, 1114111);
-	if (!out)
+	outbuf = PyMem_Malloc((size + delta) * sizeof(Py_UCS4));
+	if (outbuf == NULL) {
 		return NULL;
-
-	inp = PyUnicode_4BYTE_DATA(in);
-	outp = PyUnicode_4BYTE_DATA(out);
+	}
+	inp = (Py_UCS4*)data;
+	outp = outbuf;
 	DO_ESCAPE(inp, inp_end, outp);
+
+	out = PyUnicode_Import(outbuf, (size + delta) * sizeof(Py_UCS4),
+	                       PyUnicode_FORMAT_UCS4);
+	PyMem_Free(outbuf);
 	return out;
 }
 
 static PyObject*
 escape_unicode(PyObject *self, PyObject *s)
 {
-	if (!PyUnicode_CheckExact(s))
+	uint32_t formats = (PyUnicode_FORMAT_ASCII
+	                    | PyUnicode_FORMAT_UCS1
+	                    | PyUnicode_FORMAT_UCS2
+	                    | PyUnicode_FORMAT_UCS4);
+	uint32_t format;
+	Py_ssize_t size;
+	const void *data = PyUnicode_Export(s, formats, &size, &format);
+	if (data == NULL) {
 		return NULL;
-
-    // This check is no longer needed in Python 3.12.
-	if (PyUnicode_READY(s))
-		return NULL;
-
-	switch (PyUnicode_KIND(s)) {
-	case PyUnicode_1BYTE_KIND:
-		return escape_unicode_kind1(s);
-	case PyUnicode_2BYTE_KIND:
-		return escape_unicode_kind2(s);
-	case PyUnicode_4BYTE_KIND:
-		return escape_unicode_kind4(s);
 	}
-	assert(0);  /* shouldn't happen */
-	return NULL;
+
+	PyObject *res;
+	switch (format) {
+	case PyUnicode_FORMAT_ASCII:
+	case PyUnicode_FORMAT_UCS1:
+		res = escape_unicode_kind1(s, data, size);
+		break;
+	case PyUnicode_FORMAT_UCS2:
+		res = escape_unicode_kind2(s, data, size / 2);
+		break;
+	case PyUnicode_FORMAT_UCS4:
+		res = escape_unicode_kind4(s, data, size / 4);
+		break;
+	default:
+		assert(0);  /* shouldn't happen */
+		res = NULL;
+	}
+	PyUnicode_ReleaseExport(s, data, format);
+	return res;
 }
 
 static PyMethodDef module_methods[] = {
