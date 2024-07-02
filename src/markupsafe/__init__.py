@@ -6,7 +6,7 @@ import sys
 import typing as t
 
 try:
-    from ._speedups import _escape_inner
+    from ._rust_speedups import _escape_inner
 except ImportError:
     from ._native import _escape_inner
 
