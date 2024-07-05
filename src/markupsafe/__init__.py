@@ -5,19 +5,22 @@ import string
 import sys
 import typing as t
 
+import typing_extensions as te
+
 try:
     from ._speedups import _escape_inner
 except ImportError:
     from ._native import _escape_inner
 
-if t.TYPE_CHECKING:
-    import typing_extensions as te
 
-    class HasHTML(te.Protocol):
-        def __html__(self, /) -> str: ...
+@te.runtime_checkable
+class HasHTML(te.Protocol):
+    def __html__(self, /) -> str: ...
 
-    class TPEscape(te.Protocol):
-        def __call__(self, s: t.Any, /) -> Markup: ...
+
+@te.runtime_checkable
+class TPEscape(te.Protocol):
+    def __call__(self, s: t.Any, /) -> Markup: ...
 
 
 def escape(s: t.Any, /) -> Markup:

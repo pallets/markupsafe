@@ -20,6 +20,8 @@ Unreleased
     ``importlib.metadata.version("markupsafe")``, instead. :pr:`402`
 -   Speed up escaping plain strings by 40%. :pr:`434`
 -   Simplify speedups implementation. :pr:`437`
+-   Add ``typing_extensions>=4.0.0`` as a dependency to satisfy the requirements
+    of runtime type checkers (eg ``beartype``).
 
 
 Version 2.1.5
