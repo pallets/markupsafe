@@ -11,3 +11,4 @@ dist/
 htmlcov/
 .tox/
 docs/_build/
+/src/rust/target/
