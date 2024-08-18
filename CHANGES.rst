@@ -20,6 +20,7 @@ Unreleased
     ``importlib.metadata.version("markupsafe")``, instead. :pr:`402`
 -   Speed up escaping plain strings by 40%. :pr:`434`
 -   Simplify speedups implementation. :pr:`437`
+-   Publish wheels for Python 3.13. :pr:`461`
 
 
 Version 2.1.5
