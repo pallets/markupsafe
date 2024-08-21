@@ -21,6 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - {name: '3.13 free-threading', nogil: true, tox: py313}
+          - {name: Windows free-threading, nogil: true, os: windows-latest, tox: py313}
           - {python: '3.13'}
           - {python: '3.12'}
           - {name: Windows, python: '3.12', os: windows-latest}
@@ -33,13 +35,34 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
+        if: ${{ ! matrix.nogil }}
         with:
           python-version: ${{ matrix.python }}
           allow-prereleases: true
           cache: pip
           cache-dependency-path: requirements*/*.txt
+
+      # Free-threading versions of python
+      # https://py-free-threading.github.io/ci/
+      - if: ${{ matrix.nogil && ! matrix.os }}
+        uses: deadsnakes/action@6c8b9b82fe0b4344f4b98f2775fcc395df45e494 # v3.1.0
+        with:
+          python-version: 3.13-dev
+          nogil: true
+      - if: ${{ matrix.nogil && matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: |
+          $pythonInstallerUrl = "https://www.python.org/ftp/python/3.13.0/python-3.13.0rc1-amd64.exe"
+          Invoke-WebRequest $pythonInstallerUrl -OutFile setup-python.exe
+          Start-Process "setup-python.exe" -argumentlist "/quiet PrependPath=1 TargetDir=C:\Python313 Include_freethreaded=1" -wait
+          C:\Python313\python3.13t.exe -m pip install -U pip
+          C:\Python313\python3.13t.exe -c "import sys; print(f'{sys._is_gil_enabled()=}')"
+          echo "C:\Python313\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "C:\Python313" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
       - run: pip install tox
       - run: tox run -e ${{ matrix.tox || format('py{0}', matrix.python) }}
+                 --discover C:\Python313\python3.13t.exe
   typing:
     runs-on: ubuntu-latest
     steps:
