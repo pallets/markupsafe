@@ -26,9 +26,22 @@ static NEEDS_SANITIZE: [bool; 256] = {
 };
 
 pub fn needs_sanitize(bytes: &[u8]) -> Option<usize> {
-    for (i, &b) in bytes.iter().enumerate() {
+    let chunks = bytes.chunks_exact(4);
+    let rest = chunks.remainder();
+
+    for (i, chunk) in chunks.enumerate() {
+        let a = NEEDS_SANITIZE[chunk[0] as usize];
+        let b = NEEDS_SANITIZE[chunk[1] as usize];
+        let c = NEEDS_SANITIZE[chunk[2] as usize];
+        let d = NEEDS_SANITIZE[chunk[3] as usize];
+        if a | b | c | d {
+            return Some(i * 4);
+        }
+    }
+
+    for (i, &b) in rest.iter().enumerate() {
         if NEEDS_SANITIZE[b as usize] {
-            return Some(i);
+            return Some(((bytes.len() / 4) * 4) + i);
         }
     }
 
@@ -86,12 +99,9 @@ pub fn lut_replace(input: &str) -> Option<String> {
 }
 
 #[pyfunction]
-pub fn _escape_inner<'py>(
-    py: Python<'py>,
-    s: Bound<'py, PyString>,
-) -> PyResult<Bound<'py, PyString>> {
+pub fn _escape_inner<'py>(py: Python<'py>, s: &'py PyString) -> PyResult<&'py PyString> {
     if let Some(out) = lut_replace(s.to_str()?) {
-        Ok(PyString::new_bound(py, out.as_str()))
+        Ok(PyString::new(py, out.as_str()))
     } else {
         Ok(s)
     }
@@ -99,7 +109,7 @@ pub fn _escape_inner<'py>(
 
 #[pymodule]
 #[pyo3(name = "_rust_speedups")]
-fn speedups<'py>(_py: Python<'py>, m: &Bound<'py, PyModule>) -> PyResult<()> {
+fn speedups<'py>(_py: Python<'py>, m: &'py PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(_escape_inner, m)?)?;
     Ok(())
 }
