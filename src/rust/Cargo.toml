@@ -8,7 +8,7 @@ publish = false
 debug = true
 
 [dependencies]
-pyo3 = "0.20.3"
+pyo3 = "0.22.2"
 
 [lib]
 name = "_rust_speedups"
