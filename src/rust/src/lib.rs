@@ -99,9 +99,12 @@ pub fn lut_replace(input: &str) -> Option<String> {
 }
 
 #[pyfunction]
-pub fn _escape_inner<'py>(py: Python<'py>, s: &'py PyString) -> PyResult<&'py PyString> {
+pub fn _escape_inner<'py>(
+    py: Python<'py>,
+    s: Bound<'py, PyString>,
+) -> PyResult<Bound<'py, PyString>> {
     if let Some(out) = lut_replace(s.to_str()?) {
-        Ok(PyString::new(py, out.as_str()))
+        Ok(PyString::new_bound(py, out.as_str()))
     } else {
         Ok(s)
     }
@@ -109,7 +112,7 @@ pub fn _escape_inner<'py>(py: Python<'py>, s: &'py PyString) -> PyResult<&'py Py
 
 #[pymodule]
 #[pyo3(name = "_rust_speedups")]
-fn speedups<'py>(_py: Python<'py>, m: &'py PyModule) -> PyResult<()> {
+fn speedups<'py>(_py: Python<'py>, m: &Bound<'py, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(_escape_inner, m)?)?;
     Ok(())
 }
