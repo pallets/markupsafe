@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sysconfig
 import typing as t
 from types import ModuleType
 
@@ -12,6 +13,11 @@ try:
     from markupsafe import _speedups
 except ImportError:
     _speedups = None  # type: ignore
+
+
+def pytest_report_header() -> list[str]:
+    """Return a list of strings to be displayed in the header of the report."""
+    return [f"Free-threaded: {bool(sysconfig.get_config_var('Py_GIL_DISABLED'))}"]
 
 
 @pytest.fixture(
