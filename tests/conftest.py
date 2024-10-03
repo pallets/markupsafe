@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import sysconfig
+import sys
 import typing as t
 from types import ModuleType
 
@@ -17,7 +17,9 @@ except ImportError:
 
 def pytest_report_header() -> list[str]:
     """Return a list of strings to be displayed in the header of the report."""
-    return [f"Free-threaded: {bool(sysconfig.get_config_var('Py_GIL_DISABLED'))}"]
+    if sys.version_info < (3, 13):
+        return []
+    return [f"Free-threaded: {not sys._is_gil_enabled()}"]
 
 
 @pytest.fixture(
