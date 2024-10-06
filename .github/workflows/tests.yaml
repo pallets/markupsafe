@@ -28,7 +28,6 @@ jobs:
           - {python: '3.11'}
           - {python: '3.10'}
           - {python: '3.9'}
-          - {python: '3.8'}
           - {name: PyPy, python: 'pypy-3.10', tox: pypy310}
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
