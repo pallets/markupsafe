@@ -1,6 +1,6 @@
 [project]
 name = "MarkupSafe"
-version = "3.0.0.dev"
+version = "3.0.0"
 description = "Safely add untrusted strings to HTML/XML markup."
 readme = "README.md"
 license = { file = "LICENSE.txt" }

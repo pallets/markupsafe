@@ -1,7 +1,7 @@
 Version 3.0.0
 -------------
 
-Unreleased
+Released 2024-08-07
 
 -   Support Python 3.13 and its experimental free-threaded build. :pr:`461`
 -   Drop support for Python 3.7 and 3.8.
