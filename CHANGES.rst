@@ -3,6 +3,7 @@ Version 3.0.0
 
 Unreleased
 
+-   Support Python 3.13 and its experimental free-threaded build. :pr:`461`
 -   Drop support for Python 3.7 and 3.8.
 -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
     :pr:`348`
@@ -20,7 +21,6 @@ Unreleased
     ``importlib.metadata.version("markupsafe")``, instead. :pr:`402`
 -   Speed up escaping plain strings by 40%. :pr:`434`
 -   Simplify speedups implementation. :pr:`437`
--   Publish wheels for Python 3.13. :pr:`461`
 
 
 Version 2.1.5
