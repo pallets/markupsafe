@@ -3,6 +3,7 @@ Version 3.0.0
 
 Unreleased
 
+-   Support Python 3.13 and its experimental free-threaded build. :pr:`461`
 -   Drop support for Python 3.7 and 3.8.
 -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
     :pr:`348`

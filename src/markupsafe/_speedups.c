@@ -190,5 +190,15 @@ static struct PyModuleDef module_definition = {
 PyMODINIT_FUNC
 PyInit__speedups(void)
 {
-	return PyModule_Create(&module_definition);
+	PyObject *m = PyModule_Create(&module_definition);
+
+	if (m == NULL) {
+		return NULL;
+	}
+
+	#ifdef Py_GIL_DISABLED
+	PyUnstable_Module_SetGIL(m, Py_MOD_GIL_NOT_USED);
+	#endif
+
+	return m;
 }

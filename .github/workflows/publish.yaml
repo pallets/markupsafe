@@ -59,6 +59,7 @@ jobs:
           CIBW_ARCHS_LINUX: auto aarch64
           CIBW_ARCHS_MACOS: auto universal2
           CIBW_BUILD_FRONTEND: build
+          CIBW_FREE_THREADED_SUPPORT: 1
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         with:
           name: build-wheels-${{ matrix.os }}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 import typing as t
 from types import ModuleType
 
@@ -12,6 +13,14 @@ try:
     from markupsafe import _speedups
 except ImportError:
     _speedups = None  # type: ignore
+
+
+def pytest_report_header() -> list[str]:
+    """Return a list of strings to be displayed in the header of the report."""
+    if sys.version_info >= (3, 13):
+        return [f"Free-threaded: {not sys._is_gil_enabled()}"]
+
+    return []
 
 
 @pytest.fixture(
