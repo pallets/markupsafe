@@ -1,7 +1,7 @@
 Version 3.0.1
 -------------
 
-Unreleased
+Released 2024-10-08
 
 -   Address compiler warnings that became errors in GCC 14. :issue:`466`
 -   Fix compatibility with proxy objects. :issue:`467`
@@ -10,7 +10,7 @@ Unreleased
 Version 3.0.0
 -------------
 
-Released 2024-08-07
+Released 2024-10-07
 
 -   Support Python 3.13 and its experimental free-threaded build. :pr:`461`
 -   Drop support for Python 3.7 and 3.8.
