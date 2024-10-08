@@ -4,6 +4,7 @@ Version 3.0.1
 Unreleased
 
 -   Address compiler warnings that became errors in GCC 14. :issue:`466`
+-   Fix compatibility with proxy objects. :issue:`467`
 
 
 Version 3.0.0
