@@ -13,13 +13,16 @@ release, version = get_version("MarkupSafe")
 master_doc = "index"
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "pallets_sphinx_themes",
     "sphinxcontrib.log_cabinet",
-    "sphinx_issues",
 ]
+extlinks = {
+    "issue": ("https://github.com/pallets/markupsafe/issues/%s", "#%s"),
+    "pr": ("https://github.com/pallets/markupsafe/pull/%s", "#%s"),
+}
 intersphinx_mapping = {"python": ("https://docs.python.org/3/", None)}
-issues_github_path = "pallets/markupsafe"
 
 # HTML -----------------------------------------------------------------
 
