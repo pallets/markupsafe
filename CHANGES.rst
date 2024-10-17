@@ -3,6 +3,8 @@ Version 3.1.0
 
 Unreleased
 
+-   Fix compatibility when ``__str__`` returns a ``str`` subclass. :issue:`472`
+
 
 Version 3.0.1
 -------------
