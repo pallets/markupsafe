@@ -1,7 +1,7 @@
 Version 3.0.2
 -------------
 
-Unreleased
+Released 2024-10-18
 
 -   Fix compatibility when ``__str__`` returns a ``str`` subclass. :issue:`472`
 -   Build requires setuptools >= 70.1. :issue:`475`
