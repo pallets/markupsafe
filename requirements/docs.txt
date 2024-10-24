@@ -20,13 +20,13 @@ imagesize==1.4.1
     # via sphinx
 jinja2==3.1.4
     # via sphinx
-markupsafe==3.0.1
+markupsafe==3.0.2
     # via jinja2
 packaging==24.1
     # via
     #   pallets-sphinx-themes
     #   sphinx
-pallets-sphinx-themes==2.2.0
+pallets-sphinx-themes==2.3.0
     # via -r docs.in
 pygments==2.18.0
     # via sphinx

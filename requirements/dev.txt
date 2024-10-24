@@ -57,11 +57,11 @@ jinja2==3.1.4
     # via
     #   -r docs.txt
     #   sphinx
-markupsafe==3.0.1
+markupsafe==3.0.2
     # via
     #   -r docs.txt
     #   jinja2
-mypy==1.12.0
+mypy==1.13.0
     # via -r typing.txt
 mypy-extensions==1.0.0
     # via
@@ -82,7 +82,7 @@ packaging==24.1
     #   pytest
     #   sphinx
     #   tox
-pallets-sphinx-themes==2.2.0
+pallets-sphinx-themes==2.3.0
     # via -r docs.txt
 platformdirs==4.3.6
     # via
@@ -102,7 +102,7 @@ pygments==2.18.0
     #   sphinx
 pyproject-api==1.8.0
     # via tox
-pyright==1.1.385
+pyright==1.1.386
     # via -r typing.txt
 pytest==8.3.3
     # via
@@ -154,7 +154,7 @@ sphinxcontrib-serializinghtml==2.0.0
     # via
     #   -r docs.txt
     #   sphinx
-tox==4.22.0
+tox==4.23.2
     # via -r dev.in
 typing-extensions==4.12.2
     # via
@@ -165,7 +165,7 @@ urllib3==2.2.3
     # via
     #   -r docs.txt
     #   requests
-virtualenv==20.26.6
+virtualenv==20.27.0
     # via
     #   pre-commit
     #   tox
