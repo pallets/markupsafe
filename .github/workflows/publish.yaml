@@ -63,6 +63,7 @@ jobs:
           CIBW_SKIP: pp*
           CIBW_ARCHS_LINUX: auto aarch64
           CIBW_ARCHS_MACOS: auto universal2
+          CIBW_ARCHS_WINDOWS: auto ARM64
           CIBW_ENABLE: cpython-freethreading
           CIBW_BUILD_FRONTEND: build[uv]
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
