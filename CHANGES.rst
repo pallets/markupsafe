@@ -4,6 +4,7 @@ Version 3.1.0
 Unreleased
 
 -   fix(pyproject): set project.license to the right value. :issue:`488`
+-   fix(readthedocs): add missing sphinx.configuration key to .readthedocs.yml :issue:`490`
 
 Version 3.0.2
 -------------
