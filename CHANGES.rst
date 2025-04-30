@@ -3,6 +3,7 @@ Version 3.1.0
 
 Unreleased
 
+-   ci: update tests.yaml action file :issue:`491`
 
 Version 3.0.2
 -------------

@@ -5,54 +5,69 @@ on:
     paths-ignore: ['docs/**', '*.md', '*.rst']
   pull_request:
     paths-ignore: ['docs/**', '*.md', '*.rst']
+
+# Add concurrency control to cancel outdated runs on PRs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  tests:
-    name: ${{ matrix.name || matrix.python }}
-    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+  test:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - {python: '3.13'}
-          - {name: 'Free-threaded', python: '3.13', free-threaded: true}
-          - {python: '3.12'}
-          - {name: Windows, python: '3.12', os: windows-latest}
-          - {name: Mac, python: '3.12', os: macos-latest}
-          - {python: '3.11'}
-          - {python: '3.10'}
-          - {python: '3.9'}
-          - {name: PyPy, python: 'pypy-3.10', tox: pypy310}
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy-3.8", "pypy-3.9", "pypy-3.10"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        exclude:
+          # PyPy does not support macOS ARM64 runners yet
+          # https://github.com/actions/runner-images/issues/7113
+          # pypy doesn't have 3.10 wheels for apple silicon yet
+          - os: macos-latest
+            python-version: pypy-3.10
+          # PyPy not available on windows
+          - os: windows-latest
+            python-version: pypy-3.8
+          - os: windows-latest
+            python-version: pypy-3.9
+          - os: windows-latest
+            python-version: pypy-3.10
+
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
-        if: ${{ !matrix.free-threaded }}
-        with:
-          python-version: ${{ matrix.python }}
-          allow-prereleases: true
-          cache: pip
-          cache-dependency-path: requirements*/*.txt
-      - uses: deadsnakes/action@e640ac8743173a67cca4d7d77cd837e514bf98e8 # v3.2.0
-        if: ${{ matrix.free-threaded }}
-        with:
-          python-version: ${{ matrix.python }}
-          nogil: true
-      - run: pip install tox
-      - env:
-          PYTHON_GIL: ${{ matrix.free-threaded && '0' || '1' }}
-        run: tox run -e ${{ matrix.tox || format('py{0}', matrix.python) }}
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: pip # Enable caching for pip dependencies
+
+    - name: Install dependencies
+      run: pip install -r requirements/dev.txt
+
+    - name: Run tests
+      run: pytest
+
   typing:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
-        with:
-          python-version: '3.x'
-          cache: pip
-          cache-dependency-path: requirements*/*.txt
-      - name: cache mypy
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
-        with:
-          path: ./.mypy_cache
-          key: mypy|${{ hashFiles('pyproject.toml') }}
-      - run: pip install tox
-      - run: tox run -e typing
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+        cache: pip
+
+    - name: Install typing dependencies
+      run: pip install -r requirements/typing.txt
+
+    - name: Run mypy
+      run: mypy src tests
