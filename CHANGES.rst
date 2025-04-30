@@ -3,6 +3,7 @@ Version 3.1.0
 
 Unreleased
 
+-   fix(pyproject): set project.license to the right value. :issue:`488`
 
 Version 3.0.2
 -------------
