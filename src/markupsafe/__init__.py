@@ -388,6 +388,7 @@ def __getattr__(name: str) -> t.Any:
             "The '__version__' attribute is deprecated and will be removed in"
             " MarkupSafe 3.1. Use feature detection, or"
             ' `importlib.metadata.version("markupsafe")`, instead.',
+            DeprecationWarning,
             stacklevel=2,
         )
         return importlib.metadata.version("markupsafe")
