@@ -3,6 +3,8 @@ Version 3.1.0
 
 Unreleased
 
+-   Drop support for Python 3.9.
+
 
 Version 3.0.3
 -------------
