@@ -1,6 +1,5 @@
 include CHANGES.rst
-include tox.ini
-include requirements/*.txt
+include uv.lock
 graft docs
 prune docs/_build
 graft tests
