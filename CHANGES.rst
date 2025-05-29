@@ -7,6 +7,7 @@ Unreleased
     :issue:`487`
 -   Adopt multi-phase initialisation (:pep:`489`) for the C extension.
     :issue:`494`
+-   Build Windows ARM64 wheels. :issue:`485`
 
 
 Version 3.0.2
