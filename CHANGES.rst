@@ -3,6 +3,9 @@ Version 3.0.3
 
 Unreleased
 
+-   ``__version__`` raises ``DeprecationWarning`` instead of ``UserWarning``.
+    :issue:`487`
+
 
 Version 3.0.2
 -------------
