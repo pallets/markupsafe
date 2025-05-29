@@ -1,9 +1,49 @@
-Version 3.0.0
+Version 3.1.0
 -------------
 
 Unreleased
 
--   Drop support for Python 3.7.
+-   Drop support for Python 3.9.
+-   Remove previously deprecated code.
+
+
+Version 3.0.3
+-------------
+
+Unreleased
+
+-   ``__version__`` raises ``DeprecationWarning`` instead of ``UserWarning``.
+    :issue:`487`
+-   Adopt multi-phase initialisation (:pep:`489`) for the C extension.
+    :issue:`494`
+-   Build Windows ARM64 wheels. :issue:`485`
+
+
+Version 3.0.2
+-------------
+
+Released 2024-10-18
+
+-   Fix compatibility when ``__str__`` returns a ``str`` subclass. :issue:`472`
+-   Build requires setuptools >= 70.1. :issue:`475`
+
+
+Version 3.0.1
+-------------
+
+Released 2024-10-08
+
+-   Address compiler warnings that became errors in GCC 14. :issue:`466`
+-   Fix compatibility with proxy objects. :issue:`467`
+
+
+Version 3.0.0
+-------------
+
+Released 2024-10-07
+
+-   Support Python 3.13 and its experimental free-threaded build. :pr:`461`
+-   Drop support for Python 3.7 and 3.8.
 -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
     :pr:`348`
 -   Change ``distutils`` imports to ``setuptools``. :pr:`399`

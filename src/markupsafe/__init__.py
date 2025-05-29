@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import collections.abc as cabc
 import string
-import sys
 import typing as t
 
 try:
@@ -13,11 +12,13 @@ except ImportError:
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
-    class HasHTML(te.Protocol):
-        def __html__(self, /) -> str: ...
 
-    class TPEscape(te.Protocol):
-        def __call__(self, s: t.Any, /) -> Markup: ...
+class _HasHTML(t.Protocol):
+    def __html__(self, /) -> str: ...
+
+
+class _TPEscape(t.Protocol):
+    def __call__(self, s: t.Any, /) -> Markup: ...
 
 
 def escape(s: t.Any, /) -> Markup:
@@ -33,7 +34,9 @@ def escape(s: t.Any, /) -> Markup:
     """
     # If the object is already a plain string, skip __html__ check and string
     # conversion. This is the most common use case.
-    if s.__class__ is str:
+    # Use type(s) instead of s.__class__ because a proxy object may be reporting
+    # the __class__ of the proxied value.
+    if type(s) is str:
         return Markup(_escape_inner(s))
 
     if hasattr(s, "__html__"):
@@ -130,13 +133,13 @@ class Markup(str):
     def __html__(self, /) -> te.Self:
         return self
 
-    def __add__(self, value: str | HasHTML, /) -> te.Self:
+    def __add__(self, value: str | _HasHTML, /) -> te.Self:
         if isinstance(value, str) or hasattr(value, "__html__"):
             return self.__class__(super().__add__(self.escape(value)))
 
         return NotImplemented
 
-    def __radd__(self, value: str | HasHTML, /) -> te.Self:
+    def __radd__(self, value: str | _HasHTML, /) -> te.Self:
         if isinstance(value, str) or hasattr(value, "__html__"):
             return self.escape(value).__add__(self)
 
@@ -164,7 +167,7 @@ class Markup(str):
     def __repr__(self, /) -> str:
         return f"{self.__class__.__name__}({super().__repr__()})"
 
-    def join(self, iterable: cabc.Iterable[str | HasHTML], /) -> te.Self:
+    def join(self, iterable: cabc.Iterable[str | _HasHTML], /) -> te.Self:
         return self.__class__(super().join(map(self.escape, iterable)))
 
     def split(  # type: ignore[override]
@@ -211,14 +214,14 @@ class Markup(str):
             if (end := value.find("-->", start)) == -1:
                 break
 
-            value = f"{value[:start]}{value[end + 3:]}"
+            value = f"{value[:start]}{value[end + 3 :]}"
 
         # remove tags using the same method
         while (start := value.find("<")) != -1:
             if (end := value.find(">", start)) == -1:
                 break
 
-            value = f"{value[:start]}{value[end + 1:]}"
+            value = f"{value[:start]}{value[end + 1 :]}"
 
         # collapse spaces
         value = " ".join(value.split())
@@ -291,13 +294,11 @@ class Markup(str):
     def casefold(self, /) -> te.Self:
         return self.__class__(super().casefold())
 
-    if sys.version_info >= (3, 9):
+    def removeprefix(self, prefix: str, /) -> te.Self:
+        return self.__class__(super().removeprefix(prefix))
 
-        def removeprefix(self, prefix: str, /) -> te.Self:
-            return self.__class__(super().removeprefix(prefix))
-
-        def removesuffix(self, suffix: str) -> te.Self:
-            return self.__class__(super().removesuffix(suffix))
+    def removesuffix(self, suffix: str) -> te.Self:
+        return self.__class__(super().removesuffix(suffix))
 
     def partition(self, sep: str, /) -> tuple[te.Self, te.Self, te.Self]:
         left, sep, right = super().partition(sep)
@@ -331,8 +332,8 @@ class Markup(str):
 class EscapeFormatter(string.Formatter):
     __slots__ = ("escape",)
 
-    def __init__(self, escape: TPEscape) -> None:
-        self.escape: TPEscape = escape
+    def __init__(self, escape: _TPEscape) -> None:
+        self.escape: _TPEscape = escape
         super().__init__()
 
     def format_field(self, value: t.Any, format_spec: str) -> str:
@@ -358,9 +359,9 @@ class _MarkupEscapeHelper:
 
     __slots__ = ("obj", "escape")
 
-    def __init__(self, obj: t.Any, escape: TPEscape) -> None:
+    def __init__(self, obj: t.Any, escape: _TPEscape) -> None:
         self.obj: t.Any = obj
-        self.escape: TPEscape = escape
+        self.escape: _TPEscape = escape
 
     def __getitem__(self, key: t.Any, /) -> te.Self:
         return self.__class__(self.obj[key], self.escape)
@@ -376,19 +377,3 @@ class _MarkupEscapeHelper:
 
     def __float__(self, /) -> float:
         return float(self.obj)
-
-
-def __getattr__(name: str) -> t.Any:
-    if name == "__version__":
-        import importlib.metadata
-        import warnings
-
-        warnings.warn(
-            "The '__version__' attribute is deprecated and will be removed in"
-            " MarkupSafe 3.1. Use feature detection, or"
-            ' `importlib.metadata.version("markupsafe")`, instead.',
-            stacklevel=2,
-        )
-        return importlib.metadata.version("markupsafe")
-
-    raise AttributeError(name)

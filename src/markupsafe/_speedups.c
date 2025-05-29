@@ -151,7 +151,7 @@ escape_unicode_kind4(PyUnicodeObject *in)
 static PyObject*
 escape_unicode(PyObject *self, PyObject *s)
 {
-	if (!PyUnicode_CheckExact(s))
+	if (!PyUnicode_Check(s))
 		return NULL;
 
     // This check is no longer needed in Python 3.12.
@@ -160,11 +160,11 @@ escape_unicode(PyObject *self, PyObject *s)
 
 	switch (PyUnicode_KIND(s)) {
 	case PyUnicode_1BYTE_KIND:
-		return escape_unicode_kind1(s);
+		return escape_unicode_kind1((PyUnicodeObject*) s);
 	case PyUnicode_2BYTE_KIND:
-		return escape_unicode_kind2(s);
+		return escape_unicode_kind2((PyUnicodeObject*) s);
 	case PyUnicode_4BYTE_KIND:
-		return escape_unicode_kind4(s);
+		return escape_unicode_kind4((PyUnicodeObject*) s);
 	}
 	assert(0);  /* shouldn't happen */
 	return NULL;
@@ -175,20 +175,26 @@ static PyMethodDef module_methods[] = {
 	{NULL, NULL, 0, NULL}  /* Sentinel */
 };
 
+static PyModuleDef_Slot module_slots[] = {
+#ifdef Py_mod_multiple_interpreters  // Python 3.12+
+	{Py_mod_multiple_interpreters, Py_MOD_PER_INTERPRETER_GIL_SUPPORTED},
+#endif
+#ifdef Py_mod_gil  // Python 3.13+
+	{Py_mod_gil, Py_MOD_GIL_NOT_USED},
+#endif
+	{0, NULL}  /* Sentinel */
+};
+
 static struct PyModuleDef module_definition = {
-	PyModuleDef_HEAD_INIT,
-	"markupsafe._speedups",
-	NULL,
-	-1,
-	module_methods,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	.m_base = PyModuleDef_HEAD_INIT,
+	.m_name = "markupsafe._speedups",
+	.m_size = 0,
+	.m_methods = module_methods,
+	.m_slots = module_slots,
 };
 
 PyMODINIT_FUNC
 PyInit__speedups(void)
 {
-	return PyModule_Create(&module_definition);
+	return PyModuleDef_Init(&module_definition);
 }
