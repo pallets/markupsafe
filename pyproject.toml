@@ -56,7 +56,7 @@ typing = [
 ]
 
 [build-system]
-requires = ["setuptools>=77"]
+requires = ["setuptools>=77", "setuptools-rust"]
 build-backend = "setuptools.build_meta"
 
 [tool.uv]
