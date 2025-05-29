@@ -377,20 +377,3 @@ class _MarkupEscapeHelper:
 
     def __float__(self, /) -> float:
         return float(self.obj)
-
-
-def __getattr__(name: str) -> t.Any:
-    if name == "__version__":
-        import importlib.metadata
-        import warnings
-
-        warnings.warn(
-            "The '__version__' attribute is deprecated and will be removed in"
-            " MarkupSafe 3.1. Use feature detection, or"
-            ' `importlib.metadata.version("markupsafe")`, instead.',
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return importlib.metadata.version("markupsafe")
-
-    raise AttributeError(name)
