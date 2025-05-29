@@ -5,6 +5,8 @@ Unreleased
 
 -   ``__version__`` raises ``DeprecationWarning`` instead of ``UserWarning``.
     :issue:`487`
+-   Adopt multi-phase initialisation (:pep:`489`) for the C extension.
+    :issue:`494`
 
 
 Version 3.0.2
