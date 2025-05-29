@@ -360,7 +360,7 @@ wheels = [
 
 [[package]]
 name = "markupsafe"
-version = "3.0.2"
+version = "3.0.3.dev0"
 source = { editable = "." }
 
 [package.dev-dependencies]
