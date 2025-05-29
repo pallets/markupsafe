@@ -4,6 +4,18 @@ Version 3.1.0
 Unreleased
 
 
+Version 3.0.3
+-------------
+
+Unreleased
+
+-   ``__version__`` raises ``DeprecationWarning`` instead of ``UserWarning``.
+    :issue:`487`
+-   Adopt multi-phase initialisation (:pep:`489`) for the C extension.
+    :issue:`494`
+-   Build Windows ARM64 wheels. :issue:`485`
+
+
 Version 3.0.2
 -------------
 
