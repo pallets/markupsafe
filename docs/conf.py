@@ -47,5 +47,8 @@ html_sidebars = {
     "**": ["localtoc.html", "relations.html", "searchbox.html", "ethicalads.html"],
 }
 singlehtml_sidebars = {"index": ["project.html", "localtoc.html", "ethicalads.html"]}
+html_static_path = ["_static"]
+html_favicon = "_static/markupsafe-icon.svg"
+html_logo = "_static/markupsafe-vertical.svg"
 html_title = f"MarkupSafe Documentation ({version})"
 html_show_sourcelink = False

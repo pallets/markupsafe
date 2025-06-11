@@ -1,3 +1,5 @@
+<div align="center"><img src="https://raw.githubusercontent.com/pallets/markupsafe/refs/heads/stable/docs/_static/markupsafe-horizontal.svg" alt="" height="150"></div>
+
 # MarkupSafe
 
 MarkupSafe implements a text object that escapes characters so it is
