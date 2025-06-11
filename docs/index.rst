@@ -1,7 +1,12 @@
 .. currentmodule:: markupsafe
+.. rst-class:: hide-header
 
 MarkupSafe
 ==========
+
+.. image:: _static/markupsafe-horizontal.svg
+    :align: center
+    :height: 200px
 
 MarkupSafe escapes characters so text is safe to use in HTML and XML.
 Characters that have special meanings are replaced so that they display
