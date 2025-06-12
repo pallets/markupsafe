@@ -4,7 +4,7 @@
 MarkupSafe
 ==========
 
-.. image:: _static/markupsafe-horizontal.svg
+.. image:: _static/markupsafe-name.svg
     :align: center
     :height: 200px
 
