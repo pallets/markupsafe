@@ -8,7 +8,7 @@ for name, s in (
     ("long plain", '"Hello, World!" * 1000'),
     ("long suffix", '"<strong>Hello, World!</strong>" + "x" * 100_000'),
 ):
-    for mod in "native", "speedups":
+    for mod in "native", "rust_speedups":
         subprocess.run(
             [
                 sys.executable,
