@@ -10,6 +10,7 @@ except ImportError:
     _speedups = None  # type: ignore[assignment]
 
 
+@pytest.mark.thread_unsafe(reason="Tampers with sys.modules")
 @pytest.mark.skipif(_speedups is None, reason="speedups unavailable")
 def test_ext_init() -> None:
     """Test that the extension module uses multi-phase init by checking that

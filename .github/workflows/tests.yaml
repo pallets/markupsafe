@@ -35,6 +35,8 @@ jobs:
           python-version: ${{ matrix.python }}
           allow-prereleases: true
       - run: uv run --locked tox run -e ${{ matrix.tox || format('py{0}', matrix.python) }}
+      - if: endsWith(matrix.python, 't')
+        run: uv run --locked tox run -e ${{ format('py{0}', matrix.python) }} -- --parallel-threads=4
   typing:
     runs-on: ubuntu-latest
     steps:

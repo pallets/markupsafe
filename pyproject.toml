@@ -12,6 +12,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
+    "Programming Language :: Python :: Free Threading :: 2 - Beta",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Text Processing :: Markup :: HTML",
     "Typing :: Typed",
@@ -48,6 +49,7 @@ pre-commit = [
 ]
 tests = [
     "pytest",
+    "pytest-run-parallel; python_full_version >= '3.13'",
 ]
 typing = [
     "mypy",
@@ -67,7 +69,10 @@ testpaths = ["tests"]
 filterwarnings = [
     "error",
 ]
-
+markers = [
+    # Needed when pytest-run-parallel is not installed
+    "thread_unsafe: mark test as not safe to run in multiple threads",
+]
 [tool.coverage.run]
 branch = true
 source = ["markupsafe", "tests"]

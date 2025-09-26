@@ -1,8 +1,9 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.9"
 resolution-markers = [
-    "python_full_version >= '3.12'",
+    "python_full_version >= '3.13'",
+    "python_full_version == '3.12.*'",
     "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
     "python_full_version < '3.10'",
@@ -25,7 +26,8 @@ name = "alabaster"
 version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.12'",
+    "python_full_version >= '3.13'",
+    "python_full_version == '3.12.*'",
     "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
@@ -189,7 +191,8 @@ name = "click"
 version = "8.3.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.12'",
+    "python_full_version >= '3.13'",
+    "python_full_version == '3.12.*'",
     "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
@@ -390,6 +393,7 @@ pre-commit = [
 ]
 tests = [
     { name = "pytest" },
+    { name = "pytest-run-parallel", marker = "python_full_version >= '3.13'" },
 ]
 typing = [
     { name = "mypy" },
@@ -416,7 +420,10 @@ pre-commit = [
     { name = "pre-commit" },
     { name = "pre-commit-uv" },
 ]
-tests = [{ name = "pytest" }]
+tests = [
+    { name = "pytest" },
+    { name = "pytest-run-parallel", marker = "python_full_version >= '3.13'" },
+]
 typing = [
     { name = "mypy" },
     { name = "pyright" },
@@ -627,6 +634,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pytest-run-parallel"
+version = "0.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest", marker = "python_full_version >= '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d0/0c/2dd2d1f2f014e8d9c9f365eb4138c52eeb5b96fa8574f15c1d9436842a48/pytest_run_parallel-0.7.0.tar.gz", hash = "sha256:05088a808d26975f095739a06efc9e8ba4749c194457f9927903eaacdd1e05ce", size = 50185, upload-time = "2025-09-25T13:57:29.686Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2e/64/d676a217242e263a62bf30588654dba53252fb40df15d8a7023026dae109/pytest_run_parallel-0.7.0-py3-none-any.whl", hash = "sha256:0d8b981a2ac895df25c4bc27b89e8df0bbddbead57cbfdb0aed743db8533a8c0", size = 18884, upload-time = "2025-09-25T13:57:28.545Z" },
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -815,7 +834,8 @@ name = "sphinx"
 version = "8.2.3"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.12'",
+    "python_full_version >= '3.13'",
+    "python_full_version == '3.12.*'",
     "python_full_version == '3.11.*'",
 ]
 dependencies = [
@@ -869,7 +889,8 @@ name = "sphinx-autobuild"
 version = "2025.8.25"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.12'",
+    "python_full_version >= '3.13'",
+    "python_full_version == '3.12.*'",
     "python_full_version == '3.11.*'",
 ]
 dependencies = [
