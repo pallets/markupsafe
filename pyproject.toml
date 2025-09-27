@@ -129,8 +129,8 @@ tag-only = [
 
 [tool.tox]
 env_list = [
-    "py3.14", "py3.14t", "py3.13", "py3.13t",
-    "py3.12", "py3.11", "py3.10", "py3.9",
+    "py3.14", "py3.14t", "parallel",
+    "py3.13", "py3.13t", "py3.12", "py3.11", "py3.10", "py3.9",
     "pypy3.11",
     "style",
     "typing",
@@ -147,6 +147,15 @@ use_frozen_constraints = true
 dependency_groups = ["tests"]
 commands = [[
     "pytest", "-v", "--tb=short", "--basetemp={env_tmp_dir}",
+    {replace = "posargs", default = [], extend = true},
+]]
+
+[tool.tox.env.parallel]
+description = "check for free threading issues"
+base_python = ["3.14t"]
+commands = [[
+    "pytest", "-v", "--tb=short", "--basetemp=env_tmp_dir",
+    "--parallel-threads=8",
     {replace = "posargs", default = [], extend = true},
 ]]
 
