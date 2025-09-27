@@ -1,0 +1,15 @@
+[package]
+name = "markupsafe-rust"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[profile.release]
+debug = true
+
+[dependencies]
+pyo3 = "0.22.2"
+
+[lib]
+name = "_rust_speedups"
+crate-type = ["cdylib"]
