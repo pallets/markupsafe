@@ -35,7 +35,7 @@ jobs:
           python-version: ${{ matrix.python }}
           allow-prereleases: true
       - run: uv run --locked tox run -e ${{ matrix.tox || format('py{0}', matrix.python) }}
-      - if: endsWith(matrix.python, 't')
+      - if: ${{ matrix.python == '3.14t' }}
         run: uv run --locked tox run -e parallel
   typing:
     runs-on: ubuntu-latest
