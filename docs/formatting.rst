@@ -6,6 +6,26 @@ String Formatting
 The :class:`Markup` class can be used as a format string. Objects
 formatted into a markup string will be escaped first.
 
+t-strings
+---------
+
+.. versionadded:: 3.1.0
+
+On Python 3.14 :ref:`python:t-strings` can be passed to :class:`Markup`
+(or :func:`escape`), any interpolated value will be escaped while literal
+content will be treated as as markup.
+
+.. code-block:: pycon
+
+    >>> uid, name = 3, "<script>"
+    >>> Markup(t'<a href="/user/{uid}">{name}</a>')
+    Markup('<a href="/user/3">&lt;script&gt;</a>')
+
+.. seealso::
+
+    - :ref:`What's new in Python 3.14: template string literals <python:whatsnew314-template-string-literals>`
+    - :pep:`750`
+    - :mod:`string.templatelib`
 
 Format Method
 -------------

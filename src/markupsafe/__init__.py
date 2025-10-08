@@ -9,6 +9,12 @@ try:
 except ImportError:
     from ._native import _escape_inner
 
+try:
+    from string.templatelib import Interpolation  # type: ignore[import-not-found]
+    from string.templatelib import Template
+except ImportError:
+    Template = Interpolation = None
+
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
@@ -36,8 +42,12 @@ def escape(s: t.Any, /) -> Markup:
     # conversion. This is the most common use case.
     # Use type(s) instead of s.__class__ because a proxy object may be reporting
     # the __class__ of the proxied value.
-    if type(s) is str:
+    s_type = type(s)
+    if s_type is str:
         return Markup(_escape_inner(s))
+
+    if s_type is Template:
+        return _template__html__(s)
 
     if hasattr(s, "__html__"):
         return Markup(s.__html__())
@@ -122,7 +132,10 @@ class Markup(str):
     def __new__(
         cls, object: t.Any = "", encoding: str | None = None, errors: str = "strict"
     ) -> te.Self:
-        if hasattr(object, "__html__"):
+        if type(object) is Template:
+            object = _template__html__(object)
+
+        elif hasattr(object, "__html__"):
             object = object.__html__()
 
         if encoding is None:
@@ -377,3 +390,21 @@ class _MarkupEscapeHelper:
 
     def __float__(self, /) -> float:
         return float(self.obj)
+
+
+def _template__html__(
+    s: Template,
+    *,
+    escape: t.Callable[[t.Any], Markup] = escape,
+    str: t.Callable[[t.Any], str] = str,
+    Markup: t.Callable[[t.Any], Markup] = Markup,
+    format: t.Callable[[t.Any, str], str] = format,
+) -> Markup:
+    return Markup("").join(
+        Markup(value)
+        if value.__class__ is str
+        else escape(value.value)
+        if value.format_spec is None
+        else escape(format(value.value, value.format_spec))
+        for value in s
+    )
