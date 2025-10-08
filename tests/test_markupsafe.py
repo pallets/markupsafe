@@ -2,6 +2,12 @@ from __future__ import annotations
 
 import typing as t
 
+try:
+    from string.templatelib import Interpolation  # type: ignore[import-not-found]
+    from string.templatelib import Template
+except ImportError:
+    Template = Interpolation = None
+
 import pytest
 
 from markupsafe import escape
@@ -25,12 +31,29 @@ def test_adding() -> None:
             {"username": "<bad user>"},
             "<em>&lt;bad user&gt;</em>",
         ),
-        ("%i", 3.14, "3"),
-        ("%.2f", 3.14, "3.14"),
+        ("%i", 3.1415, "3"),
+        ("%.2f", 3.1415, "3.14"),
     ),
 )
 def test_string_interpolation(template: str, data: t.Any, expect: str) -> None:
     assert Markup(template) % data == expect
+
+
+@pytest.mark.skipif(Template is None, reason="requires Python 3.14+")
+@pytest.mark.parametrize(
+    ("template", "expect"),
+    (
+        (
+            lambda: Template("<em>", Interpolation("<bad user>", "username"), "</em>"),
+            "<em>&lt;bad user&gt;</em>",
+        ),
+        (lambda: Template(Interpolation(3.1415, "value", None, ".0f")), "3"),
+        (lambda: Template(Interpolation(3.1415, "value", None, ".2f")), "3.14"),
+    ),
+)
+def test_string_template(template: t.Callable[[], Template], expect: str) -> None:
+    assert Markup(template()) == expect
+    assert escape(template()) == expect
 
 
 def test_type_behavior() -> None:
