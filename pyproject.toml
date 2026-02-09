@@ -213,7 +213,7 @@ select = "*-musllinux_riscv64"
 build-frontend = "build"
 
 [tool.cibuildwheel.linux]
-archs = ["x86_64", "aarch64", "riscv64"]
+archs = ["x86_64", "aarch64", "armv7l", "riscv64"]
 
 [tool.cibuildwheel.macos]
 archs = ["x86_64", "arm64"]
