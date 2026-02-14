@@ -30,11 +30,22 @@ jobs:
           path: dist/
           if-no-files-found: error
   wheels:
-    name: wheels / ${{ matrix.os }}
+    name: wheels / ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        include:
+          - platform: linux
+            os: ubuntu-latest
+          - platform: windows
+            os: windows-latest
+          - platform: macos
+            os: macos-latest
+          - platform: ios
+            os: macos-latest
+          - platform: android
+            os: ubuntu-latest
         os: [ubuntu-latest, windows-latest, macos-latest]
     outputs:
       artifact-id: ${{ steps.upload-artifact.outputs.artifact-id }}
@@ -52,10 +63,12 @@ jobs:
           platforms: arm64,armv7l,ppc64le,riscv64
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
       - uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
+        env:
+          CIBW_PLATFORM: ${{ matrix.platform }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         id: upload-artifact
         with:
-          name: build-wheels-${{ matrix.os }}
+          name: build-wheels-${{ matrix.platform }}
           path: wheelhouse/
           if-no-files-found: error
   create-release:
