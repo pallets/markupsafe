@@ -5,6 +5,8 @@ Unreleased
 
 -   Drop support for Python 3.9.
 -   Remove previously deprecated code.
+-   Build Android wheels. :issue:`515`
+-   Build iOS wheels. :issue:`515`
 
 
 Version 3.0.3

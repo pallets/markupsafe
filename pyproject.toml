@@ -220,3 +220,11 @@ archs = ["x86_64", "arm64"]
 
 [tool.cibuildwheel.windows]
 archs = ["auto", "ARM64"]
+
+[tool.cibuildwheel.ios]
+archs = ["arm64_iphoneos", "arm64_iphonesimulator", "x86_64_iphonesimulator"]
+build-frontend = "build"
+
+[tool.cibuildwheel.android]
+archs = ["arm64_v8a", "x86_64"]
+build-frontend = "build"
