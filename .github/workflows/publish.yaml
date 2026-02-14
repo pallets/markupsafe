@@ -36,12 +36,22 @@ jobs:
         # be present in the run for the hash job, so only the upload is skipped.
         if: github.event_name == 'push'
   wheels:
-    name: wheels / ${{ matrix.os }}
+    name: wheels / ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - platform: linux
+            os: ubuntu-latest
+          - platform: windows
+            os: windows-latest
+          - platform: macos
+            os: macos-latest
+          - platform: ios
+            os: macos-latest
+          - platform: android
+            os: ubuntu-latest
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - uses: astral-sh/setup-uv@b75a909f75acd358c2196fb9a5f1299a9a8868a4 # v6.7.0
@@ -58,9 +68,10 @@ jobs:
         env:
           # For workflow_dispatch, only build the new Python version.
           CIBW_BUILD: ${{ inputs.python && format('{0}-*', inputs.python) || null }}
+          CIBW_PLATFORM: "${{ matrix.platform }}"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: build-wheels-${{ matrix.os }}
+          name: build-wheels-${{ matrix.platform }}
           path: ./wheelhouse
   create-release:
     needs: [sdist, wheels]
