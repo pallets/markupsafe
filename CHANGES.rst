@@ -5,7 +5,7 @@ Unreleased
 
 -   Drop support for Python 3.9.
 -   Remove previously deprecated code.
-
+-   Build ppc64le wheels. :issue:`517`
 
 Version 3.0.3
 -------------
