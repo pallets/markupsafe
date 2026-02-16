@@ -212,8 +212,12 @@ select = "*-musllinux_riscv64"
 # uv is not available
 build-frontend = "build"
 
+[[tool.cibuildwheel.overrides]]
+select = "*-musllinux_ppc64le"
+build-frontend = "build"
+
 [tool.cibuildwheel.linux]
-archs = ["x86_64", "aarch64", "riscv64"]
+archs = ["x86_64", "aarch64", "riscv64", "ppc64le"]
 
 [tool.cibuildwheel.macos]
 archs = ["x86_64", "arm64"]
