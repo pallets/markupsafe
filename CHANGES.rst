@@ -5,6 +5,7 @@ Unreleased
 
 -   Drop support for Python 3.9.
 -   Remove previously deprecated code.
+-   Fix performance issue with ``striptags``.  :issue:`521`
 
 
 Version 3.0.3

@@ -204,24 +204,29 @@ class Markup(str):
         'Main » About'
         """
         value = str(self)
-
-        # Look for comments then tags separately. Otherwise, a comment that
-        # contains a tag would end early, leaving some of the comment behind.
-
-        # keep finding comment start marks
-        while (start := value.find("<!--")) != -1:
-            # find a comment end mark beyond the start, otherwise stop
-            if (end := value.find("-->", start)) == -1:
+        parts = []
+        prev = 0
+        while True:
+            start = value.find("<", prev)
+            if start == -1:
                 break
-
-            value = f"{value[:start]}{value[end + 3 :]}"
-
-        # remove tags using the same method
-        while (start := value.find("<")) != -1:
-            if (end := value.find(">", start)) == -1:
-                break
-
-            value = f"{value[:start]}{value[end + 1 :]}"
+            if value[start : start + 4] == "<!--":
+                # comment
+                end = value.find("-->", start)
+                if end == -1:
+                    break
+                parts.append(value[prev:start])
+                prev = end + 3
+            else:
+                # tag
+                end = value.find(">", start)
+                if end == -1:
+                    break
+                parts.append(value[prev:start])
+                prev = end + 1
+        if prev > 0:
+            parts.append(value[prev:])
+            value = "".join(parts)
 
         # collapse spaces
         value = " ".join(value.split())
