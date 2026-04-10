@@ -4,6 +4,7 @@ Version 3.0.4
 Unreleased
 
 -   Wheels are available for Python 3.15.
+-   Improve performance of ``striptags``. :issue:`521`
 
 
 Version 3.0.3
