@@ -1,14 +1,14 @@
 [package]
 name = "markupsafe-rust"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 publish = false
 
 [profile.release]
 debug = true
 
 [dependencies]
-pyo3 = "0.22.2"
+pyo3 = { version = "0.29.0", features = ["abi3", "abi3-py310"] }
 
 [lib]
 name = "_rust_speedups"

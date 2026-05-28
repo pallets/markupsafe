@@ -77,7 +77,7 @@ pub fn _escape_inner<'py>(
     s: Bound<'py, PyString>,
 ) -> PyResult<Bound<'py, PyString>> {
     if let Some(out) = lut_replace(s.to_str()?) {
-        Ok(PyString::new_bound(py, out.as_str()))
+        Ok(PyString::new(py, out.as_str()))
     } else {
         Ok(s)
     }
