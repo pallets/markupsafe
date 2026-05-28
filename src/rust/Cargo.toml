@@ -5,6 +5,7 @@ edition = "2024"
 publish = false
 
 [profile.release]
+overflow-checks = true
 debug = true
 
 [dependencies]
