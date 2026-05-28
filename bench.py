@@ -5,12 +5,9 @@
 #     "pyperf",
 # ]
 # ///
-import os
-import pathlib
 import subprocess
 import sys
 import tempfile
-
 
 with tempfile.TemporaryDirectory() as d:
     outfiles = []
@@ -23,7 +20,10 @@ with tempfile.TemporaryDirectory() as d:
             ("long escape", '"<strong>Hello, World!</strong>" * 1000'),
             ("short plain", '"Hello, World!"'),
             ("long plain", '"Hello, World!" * 1000'),
-            ("long prefix", '"Hello, World!" * 1000 + "<strong>Hello, World!</strong>"'),
+            (
+                "long prefix",
+                '"Hello, World!" * 1000 + "<strong>Hello, World!</strong>"',
+            ),
             ("long suffix", '"<strong>Hello, World!</strong>" + "x" * 100_000'),
         ):
             subprocess.run(
@@ -49,14 +49,16 @@ with tempfile.TemporaryDirectory() as d:
                 ],
                 stdout=subprocess.DEVNULL,
             )
-            print('.', end='', flush=True)
+            print(".", end="", flush=True)
         print()
 
-    subprocess.run([
-        sys.executable,
-        '-m',
-        'pyperf',
-        'compare_to',
-        '--table',
-        *outfiles,
-    ])
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pyperf",
+            "compare_to",
+            "--table",
+            *outfiles,
+        ]
+    )
