@@ -20,10 +20,10 @@ Markup('&lt;script&gt;alert(document.cookie);&lt;/script&gt;')
 
 >>> # wrap in Markup to mark text "safe" and prevent escaping
 >>> Markup("<strong>Hello</strong>")
-Markup('<strong>hello</strong>')
+Markup('<strong>Hello</strong>')
 
 >>> escape(Markup("<strong>Hello</strong>"))
-Markup('<strong>hello</strong>')
+Markup('<strong>Hello</strong>')
 
 >>> # Markup is a str subclass
 >>> # methods and operators escape their arguments

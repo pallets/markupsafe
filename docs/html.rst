@@ -46,4 +46,4 @@ should still be escaped:
 
     >>> user = User(3, "<script>")
     >>> escape(user)
-    Markup('<a href="/users/3">&lt;script&gt;</a>')
+    Markup('<a href="/user/3">&lt;script&gt;</a>')
