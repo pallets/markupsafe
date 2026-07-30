@@ -216,12 +216,28 @@ class Markup(str):
 
             value = f"{value[:start]}{value[end + 3 :]}"
 
-        # remove tags using the same method
-        while (start := value.find("<")) != -1:
-            if (end := value.find(">", start)) == -1:
-                break
+        # Remove tags. Unlike the comment mark, the tag start mark is a single
+        # character, so removing a tag can never join two characters into a new
+        # start mark. That means one left-to-right pass finds exactly the same
+        # tags as repeatedly searching from the beginning would, while copying
+        # the remainder of the string once instead of once per tag.
+        if (start := value.find("<")) != -1 and (end := value.find(">", start)) != -1:
+            chunks = []
+            pos = 0
 
-            value = f"{value[:start]}{value[end + 1 :]}"
+            while True:
+                chunks.append(value[pos:start])
+                pos = end + 1
+
+                if (start := value.find("<", pos)) == -1:
+                    break
+
+                # an unclosed tag ends the search, keeping the rest as-is
+                if (end := value.find(">", start)) == -1:
+                    break
+
+            chunks.append(value[pos:])
+            value = "".join(chunks)
 
         # collapse spaces
         value = " ".join(value.split())
