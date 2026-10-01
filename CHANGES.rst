@@ -3,6 +3,8 @@ Version 3.1.0
 
 Unreleased
 
+-   ``Markup.format`` keeps HTML from ``__html__`` when that method
+    returns a plain string. :issue:`531`
 -   Drop support for Python 3.9.
 -   Remove previously deprecated code.
 

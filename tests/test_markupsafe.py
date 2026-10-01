@@ -141,6 +141,22 @@ def test_custom_formatting() -> None:
     assert Markup("{0}").format(HasHTMLAndFormat()) == Markup("<FORMAT>")
 
 
+def test_format_html_returns_str() -> None:
+    class Foo:
+        def __html__(self) -> str:
+            return "<strong>Foo</strong>"
+
+    class Bar:
+        def __html__(self) -> str:
+            return "<em>Bar</em>"
+
+        def __html_format__(self, spec: str) -> str:
+            return f"<em>{spec}</em>"
+
+    assert Markup("{0}").format(Foo()) == Markup("<strong>Foo</strong>")
+    assert Markup("{0:link}").format(Bar()) == Markup("<em>link</em>")
+
+
 def test_complex_custom_formatting() -> None:
     class User:
         def __init__(self, id: int, username: str) -> None:

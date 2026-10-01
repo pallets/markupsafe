@@ -311,6 +311,14 @@ class Markup(str):
         return cls(left), cls(sep), cls(right)
 
     def format(self, *args: t.Any, **kwargs: t.Any) -> te.Self:
+        """Format the string, escaping plain values.
+
+        An object with ``__html__`` is already safe HTML, including when
+        that method returns a plain string.
+
+        .. versionchanged:: 3.1.0
+            ``__html__`` returning a plain string is no longer escaped.
+        """
         formatter = EscapeFormatter(self.escape)
         return self.__class__(formatter.vformat(self, args, kwargs))
 
@@ -351,7 +359,11 @@ class EscapeFormatter(string.Formatter):
             # We need to make sure the format spec is str here as
             # otherwise the wrong callback methods are invoked.
             rv = super().format_field(value, str(format_spec))
-        return str(self.escape(rv))
+            return str(self.escape(rv))
+
+        # __html__ and __html_format__ already returned HTML. escape()
+        # would escape a plain string a second time.
+        return str(Markup(rv))
 
 
 class _MarkupEscapeHelper:
