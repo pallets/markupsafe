@@ -237,7 +237,7 @@ class Markup(str):
         if rv.__class__ is not cls:
             return cls(rv)
 
-        return rv  # type: ignore[return-value]
+        return rv
 
     def __getitem__(self, key: t.SupportsIndex | slice, /) -> te.Self:
         return self.__class__(super().__getitem__(key))
