@@ -3,6 +3,8 @@ Version 3.0.4
 
 Unreleased
 
+-   Wheels are available for Python 3.15.
+
 
 Version 3.0.3
 -------------
