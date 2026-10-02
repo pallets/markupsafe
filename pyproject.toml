@@ -204,13 +204,7 @@ skip_install = true
 commands = [["uv", "lock", {replace = "posargs", default = ["-U"], extend = true}]]
 
 [tool.cibuildwheel]
-enable = "cpython-freethreading"
 build-frontend = "build[uv]"
-
-[[tool.cibuildwheel.overrides]]
-select = "*-musllinux_riscv64"
-# uv is not available
-build-frontend = "build"
 
 [[tool.cibuildwheel.overrides]]
 select = "*-musllinux_ppc64le"
