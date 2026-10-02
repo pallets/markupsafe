@@ -208,16 +208,19 @@ build-frontend = "build[uv]"
 
 [[tool.cibuildwheel.overrides]]
 select = "*-musllinux_ppc64le"
+# uv is not available
 build-frontend = "build"
 
 [tool.cibuildwheel.linux]
+# overridden in workflow for parallel envs
 archs = ["x86_64", "aarch64", "armv7l", "ppc64le", "riscv64"]
 
 [tool.cibuildwheel.macos]
 archs = ["x86_64", "arm64"]
 
 [tool.cibuildwheel.windows]
-archs = ["auto", "ARM64"]
+# overridden in workflow for parallel envs
+archs = ["AMD64", "ARM64", "x86"]
 
 [tool.cibuildwheel.ios]
 archs = ["arm64_iphoneos", "arm64_iphonesimulator", "x86_64_iphonesimulator"]

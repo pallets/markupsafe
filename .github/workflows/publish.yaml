@@ -10,7 +10,7 @@ jobs:
   sdist:
     runs-on: ubuntu-latest
     outputs:
-      artifact-id: ${{ steps.upload-artifact.outputs.artifact-id }}
+      sdist: ${{ steps.upload.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -24,30 +24,41 @@ jobs:
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
       - run: uv build --sdist
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        id: upload-artifact
+        id: upload
         with:
-          name: build-sdist
+          name: sdist
           path: dist/
           if-no-files-found: error
   wheels:
-    name: wheels / ${{ matrix.platform }}
+    name: wheels / ${{ matrix.platform }}-${{ matrix.arch || 'all' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - platform: linux
-            os: ubuntu-latest
-          - platform: windows
-            os: windows-latest
-          - platform: macos
-            os: macos-latest
-          - platform: ios
-            os: macos-latest
-          - platform: android
-            os: ubuntu-latest
+          - { platform: linux, arch: x86_64, os: ubuntu-latest }
+          - { platform: linux, arch: aarch64, os: ubuntu-latest }
+          - { platform: linux, arch: armv7l, os: ubuntu-latest }
+          - { platform: linux, arch: ppc64le, os: ubuntu-latest }
+          - { platform: linux, arch: riscv64, os: ubuntu-latest }
+          - { platform: windows, arch: AMD64, os: windows-latest }
+          - { platform: windows, arch: ARM64, os: windows-latest }
+          - { platform: windows, arch: x86, os: windows-latest }
+          - { platform: macos, os: macos-latest }
+          - { platform: ios, os: macos-latest }
+          - { platform: android, os: ubuntu-latest }
     outputs:
-      artifact-id: ${{ steps.upload-artifact.outputs.artifact-id }}
+      linux-x86_64: ${{ steps.output.outputs.linux-x86_64 }}
+      linux-aarch64: ${{ steps.output.outputs.linux-aarch64 }}
+      linux-armv7l: ${{ steps.output.outputs.linux-armv7l }}
+      linux-ppc64le: ${{ steps.output.outputs.linux-ppc64le }}
+      linux-riscv64: ${{ steps.output.outputs.linux-riscv64 }}
+      windows-AMD64: ${{ steps.output.outputs.windows-AMD64 }}
+      windows-ARM64: ${{ steps.output.outputs.windows-ARM64 }}
+      windows-x86: ${{ steps.output.outputs.windows-x86 }}
+      macos-all: ${{ steps.output.outputs.macos-all }}
+      ios-all: ${{ steps.output.outputs.ios-all }}
+      android-all: ${{ steps.output.outputs.android-all }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -58,18 +69,22 @@ jobs:
       - name: Set up QEMU
         if: matrix.platform == 'linux'
         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
-        with:
-          platforms: arm64,arm,ppc64le,riscv64
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
       - uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
         env:
           CIBW_PLATFORM: ${{ matrix.platform }}
+          CIBW_ARCHS: ${{ matrix.arch || null }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        id: upload-artifact
+        id: upload
         with:
-          name: build-wheels-${{ matrix.platform }}
+          name: ${{ matrix.platform }}-${{ matrix.arch || 'all' }}
           path: wheelhouse/
           if-no-files-found: error
+      - id: output
+        run: echo "$OUTPUT_KV" >> $GITHUB_OUTPUT
+        shell: bash
+        env:
+          OUTPUT_KV: ${{ matrix.platform }}-${{ matrix.arch || 'all' }}=${{ steps.upload.outputs.artifact-id }}
   create-release:
     needs: [sdist, wheels]
     runs-on: ubuntu-latest
@@ -78,7 +93,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          artifact-ids: ${{ needs.sdist.outputs.artifact-id }}, ${{ needs.wheels.outputs.artifact-id }}
+          artifact-ids: ${{ format('{0},{1}', needs.sdist.outputs.sdist, join(needs.wheels.outputs.*, ',')) }}
           path: dist
           merge-multiple: true
       - name: create release
@@ -96,7 +111,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          artifact-ids: ${{ needs.sdist.outputs.artifact-id }}, ${{ needs.wheels.outputs.artifact-id }}
+          artifact-ids: ${{ format('{0},{1}', needs.sdist.outputs.sdist, join(needs.wheels.outputs.*, ',')) }}
           path: dist
           merge-multiple: true
       - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
