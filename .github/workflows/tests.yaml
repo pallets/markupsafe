@@ -5,6 +5,10 @@ on:
   push:
     branches: [main, stable]
     paths-ignore: ['docs/**', 'README.md']
+permissions: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   tests:
     name: ${{ matrix.name || matrix.python }}
@@ -13,43 +17,49 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - {python: '3.15'}
           - {python: '3.14'}
           - {python: '3.14t'}
           - {name: Windows, python: '3.14', os: windows-latest}
           - {name: Mac, python: '3.14', os: macos-latest}
           - {python: '3.13'}
-          - {python: '3.13t'}
           - {python: '3.12'}
           - {python: '3.11'}
           - {python: '3.10'}
-          - {name: PyPy, python: 'pypy-3.11', tox: pypy311}
+          - {name: PyPy, python: 'pypy-3.11', tox: pypy3.11}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - uses: astral-sh/setup-uv@b75a909f75acd358c2196fb9a5f1299a9a8868a4 # v6.7.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           enable-cache: true
           prune-cache: false
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python }}
           allow-prereleases: true
-      - run: uv run --locked tox run -e ${{ matrix.tox || format('py{0}', matrix.python) }}
+      - run: uv run --locked --no-default-groups --group dev tox run
+        env:
+          TOX_ENV: ${{ matrix.tox || format('py{0}', matrix.python) }}
       - if: endsWith(matrix.python, 't')
-        run: uv run --locked tox run -e parallel
+        run: uv run --locked --no-default-groups --group dev tox run -e parallel
   typing:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - uses: astral-sh/setup-uv@b75a909f75acd358c2196fb9a5f1299a9a8868a4 # v6.7.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           enable-cache: true
           prune-cache: false
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version-file: pyproject.toml
       - name: cache mypy
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ./.mypy_cache
           key: mypy|${{ hashFiles('pyproject.toml') }}
-      - run: uv run --locked tox run -e typing
+      - run: uv run --locked --no-default-groups --group dev tox run -e typing
