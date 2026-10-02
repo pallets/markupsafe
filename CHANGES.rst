@@ -1,10 +1,9 @@
 Version 3.0.4
 -------------
 
-Unreleased
+Released 2026-10-02
 
--   Wheels are available for Python 3.15.
--   Wheels are available for ``armv7l``, ``ppc64le``, Android, and iOS.
+-   Build Python 3.15, armv7l, ppc64le, Android, and iOS wheels.
 -   Improve performance of ``striptags``. :issue:`521`
 
 
