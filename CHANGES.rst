@@ -4,7 +4,7 @@ Version 3.0.4
 Unreleased
 
 -   Wheels are available for Python 3.15.
--   Wheels are available for ``armv7l`` and ``ppc64le``.
+-   Wheels are available for ``armv7l``, ``ppc64le``, Android, and iOS.
 -   Improve performance of ``striptags``. :issue:`521`
 
 
