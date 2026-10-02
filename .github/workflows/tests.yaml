@@ -5,6 +5,10 @@ on:
   push:
     branches: [main, stable]
     paths-ignore: ['docs/**', 'README.md']
+permissions: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   tests:
     name: ${{ matrix.name || matrix.python }}
@@ -23,9 +27,11 @@ jobs:
           - {python: '3.11'}
           - {python: '3.10'}
           - {python: '3.9'}
-          - {name: PyPy, python: 'pypy-3.11', tox: pypy311}
+          - {name: PyPy, python: 'pypy-3.11', tox: pypy3.11}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           enable-cache: true
@@ -34,13 +40,17 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           allow-prereleases: true
-      - run: uv run --locked tox run -e ${{ matrix.tox || format('py{0}', matrix.python) }}
+      - run: uv run --locked --no-default-groups --group dev tox run
+        env:
+          TOX_ENV: ${{ matrix.tox || format('py{0}', matrix.python) }}
       - if: endsWith(matrix.python, 't')
-        run: uv run --locked tox run -e parallel
+        run: uv run --locked --no-default-groups --group dev tox run -e parallel
   typing:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           enable-cache: true
@@ -53,4 +63,4 @@ jobs:
         with:
           path: ./.mypy_cache
           key: mypy|${{ hashFiles('pyproject.toml') }}
-      - run: uv run --locked tox run -e typing
+      - run: uv run --locked --no-default-groups --group dev tox run -e typing
