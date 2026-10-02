@@ -46,7 +46,6 @@ jobs:
             os: macos-latest
           - platform: android
             os: ubuntu-latest
-        os: [ubuntu-latest, windows-latest, macos-latest]
     outputs:
       artifact-id: ${{ steps.upload-artifact.outputs.artifact-id }}
     steps:
@@ -57,10 +56,10 @@ jobs:
         with:
           enable-cache: false
       - name: Set up QEMU
-        if: runner.os == 'Linux'
+        if: matrix.platform == 'linux'
         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
         with:
-          platforms: arm64,armv7l,ppc64le,riscv64
+          platforms: arm64,arm,ppc64le,riscv64
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
       - uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
         env:
