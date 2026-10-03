@@ -5,6 +5,7 @@ Unreleased
 
 -   Drop support for Python 3.9 and 3.10.
 -   Remove previously deprecated code.
+-   Improve C speedups (building upon idea in https://github.com/pallets/markupsafe/pull/438)
 
 
 Version 3.0.4
