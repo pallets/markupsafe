@@ -1,0 +1,16 @@
+[package]
+name = "markupsafe-rust"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[profile.release]
+overflow-checks = true
+debug = true
+
+[dependencies]
+pyo3 = { version = "0.29.0", features = ["abi3", "abi3-py310"] }
+
+[lib]
+name = "_rust_speedups"
+crate-type = ["cdylib"]
