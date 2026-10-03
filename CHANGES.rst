@@ -5,6 +5,7 @@ Unreleased
 
 -   Drop support for Python 3.9 and 3.10.
 -   Remove previously deprecated code.
+-   Support Python 3.14 template strings. :issue:`511`
 
 
 Version 3.0.4
